@@ -1,0 +1,2 @@
+class FuelReceipt < ApplicationRecord
+end

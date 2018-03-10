@@ -1,0 +1,2 @@
+class TaxableVatField < ApplicationRecord
+end

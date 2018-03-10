@@ -1,0 +1,2 @@
+class VehicleField < ApplicationRecord
+end

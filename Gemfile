@@ -42,8 +42,11 @@ group :development, :test do
   gem 'rspec-expectations'
   gem 'rspec-mocks'
   gem 'rspec-support'
-
+  gem 'shoulda-matchers', '~> 3.1'
   gem 'guard-rspec', '~> 4.7'
+  gem 'rails-controller-testing'
+
+  gem "database_cleaner"
 end
 
 group :development do
