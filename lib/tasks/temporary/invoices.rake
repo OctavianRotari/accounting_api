@@ -16,7 +16,22 @@ namespace :invoices do
     end
   end
 
-  desc 'Move company id to join table company_invoice'
+  desc 'Move vehicle id to vehicle_line_items'
+  task move_vehicle_id_to_vehicle_line_items: :environment do
+    invoices = Invoice.where.not(vehicle_id: nil)
+    puts "Going to move #{invoices.count} ids"
+    VehicleLineItem.transaction do
+      invoices.each do |invoice|
+        VehicleLineItem.create(
+          invoice_id: invoice.id,
+          total: invoice.total,
+          vehicle_id: invoice.vehicle_id,
+        )
+      end
+    end
+  end
+
+  desc 'Move vehicle id to join table vehicle_invoice'
   task move_company_id_to_company_invoice: :environment do
     invoice = Invoice.all
     puts "Going to move #{invoice.count} ids"

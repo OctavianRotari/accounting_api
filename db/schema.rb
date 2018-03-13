@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_03_13_184615) do
+ActiveRecord::Schema.define(version: 2018_03_13_201312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,21 +102,21 @@ ActiveRecord::Schema.define(version: 2018_03_13_184615) do
     t.datetime "deadline"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "company_id"
     t.decimal "total_vat"
-    t.decimal "total"
     t.string "reason"
     t.decimal "total_taxable"
-    t.integer "vehicle_id"
     t.string "type_of_invoice"
-    t.integer "category_id"
     t.string "at_the_expense_of"
     t.integer "user_id"
     t.boolean "paid", default: false
     t.string "serial_number"
-    t.index ["company_id"], name: "index_invoices_on_company_id"
     t.index ["user_id"], name: "index_invoices_on_user_id"
-    t.index ["vehicle_id"], name: "index_invoices_on_vehicle_id"
+  end
+
+  create_table "invoices_vehicles", id: false, force: :cascade do |t|
+    t.bigint "invoice_id", null: false
+    t.bigint "vehicle_id", null: false
+    t.index ["invoice_id", "vehicle_id"], name: "index_invoices_vehicles_on_invoice_id_and_vehicle_id"
   end
 
   create_table "payments", id: :serial, force: :cascade do |t|
@@ -192,6 +192,16 @@ ActiveRecord::Schema.define(version: 2018_03_13_184615) do
     t.index ["invoice_id"], name: "index_vehicle_fields_on_invoice_id"
   end
 
+  create_table "vehicle_line_items", force: :cascade do |t|
+    t.bigint "vehicle_id"
+    t.bigint "invoice_id"
+    t.decimal "total"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_vehicle_line_items_on_invoice_id"
+    t.index ["vehicle_id"], name: "index_vehicle_line_items_on_vehicle_id"
+  end
+
   create_table "vehicles", id: :serial, force: :cascade do |t|
     t.string "plate"
     t.string "type_of_vehicle"
@@ -212,13 +222,13 @@ ActiveRecord::Schema.define(version: 2018_03_13_184615) do
   add_foreign_key "insurances", "companies"
   add_foreign_key "insurances", "users"
   add_foreign_key "insurances", "vehicles"
-  add_foreign_key "invoices", "companies"
   add_foreign_key "invoices", "users"
-  add_foreign_key "invoices", "vehicles"
   add_foreign_key "payments", "invoices"
   add_foreign_key "taxable_vat_fields", "invoices"
   add_foreign_key "tickets", "users"
   add_foreign_key "tickets", "vehicles"
   add_foreign_key "vehicle_fields", "invoices"
+  add_foreign_key "vehicle_line_items", "invoices"
+  add_foreign_key "vehicle_line_items", "vehicles"
   add_foreign_key "vehicles", "users"
 end
