@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_03_12_193845) do
+ActiveRecord::Schema.define(version: 2018_03_12_200751) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,6 +58,17 @@ ActiveRecord::Schema.define(version: 2018_03_12_193845) do
   create_table "garages", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "insurance_receipts", id: :serial, force: :cascade do |t|
+    t.decimal "paid"
+    t.string "method_of_payment"
+    t.string "policy_number"
+    t.datetime "payment_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "insurance_id"
+    t.index ["insurance_id"], name: "index_insurance_receipts_on_insurance_id"
   end
 
   create_table "insurances", id: :serial, force: :cascade do |t|
@@ -112,15 +123,14 @@ ActiveRecord::Schema.define(version: 2018_03_12_193845) do
     t.index ["invoice_id"], name: "index_payments_on_invoice_id"
   end
 
-  create_table "receipts", id: :serial, force: :cascade do |t|
-    t.decimal "paid"
-    t.string "method_of_payment"
-    t.string "policy_number"
-    t.datetime "payment_date"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer "insurance_id"
-    t.index ["insurance_id"], name: "index_receipts_on_insurance_id"
+  create_table "receipts", force: :cascade do |t|
+    t.datetime "data_of_issue"
+    t.datetime "deadline"
+    t.string "description"
+    t.boolean "collected"
+    t.string "serial_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "taxable_vat_fields", id: :serial, force: :cascade do |t|
@@ -192,6 +202,7 @@ ActiveRecord::Schema.define(version: 2018_03_12_193845) do
   add_foreign_key "fuel_receipts", "companies"
   add_foreign_key "fuel_receipts", "users"
   add_foreign_key "fuel_receipts", "vehicles"
+  add_foreign_key "insurance_receipts", "insurances"
   add_foreign_key "insurances", "companies"
   add_foreign_key "insurances", "users"
   add_foreign_key "insurances", "vehicles"
@@ -199,7 +210,6 @@ ActiveRecord::Schema.define(version: 2018_03_12_193845) do
   add_foreign_key "invoices", "users"
   add_foreign_key "invoices", "vehicles"
   add_foreign_key "payments", "invoices"
-  add_foreign_key "receipts", "insurances"
   add_foreign_key "taxable_vat_fields", "invoices"
   add_foreign_key "tickets", "users"
   add_foreign_key "tickets", "vehicles"
