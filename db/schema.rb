@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_03_12_200751) do
+ActiveRecord::Schema.define(version: 2018_03_13_184615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,6 +39,12 @@ ActiveRecord::Schema.define(version: 2018_03_12_200751) do
     t.integer "user_id"
     t.index ["category_id"], name: "index_companies_on_category_id"
     t.index ["user_id"], name: "index_companies_on_user_id"
+  end
+
+  create_table "companies_invoices", id: false, force: :cascade do |t|
+    t.bigint "invoice_id", null: false
+    t.bigint "company_id", null: false
+    t.index ["invoice_id", "company_id"], name: "index_companies_invoices_on_invoice_id_and_company_id"
   end
 
   create_table "fuel_receipts", id: :serial, force: :cascade do |t|
@@ -124,7 +130,7 @@ ActiveRecord::Schema.define(version: 2018_03_12_200751) do
   end
 
   create_table "receipts", force: :cascade do |t|
-    t.datetime "data_of_issue"
+    t.datetime "date_of_issue"
     t.datetime "deadline"
     t.string "description"
     t.boolean "collected"

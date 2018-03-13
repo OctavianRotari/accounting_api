@@ -1,5 +1,3 @@
-require 'rake'
-
 namespace :users do 
   desc 'Adds user provider and uid'
   task set_provider_uid: :environment do
