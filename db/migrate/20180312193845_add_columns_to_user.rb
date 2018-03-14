@@ -8,7 +8,6 @@ class AddColumnsToUser < ActiveRecord::Migration[5.2]
     add_column :users, :name, :string
     add_column :users, :nickname, :string
     add_column :users, :image, :string
-    add_column :users, :email, :string
     add_column :users, :tokens, :json
 
     add_column :users, :allow_password_change, :boolean, :default => false
