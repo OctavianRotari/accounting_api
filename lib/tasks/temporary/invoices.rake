@@ -1,5 +1,5 @@
 namespace :invoices do
-  desc 'Move all passive invoices into receipts'
+  desc 'Move all active invoices into receipts'
   task move_active_invoice_to_receipts: :environment do
     invoices = Invoice.where(type_of_invoice: 'attiva')
     puts "Going to update #{invoices.count} invoices"
@@ -39,13 +39,41 @@ namespace :invoices do
     ActiveRecord::Base.connection.execute("INSERT INTO companies_invoices (company_id, invoice_id) VALUES #{values}")
   end
 
-  desc 'Remove all passive invoices from invoices'
-  task remove_passive_invoices: :environment do
-    invoices = Invoice.where(type_of_invoice: 'passiva')
-    puts "Going to delete #{invoices.count} invoices"
+  desc 'Change from column at_the_expense_of to general_expence'
+  task change_from_at_the_expense_of_to_general_expence: :environment do
+    invoices = Invoice.all
+    puts "Going to value #{invoices.count} ids"
     Invoice.transaction do
       invoices.each do |invoice|
-        Invoice.delete(id: invoice.id)
+        if(invoice.at_the_expense_of == "Spese generali")
+          invoice.general_expence = true
+        else
+          invoice.general_expence = false
+        end
+      end
+    end
+    puts 'All done'
+  end
+
+  desc 'Remove all active invoices from invoices'
+  task remove_active_invoices: :environment do
+    invoices = Invoice.where(type_of_invoice: 'attiva')
+    puts "Going to delete #{invoices.count} invoices"
+    invoices.destroy_all()
+    puts 'All done'
+  end
+
+  desc 'Move items from taxable vat to line items table'
+  task move_taxable_vat_to_line_items: :environment do
+    taxableVat = TaxableVatField.all
+    puts "Going to delete #{invoices.count} invoices"
+    LineItem.transaction do
+      taxableVat.each do |item|
+        LineItem.create(
+          vat: item.vat_rate,
+          amount: item.taxable,
+          invoice_id: item.invoice_id
+        )
       end
     end
     puts 'All done'
