@@ -9,6 +9,11 @@ class CreateInsurances < ActiveRecord::Migration[5.1]
       t.integer :recurrence
       t.datetime :deadline
       t.timestamps null: true
+
+      t.references :user, foreign_key: true
+      t.references :vehicle, foreign_key: true
+      t.references :company, foreign_key: true
+      t.references :category, foreign_key: true
     end
   end
 end

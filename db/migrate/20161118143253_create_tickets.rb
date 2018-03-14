@@ -6,8 +6,11 @@ class CreateTickets < ActiveRecord::Migration[5.1]
       t.datetime :date_of_issue
       t.datetime :deadline
       t.timestamps null: true
-    end
+      t.boolean :paid
+      t.string :description
 
-    add_reference :tickets, :user, index: true, foreign_key: true
+      t.references :user, foreign_key: true
+      t.references :vehicle, foreign_key: true
+    end
   end
 end
