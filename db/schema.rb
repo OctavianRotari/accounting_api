@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_03_14_191934) do
+ActiveRecord::Schema.define(version: 2018_03_14_185032) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 2018_03_14_191934) do
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.boolean "gas_station"
+    t.integer "type_of"
     t.index ["user_id"], name: "index_categories_on_user_id"
   end
 
@@ -102,17 +103,27 @@ ActiveRecord::Schema.define(version: 2018_03_14_191934) do
     t.datetime "deadline"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "company_id"
+    t.decimal "total_vat"
+    t.decimal "total"
     t.string "reason"
+    t.decimal "total_taxable"
+    t.integer "vehicle_id"
+    t.string "type_of_invoice"
+    t.integer "category_id"
+    t.string "at_the_expense_of"
     t.integer "user_id"
     t.boolean "paid", default: false
     t.string "serial_number"
-    t.boolean "general_expence", default: false
+    t.index ["company_id"], name: "index_invoices_on_company_id"
     t.index ["user_id"], name: "index_invoices_on_user_id"
+    t.index ["vehicle_id"], name: "index_invoices_on_vehicle_id"
   end
 
   create_table "invoices_vehicles", id: false, force: :cascade do |t|
     t.bigint "invoice_id", null: false
     t.bigint "vehicle_id", null: false
+    t.decimal "total"
     t.index ["invoice_id", "vehicle_id"], name: "index_invoices_vehicles_on_invoice_id_and_vehicle_id"
   end
 
@@ -135,14 +146,13 @@ ActiveRecord::Schema.define(version: 2018_03_14_191934) do
     t.index ["invoice_id"], name: "index_payments_on_invoice_id"
   end
 
-  create_table "receipts", force: :cascade do |t|
-    t.datetime "date_of_issue"
-    t.datetime "deadline"
-    t.string "description"
-    t.boolean "collected"
-    t.string "serial_number"
+  create_table "taxable_vat_fields", id: :serial, force: :cascade do |t|
+    t.decimal "taxable"
+    t.decimal "vat_rate"
+    t.integer "invoice_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_taxable_vat_fields_on_invoice_id"
   end
 
   create_table "tickets", id: :serial, force: :cascade do |t|
@@ -173,11 +183,28 @@ ActiveRecord::Schema.define(version: 2018_03_14_191934) do
     t.string "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "provider"
-    t.string "uid"
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.string "name"
+    t.string "nickname"
+    t.string "image"
     t.json "tokens"
+    t.boolean "allow_password_change", default: false
+    t.string "provider", default: "email", null: false
+    t.string "uid", default: "", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "vehicle_fields", id: :serial, force: :cascade do |t|
+    t.integer "vehicle_id"
+    t.integer "part_of_total"
+    t.integer "invoice_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["invoice_id"], name: "index_vehicle_fields_on_invoice_id"
   end
 
   create_table "vehicle_line_items", force: :cascade do |t|
@@ -210,11 +237,15 @@ ActiveRecord::Schema.define(version: 2018_03_14_191934) do
   add_foreign_key "insurances", "companies"
   add_foreign_key "insurances", "users"
   add_foreign_key "insurances", "vehicles"
+  add_foreign_key "invoices", "companies"
   add_foreign_key "invoices", "users"
+  add_foreign_key "invoices", "vehicles"
   add_foreign_key "line_items", "invoices"
   add_foreign_key "payments", "invoices"
+  add_foreign_key "taxable_vat_fields", "invoices"
   add_foreign_key "tickets", "users"
   add_foreign_key "tickets", "vehicles"
+  add_foreign_key "vehicle_fields", "invoices"
   add_foreign_key "vehicle_line_items", "invoices"
   add_foreign_key "vehicle_line_items", "vehicles"
   add_foreign_key "vehicles", "users"
