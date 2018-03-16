@@ -3,9 +3,9 @@ namespace :invoices do
   task move_active_invoice_to_receipts: :environment do
     invoices = Invoice.where(type_of_invoice: 'attiva')
     puts "Going to update #{invoices.count} invoices"
-    Receipt.transaction do
+    ActiveInvoice.transaction do
       invoices.each do |invoice|
-        Receipt.create(
+        ActiveInvoice.create(
           id: invoice.id,
           date_of_issue: invoice.date_of_issue,
           deadline: invoice.deadline,
@@ -16,19 +16,13 @@ namespace :invoices do
     end
   end
 
-  desc 'Move vehicle id to vehicle_line_items'
+  desc 'Move vehicle id to vehicle_invoices'
   task move_vehicle_id_to_vehicle_line_items: :environment do
     invoices = Invoice.where.not(vehicle_id: nil)
     puts "Going to move #{invoices.count} ids"
-    VehicleLineItem.transaction do
-      invoices.each do |invoice|
-        VehicleLineItem.create(
-          invoice_id: invoice.id,
-          total: invoice.total,
-          vehicle_id: invoice.vehicle_id,
-        )
-      end
-    end
+    values = invoices.map { |invoice| "(#{invoice.vehicle_id}, #{invoice.id}, #{invoice.total})"}.join(",")
+    ActiveRecord::Base.connection.execute("INSERT INTO invoices_vehicles (vehicle_id, invoice_id, total) VALUES #{values}")
+    puts 'All done'
   end
 
   desc 'Move vehicle id to join table vehicle_invoice'
@@ -37,6 +31,7 @@ namespace :invoices do
     puts "Going to move #{invoice.count} ids"
     values = invoice.map { |invoice| "(#{invoice.company_id}, #{invoice.id})"}.join(",")
     ActiveRecord::Base.connection.execute("INSERT INTO companies_invoices (company_id, invoice_id) VALUES #{values}")
+    puts 'All done'
   end
 
   desc 'Change from column at_the_expense_of to general_expence'
@@ -65,14 +60,34 @@ namespace :invoices do
 
   desc 'Move items from taxable vat to line items table'
   task move_taxable_vat_to_line_items: :environment do
-    taxableVat = TaxableVatField.all
-    puts "Going to delete #{invoices.count} invoices"
+    invoices = Invoice.where(type_of_invoice: 'passiva');
+    puts "Going to move #{invoices.count} line items"
     LineItem.transaction do
-      taxableVat.each do |item|
+      invoices.each do |invoice|
+        taxableVat = TaxableVatField.find_by(invoice_id: invoice.id)
         LineItem.create(
-          vat: item.vat_rate,
-          amount: item.taxable,
-          invoice_id: item.invoice_id
+          vat: taxableVat.vat_rate,
+          amount: taxableVat.taxable,
+          invoice_id: taxableVat.invoice_id,
+          description: invoice.reason
+        )
+      end
+    end
+    puts 'All done'
+  end
+
+  desc 'Move items from taxable vat to sold line items table'
+  task move_taxable_vat_to_sold_line_items: :environment do
+    invoices = Invoice.where(type_of_invoice: 'attiva');
+    puts "Going to move #{invoices.count} sold line items"
+    SoldLineItem.transaction do
+      invoices.each do |invoice|
+        taxableVat = TaxableVatField.find_by(invoice_id: invoice.id)
+        SoldLineItem.create(
+          vat: taxableVat.vat_rate,
+          amount: taxableVat.taxable,
+          invoice_id: taxableVat.invoice_id,
+          description: invoice.reason
         )
       end
     end

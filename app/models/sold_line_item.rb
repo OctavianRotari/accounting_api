@@ -1,0 +1,2 @@
+class SoldLineItem < ApplicationRecord
+end

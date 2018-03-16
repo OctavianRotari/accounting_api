@@ -12,7 +12,6 @@ class CreateInvoices < ActiveRecord::Migration[5.1]
       t.string :at_the_expense_of
       t.boolean :paid, default: false
       t.string :serial_number
-      t.boolean :general_expence, default: false
     end
   end
 end

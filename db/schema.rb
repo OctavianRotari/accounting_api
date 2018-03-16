@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_03_14_185032) do
+ActiveRecord::Schema.define(version: 2018_03_16_202728) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_invoices", force: :cascade do |t|
+    t.datetime "date_of_issue"
+    t.boolean "collected", default: false
+    t.datetime "deadline"
+    t.string "serial_number"
+  end
 
   create_table "calculators", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -98,6 +105,11 @@ ActiveRecord::Schema.define(version: 2018_03_14_185032) do
     t.index ["vehicle_id"], name: "index_insurances_on_vehicle_id"
   end
 
+  create_table "insurances_vehicles", id: false, force: :cascade do |t|
+    t.bigint "insurance_id", null: false
+    t.bigint "vehicle_id", null: false
+  end
+
   create_table "invoices", id: :serial, force: :cascade do |t|
     t.datetime "date_of_issue"
     t.datetime "deadline"
@@ -115,6 +127,7 @@ ActiveRecord::Schema.define(version: 2018_03_14_185032) do
     t.integer "user_id"
     t.boolean "paid", default: false
     t.string "serial_number"
+    t.boolean "general_expence"
     t.index ["company_id"], name: "index_invoices_on_company_id"
     t.index ["user_id"], name: "index_invoices_on_user_id"
     t.index ["vehicle_id"], name: "index_invoices_on_vehicle_id"
@@ -130,6 +143,8 @@ ActiveRecord::Schema.define(version: 2018_03_14_185032) do
   create_table "line_items", force: :cascade do |t|
     t.integer "vat"
     t.decimal "amount"
+    t.string "description"
+    t.integer "quantity"
     t.bigint "invoice_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -144,6 +159,17 @@ ActiveRecord::Schema.define(version: 2018_03_14_185032) do
     t.integer "invoice_id"
     t.decimal "paid"
     t.index ["invoice_id"], name: "index_payments_on_invoice_id"
+  end
+
+  create_table "sold_line_items", force: :cascade do |t|
+    t.integer "vat"
+    t.decimal "amount"
+    t.string "description"
+    t.integer "quantity", default: 1
+    t.bigint "invoice_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_sold_line_items_on_invoice_id"
   end
 
   create_table "taxable_vat_fields", id: :serial, force: :cascade do |t|
@@ -168,6 +194,11 @@ ActiveRecord::Schema.define(version: 2018_03_14_185032) do
     t.string "description"
     t.index ["user_id"], name: "index_tickets_on_user_id"
     t.index ["vehicle_id"], name: "index_tickets_on_vehicle_id"
+  end
+
+  create_table "tickets_vehicles", id: false, force: :cascade do |t|
+    t.bigint "ticket_id", null: false
+    t.bigint "vehicle_id", null: false
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
@@ -242,6 +273,7 @@ ActiveRecord::Schema.define(version: 2018_03_14_185032) do
   add_foreign_key "invoices", "vehicles"
   add_foreign_key "line_items", "invoices"
   add_foreign_key "payments", "invoices"
+  add_foreign_key "sold_line_items", "invoices"
   add_foreign_key "taxable_vat_fields", "invoices"
   add_foreign_key "tickets", "users"
   add_foreign_key "tickets", "vehicles"
