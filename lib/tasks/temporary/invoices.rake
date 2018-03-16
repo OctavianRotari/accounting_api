@@ -25,7 +25,7 @@ namespace :invoices do
     puts 'All done'
   end
 
-  desc 'Move vehicle id to join table vehicle_invoice'
+  desc 'Move company id to join table company_invoice'
   task move_company_id_to_company_invoice: :environment do
     invoice = Invoice.all
     puts "Going to move #{invoice.count} ids"
@@ -36,7 +36,7 @@ namespace :invoices do
 
   desc 'Change from column at_the_expense_of to general_expence'
   task change_from_at_the_expense_of_to_general_expence: :environment do
-    invoices = Invoice.all
+    invoices = Invoice.where(at_the_expense_of: 'general_expenses')
     puts "Going to value #{invoices.count} ids"
     Invoice.transaction do
       invoices.each do |invoice|
