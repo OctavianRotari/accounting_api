@@ -6,6 +6,7 @@ class CreateInvoices < ActiveRecord::Migration[5.1]
       t.timestamps null: true
 
       t.decimal :total_vat
+      t.decimal :total
       t.string :reason
       t.decimal :total_taxable
       t.string :type_of_invoice
