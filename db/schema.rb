@@ -19,7 +19,8 @@ ActiveRecord::Schema.define(version: 2018_03_16_205103) do
     t.datetime "date_of_issue"
     t.boolean "collected", default: false
     t.datetime "deadline"
-    t.string "serial_number"
+    t.string "serial_number", default: ""
+    t.string "description", default: ""
   end
 
   create_table "categories", id: :serial, force: :cascade do |t|
@@ -38,6 +39,12 @@ ActiveRecord::Schema.define(version: 2018_03_16_205103) do
     t.datetime "updated_at", null: false
     t.integer "category_id"
     t.index ["category_id"], name: "index_companies_on_category_id"
+  end
+
+  create_table "companies_insurances", id: false, force: :cascade do |t|
+    t.bigint "insurance_id", null: false
+    t.bigint "company_id", null: false
+    t.index ["insurance_id", "company_id"], name: "index_companies_insurances_on_insurance_id_and_company_id"
   end
 
   create_table "companies_invoices", id: false, force: :cascade do |t|
@@ -72,7 +79,6 @@ ActiveRecord::Schema.define(version: 2018_03_16_205103) do
   create_table "insurances", id: :serial, force: :cascade do |t|
     t.datetime "date_of_issue"
     t.decimal "total"
-    t.string "at_the_expense_of"
     t.string "serial_of_contract"
     t.string "description"
     t.integer "recurrence"
@@ -80,16 +86,13 @@ ActiveRecord::Schema.define(version: 2018_03_16_205103) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "user_id"
-    t.integer "company_id"
-    t.integer "category_id"
-    t.index ["category_id"], name: "index_insurances_on_category_id"
-    t.index ["company_id"], name: "index_insurances_on_company_id"
     t.index ["user_id"], name: "index_insurances_on_user_id"
   end
 
   create_table "insurances_vehicles", id: false, force: :cascade do |t|
     t.bigint "insurance_id", null: false
     t.bigint "vehicle_id", null: false
+    t.index ["insurance_id", "vehicle_id"], name: "index_insurances_vehicles_on_insurance_id_and_vehicle_id"
   end
 
   create_table "invoices", id: :serial, force: :cascade do |t|
@@ -97,11 +100,11 @@ ActiveRecord::Schema.define(version: 2018_03_16_205103) do
     t.datetime "deadline"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "reason"
+    t.string "description"
     t.integer "user_id"
     t.boolean "paid", default: false
     t.string "serial_number"
-    t.boolean "general_expence"
+    t.boolean "general_expense", default: false
     t.index ["user_id"], name: "index_invoices_on_user_id"
   end
 
@@ -116,7 +119,7 @@ ActiveRecord::Schema.define(version: 2018_03_16_205103) do
     t.integer "vat"
     t.decimal "amount"
     t.string "description"
-    t.integer "quantity"
+    t.integer "quantity", default: 1
     t.bigint "invoice_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -138,14 +141,14 @@ ActiveRecord::Schema.define(version: 2018_03_16_205103) do
     t.decimal "amount"
     t.string "description"
     t.integer "quantity", default: 1
-    t.bigint "invoice_id"
+    t.bigint "active_invoice_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["invoice_id"], name: "index_sold_line_items_on_invoice_id"
+    t.index ["active_invoice_id"], name: "index_sold_line_items_on_active_invoice_id"
   end
 
   create_table "tickets", id: :serial, force: :cascade do |t|
-    t.integer "total"
+    t.decimal "total"
     t.datetime "date_of_issue"
     t.datetime "deadline"
     t.datetime "created_at"
@@ -159,6 +162,7 @@ ActiveRecord::Schema.define(version: 2018_03_16_205103) do
   create_table "tickets_vehicles", id: false, force: :cascade do |t|
     t.bigint "ticket_id", null: false
     t.bigint "vehicle_id", null: false
+    t.index ["ticket_id", "vehicle_id"], name: "index_tickets_vehicles_on_ticket_id_and_vehicle_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
@@ -204,12 +208,11 @@ ActiveRecord::Schema.define(version: 2018_03_16_205103) do
   add_foreign_key "fuel_receipts", "companies"
   add_foreign_key "fuel_receipts", "vehicles"
   add_foreign_key "insurance_receipts", "insurances"
-  add_foreign_key "insurances", "companies"
   add_foreign_key "insurances", "users"
   add_foreign_key "invoices", "users"
   add_foreign_key "line_items", "invoices"
   add_foreign_key "payments", "invoices"
-  add_foreign_key "sold_line_items", "invoices"
+  add_foreign_key "sold_line_items", "active_invoices"
   add_foreign_key "tickets", "users"
   add_foreign_key "vehicles", "users"
 end

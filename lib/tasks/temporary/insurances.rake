@@ -1,4 +1,6 @@
 namespace :insurances do
+  task main: [:move_vehicle_id_to_insurances_vehicles, :move_company_id_to_insurances_companies]
+
   desc 'Move vehicle id, ticket id to tickets_vehicles'
   task move_vehicle_id_to_insurances_vehicles: :environment do
     insurances = Insurance.where(at_the_expense_of: 'specific_vehicle')
@@ -12,8 +14,7 @@ namespace :insurances do
     insurances = Insurance.all
     puts "Going to move #{insurances.count} ids"
     values = insurances.map { |insurance| "(#{insurance.id}, #{insurance.company_id})"}.join(",")
-    ActiveRecord::Base.connection.execute("INSERT INTO insurances_companies (insurance_id, company_id) VALUES #{values}")
+    ActiveRecord::Base.connection.execute("INSERT INTO companies_insurances (insurance_id, company_id) VALUES #{values}")
     puts 'All done'
   end
-
 end

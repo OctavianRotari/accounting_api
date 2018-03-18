@@ -4,7 +4,8 @@ class CreateActiveInvoices < ActiveRecord::Migration[5.2]
       t.datetime :date_of_issue
       t.boolean :collected, default: false
       t.datetime :deadline
-      t.string :serial_number
+      t.string :serial_number, default: ''
+      t.string :description, default: ''
     end
   end
 end

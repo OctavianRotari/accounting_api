@@ -5,7 +5,7 @@ class CreateSoldLineItems < ActiveRecord::Migration[5.2]
       t.decimal :amount
       t.string :description
       t.integer :quantity, default: 1
-      t.references :invoice, foreign_key: true
+      t.references :active_invoice, foreign_key: true
 
       t.timestamps
     end

@@ -1,6 +1,6 @@
 namespace :users do 
   desc 'Adds user provider and uid'
-  task set_provider_uid: :environment do
+  task set_provider_and_uid: :environment do
     users = User.all
     puts "Going to update #{users.count} users"
     User.transaction do
