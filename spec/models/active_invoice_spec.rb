@@ -1,5 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe ActiveInvoice, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should belong_to(:user) }
+  it { should have_many(:sold_line_items) }
+  it { should have_and_belong_to_many(:payments) }
 end

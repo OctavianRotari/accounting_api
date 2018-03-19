@@ -7,6 +7,7 @@ class CreateReceipts < ActiveRecord::Migration[5.1]
       t.datetime :payment_date
 
       t.timestamps null: true
+      t.references :insurance, foreign_key: true
     end
   end
 end
