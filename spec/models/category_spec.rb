@@ -30,5 +30,6 @@ RSpec.describe Category, type: :model do
       category.save
       expect(user.categories).to eq([])
     end
+
   end
 end

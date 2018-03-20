@@ -25,5 +25,14 @@ RSpec.describe Company, type: :model do
       company.save
       expect(company.errors.full_messages).to eq(["Name required", "Adress required", "Number required"])
     end
+
+    it 'does not return others users companies' do
+      userTwo = create(:user, email: 'test@test.com')
+      categoryTwo = create(:category, name: 'Restaurants', user_id: userTwo.id)
+      companyTwo = build(:company, category_id: categoryTwo.id)
+      companyTwo.save
+      expect(user.companies).to eq([])
+      expect(userTwo.companies).to eq([companyTwo])
+    end
   end
 end
