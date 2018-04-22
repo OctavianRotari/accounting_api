@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_22_160416) do
+ActiveRecord::Schema.define(version: 2018_04_22_174518) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,13 +25,65 @@ ActiveRecord::Schema.define(version: 2018_04_22_160416) do
     t.index ["user_id"], name: "index_active_invoices_on_user_id"
   end
 
+  create_table "active_invoices_loads", id: false, force: :cascade do |t|
+    t.bigint "load_id", null: false
+    t.bigint "active_invoice_id", null: false
+  end
+
+  create_table "active_invoices_revenues", id: false, force: :cascade do |t|
+    t.bigint "active_invoice_id", null: false
+    t.bigint "revenue_id", null: false
+  end
+
+  create_table "credit_notes", force: :cascade do |t|
+    t.bigint "vendor_id"
+    t.date "date"
+    t.decimal "total"
+    t.index ["vendor_id"], name: "index_credit_notes_on_vendor_id"
+  end
+
+  create_table "credit_notes_revenues", id: false, force: :cascade do |t|
+    t.bigint "credit_note_id", null: false
+    t.bigint "revenue_id", null: false
+  end
+
+  create_table "employees", force: :cascade do |t|
+    t.string "name"
+    t.string "surname"
+    t.date "contract_start_date"
+    t.date "contract_end_date"
+    t.string "role"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_employees_on_user_id"
+  end
+
+  create_table "financial_contributions", force: :cascade do |t|
+    t.string "type"
+    t.date "date"
+    t.decimal "total"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_financial_contributions_on_user_id"
+  end
+
+  create_table "financial_contributions_payments", id: false, force: :cascade do |t|
+    t.bigint "financial_contribution_id", null: false
+    t.bigint "payment_id", null: false
+  end
+
   create_table "fuel_receipts", force: :cascade do |t|
     t.decimal "total"
     t.datetime "date_of_issue"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "vehicle_id"
+    t.bigint "company_id"
+    t.index ["company_id"], name: "index_fuel_receipts_on_company_id"
     t.index ["vehicle_id"], name: "index_fuel_receipts_on_vehicle_id"
+  end
+
+  create_table "fuel_receipts_invoices", id: false, force: :cascade do |t|
+    t.bigint "invoice_id", null: false
+    t.bigint "fuel_receipt_id", null: false
   end
 
   create_table "insurance_receipts", force: :cascade do |t|
@@ -94,11 +146,6 @@ ActiveRecord::Schema.define(version: 2018_04_22_160416) do
     t.index ["invoice_id", "vehicle_id"], name: "index_invoices_vehicles_on_invoice_id_and_vehicle_id"
   end
 
-  create_table "join_tabke_fuel_receipts_companies", force: :cascade do |t|
-    t.string "fuel_receipts"
-    t.string "companies"
-  end
-
   create_table "line_items", force: :cascade do |t|
     t.integer "vat"
     t.decimal "amount"
@@ -110,12 +157,84 @@ ActiveRecord::Schema.define(version: 2018_04_22_160416) do
     t.index ["invoice_id"], name: "index_line_items_on_invoice_id"
   end
 
+  create_table "loads", force: :cascade do |t|
+    t.bigint "vehicle_id"
+    t.string "from"
+    t.string "to"
+    t.string "serial_number"
+    t.integer "weight"
+    t.date "date"
+    t.string "desc"
+    t.decimal "price"
+    t.index ["vehicle_id"], name: "index_loads_on_vehicle_id"
+  end
+
+  create_table "maintenances", force: :cascade do |t|
+    t.bigint "vehicle_id"
+    t.date "date"
+    t.date "deadline"
+    t.string "desc"
+    t.integer "km"
+    t.index ["vehicle_id"], name: "index_maintenances_on_vehicle_id"
+  end
+
+  create_table "other_expenses", force: :cascade do |t|
+    t.string "desc"
+    t.decimal "total"
+    t.date "date"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_other_expenses_on_user_id"
+  end
+
   create_table "payments", force: :cascade do |t|
     t.decimal "paid"
     t.string "method_of_payment"
     t.datetime "payment_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "payments_salaries", id: false, force: :cascade do |t|
+    t.bigint "salary_id", null: false
+    t.bigint "payment_id", null: false
+  end
+
+  create_table "payments_sanctions", id: false, force: :cascade do |t|
+    t.bigint "sanction_id", null: false
+    t.bigint "payment_id", null: false
+  end
+
+  create_table "payments_vehicle_taxes", id: false, force: :cascade do |t|
+    t.bigint "vehicle_tax_id", null: false
+    t.bigint "payment_id", null: false
+  end
+
+  create_table "revenues", force: :cascade do |t|
+    t.decimal "total"
+    t.date "date"
+    t.string "method_of_payment"
+  end
+
+  create_table "salaries", force: :cascade do |t|
+    t.bigint "employee_id"
+    t.decimal "total"
+    t.date "month"
+    t.date "deadline"
+    t.index ["employee_id"], name: "index_salaries_on_employee_id"
+  end
+
+  create_table "sanctions", force: :cascade do |t|
+    t.bigint "user_id"
+    t.decimal "total"
+    t.date "date"
+    t.date "deadline"
+    t.string "description"
+    t.index ["user_id"], name: "index_sanctions_on_user_id"
+  end
+
+  create_table "sanctions_vehicles", id: false, force: :cascade do |t|
+    t.bigint "sanction_id", null: false
+    t.bigint "vehicle_id", null: false
   end
 
   create_table "sold_line_items", force: :cascade do |t|
@@ -127,24 +246,6 @@ ActiveRecord::Schema.define(version: 2018_04_22_160416) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["active_invoice_id"], name: "index_sold_line_items_on_active_invoice_id"
-  end
-
-  create_table "tickets", force: :cascade do |t|
-    t.decimal "total"
-    t.datetime "date_of_issue"
-    t.datetime "deadline"
-    t.boolean "paid"
-    t.string "description"
-    t.bigint "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["user_id"], name: "index_tickets_on_user_id"
-  end
-
-  create_table "tickets_vehicles", id: false, force: :cascade do |t|
-    t.bigint "ticket_id", null: false
-    t.bigint "vehicle_id", null: false
-    t.index ["ticket_id", "vehicle_id"], name: "index_tickets_vehicles_on_ticket_id_and_vehicle_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -175,6 +276,14 @@ ActiveRecord::Schema.define(version: 2018_04_22_160416) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "vehicle_taxes", force: :cascade do |t|
+    t.bigint "vehicle_id"
+    t.date "date"
+    t.date "deadline"
+    t.decimal "total"
+    t.index ["vehicle_id"], name: "index_vehicle_taxes_on_vehicle_id"
+  end
+
   create_table "vehicles", force: :cascade do |t|
     t.string "plate"
     t.string "type_of_vehicle"
@@ -194,14 +303,23 @@ ActiveRecord::Schema.define(version: 2018_04_22_160416) do
   end
 
   add_foreign_key "active_invoices", "users"
+  add_foreign_key "credit_notes", "vendors"
+  add_foreign_key "employees", "users"
+  add_foreign_key "financial_contributions", "users"
   add_foreign_key "fuel_receipts", "vehicles"
+  add_foreign_key "fuel_receipts", "vendors", column: "company_id"
   add_foreign_key "insurance_receipts", "insurances"
   add_foreign_key "insurances", "users"
   add_foreign_key "insurances", "vendors"
   add_foreign_key "invoices", "users"
   add_foreign_key "invoices", "vendors"
   add_foreign_key "line_items", "invoices"
+  add_foreign_key "loads", "vehicles"
+  add_foreign_key "maintenances", "vehicles"
+  add_foreign_key "other_expenses", "users"
+  add_foreign_key "salaries", "employees"
+  add_foreign_key "sanctions", "users"
   add_foreign_key "sold_line_items", "active_invoices"
-  add_foreign_key "tickets", "users"
+  add_foreign_key "vehicle_taxes", "vehicles"
   add_foreign_key "vehicles", "users"
 end
