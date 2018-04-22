@@ -1,8 +1,7 @@
 class Invoice < ApplicationRecord
-  belongs_to :user
-  has_many :line_items, dependent: :destroy
-
-  has_and_belongs_to_many :companies
+  belongs_to :vendor
+  has_many :line_items
   has_and_belongs_to_many :payments
+  has_and_belongs_to_many :fuel_receipts
   has_and_belongs_to_many :vehicles
 end
