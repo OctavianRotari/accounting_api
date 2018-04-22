@@ -7,12 +7,8 @@ class User < ActiveRecord::Base
 
   has_many :vendors, dependent: :destroy
   has_many :other_expenses, dependent: :destroy
-  has_many :active_invoices, dependent: :destroy
-  has_many :insurances, dependent: :destroy
-  has_many :invoices, dependent: :destroy
   has_many :vehicles, dependent: :destroy
   has_many :financial_contributions, dependent: :destroy
   has_many :employees, dependent: :destroy
   has_many :sanctions, dependent: :destroy
-  has_many :credit_notes, dependent: :destroy
 end

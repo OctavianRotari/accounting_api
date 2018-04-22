@@ -9,4 +9,5 @@ class Vehicle < ApplicationRecord
 
   has_and_belongs_to_many :insurances
   has_and_belongs_to_many :invoices
+  has_and_belongs_to_many :sanctions
 end

@@ -9,4 +9,5 @@ RSpec.describe Vehicle, type: :model do
 
   it { should have_and_belong_to_many(:invoices) }
   it { should have_and_belong_to_many(:insurances) }
+  it { should have_and_belong_to_many(:sanctions) }
 end

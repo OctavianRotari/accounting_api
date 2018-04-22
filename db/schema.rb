@@ -159,6 +159,7 @@ ActiveRecord::Schema.define(version: 2018_04_22_192522) do
 
   create_table "loads", force: :cascade do |t|
     t.bigint "vehicle_id"
+    t.bigint "vendor_id"
     t.string "from"
     t.string "to"
     t.string "serial_number"
@@ -167,6 +168,7 @@ ActiveRecord::Schema.define(version: 2018_04_22_192522) do
     t.string "desc"
     t.decimal "price"
     t.index ["vehicle_id"], name: "index_loads_on_vehicle_id"
+    t.index ["vendor_id"], name: "index_loads_on_vendor_id"
   end
 
   create_table "maintenances", force: :cascade do |t|
@@ -317,6 +319,7 @@ ActiveRecord::Schema.define(version: 2018_04_22_192522) do
   add_foreign_key "invoices", "vendors"
   add_foreign_key "line_items", "invoices"
   add_foreign_key "loads", "vehicles"
+  add_foreign_key "loads", "vendors"
   add_foreign_key "maintenances", "vehicles"
   add_foreign_key "other_expenses", "users"
   add_foreign_key "salaries", "employees"
