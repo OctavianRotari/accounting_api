@@ -6,7 +6,6 @@ class RemoveColumnsFromInvoice < ActiveRecord::Migration[5.2]
     remove_column :invoices, :total_vat, :decimal
     remove_column :invoices, :vehicle_id, :integer
     remove_column :invoices, :total, :decimal
-    remove_column :invoices, :company_id, :integer
     remove_column :invoices, :category_id, :integer
   end
 end
