@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_22_174518) do
+ActiveRecord::Schema.define(version: 2018_04_22_180235) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -300,6 +300,8 @@ ActiveRecord::Schema.define(version: 2018_04_22_174518) do
     t.string "number"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_vendors_on_user_id"
   end
 
   add_foreign_key "active_invoices", "users"
@@ -322,4 +324,5 @@ ActiveRecord::Schema.define(version: 2018_04_22_174518) do
   add_foreign_key "sold_line_items", "active_invoices"
   add_foreign_key "vehicle_taxes", "vehicles"
   add_foreign_key "vehicles", "users"
+  add_foreign_key "vendors", "users"
 end

@@ -68,3 +68,7 @@ guard :rspec, cmd: "bundle exec rspec" do
     Dir[File.join("**/#{m[1]}.feature")][0] || "spec/acceptance"
   end
 end
+
+guard 'rake', :task => 'build' do
+  watch(%r{^my_file.rb})
+end

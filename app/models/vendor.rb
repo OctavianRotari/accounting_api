@@ -1,8 +1,8 @@
-class Company < ApplicationRecord
-  belongs_to :category
+class Vendor < ApplicationRecord
+  belongs_to :user
 
-  has_and_belongs_to_many :invoices
-  has_and_belongs_to_many :insurances
+  has_many :invoices
+  has_many :insurances
 
   validates :name, presence: {message: 'required'}
   validates :adress, presence: {message: 'required'}

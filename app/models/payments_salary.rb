@@ -1,0 +1,2 @@
+class PaymentsSalary < ApplicationRecord
+end

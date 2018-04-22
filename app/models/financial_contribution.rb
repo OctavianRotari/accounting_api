@@ -1,0 +1,2 @@
+class FinancialContribution < ApplicationRecord
+end
