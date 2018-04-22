@@ -2,8 +2,11 @@ require 'rails_helper'
 
 RSpec.describe Vendor, type: :model do
   it { should belong_to(:user) }
-  it { should have_many(:insurances) }
   it { should have_many(:invoices) }
+  it { should have_many(:fuel_receipts) }
+  it { should have_many(:insurances) }
+  it { should have_many(:active_invoices) }
+  it { should have_many(:credit_notes) }
 
   describe 'user create a vendor' do
     let(:user) { create(:user) }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_22_180235) do
+ActiveRecord::Schema.define(version: 2018_04_22_192522) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,8 +21,8 @@ ActiveRecord::Schema.define(version: 2018_04_22_180235) do
     t.datetime "deadline"
     t.string "serial_number", default: ""
     t.string "description", default: ""
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_active_invoices_on_user_id"
+    t.bigint "vendor_id"
+    t.index ["vendor_id"], name: "index_active_invoices_on_vendor_id"
   end
 
   create_table "active_invoices_loads", id: false, force: :cascade do |t|
@@ -76,9 +76,9 @@ ActiveRecord::Schema.define(version: 2018_04_22_180235) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "vehicle_id"
-    t.bigint "company_id"
-    t.index ["company_id"], name: "index_fuel_receipts_on_company_id"
+    t.bigint "vendor_id"
     t.index ["vehicle_id"], name: "index_fuel_receipts_on_vehicle_id"
+    t.index ["vendor_id"], name: "index_fuel_receipts_on_vendor_id"
   end
 
   create_table "fuel_receipts_invoices", id: false, force: :cascade do |t|
@@ -304,12 +304,12 @@ ActiveRecord::Schema.define(version: 2018_04_22_180235) do
     t.index ["user_id"], name: "index_vendors_on_user_id"
   end
 
-  add_foreign_key "active_invoices", "users"
+  add_foreign_key "active_invoices", "vendors"
   add_foreign_key "credit_notes", "vendors"
   add_foreign_key "employees", "users"
   add_foreign_key "financial_contributions", "users"
   add_foreign_key "fuel_receipts", "vehicles"
-  add_foreign_key "fuel_receipts", "vendors", column: "company_id"
+  add_foreign_key "fuel_receipts", "vendors"
   add_foreign_key "insurance_receipts", "insurances"
   add_foreign_key "insurances", "users"
   add_foreign_key "insurances", "vendors"

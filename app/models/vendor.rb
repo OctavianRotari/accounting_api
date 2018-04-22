@@ -1,8 +1,11 @@
 class Vendor < ApplicationRecord
   belongs_to :user
 
-  has_many :invoices
-  has_many :insurances
+  has_many :invoices, dependent: :destroy
+  has_many :fuel_receipts, dependent: :destroy
+  has_many :insurances, dependent: :destroy
+  has_many :active_invoices, dependent: :destroy
+  has_many :credit_notes, dependent: :destroy
 
   validates :name, presence: {message: 'required'}
   validates :adress, presence: {message: 'required'}
