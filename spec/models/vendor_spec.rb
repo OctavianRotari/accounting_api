@@ -27,12 +27,12 @@ RSpec.describe Vendor, type: :model do
       expect(vendor.errors.full_messages).to eq(["Name required", "Adress required", "Number required"])
     end
 
-    it 'does not return others users companies' do
-      userTwo = create(:user, email: 'test@test.com')
-      vendorTwo = build(:vendor, user_id: userTwo.id)
-      vendorTwo.save
+    it 'does not return others users vendors' do
+      user_two = create(:user, email: 'test@test.com')
+      vendor_two = build(:vendor, user_id: user_two.id)
+      vendor_two.save
       expect(user.vendors).to eq([])
-      expect(userTwo.vendors).to eq([vendorTwo])
+      expect(user_two.vendors).to eq([vendor_two])
     end
   end
 end
