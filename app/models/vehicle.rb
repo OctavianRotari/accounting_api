@@ -1,5 +1,6 @@
 class Vehicle < ApplicationRecord
   belongs_to :user
+  belongs_to :vehicle_type
 
   has_many :fuel_receipts, dependent: :destroy
   has_many :maintenances, dependent: :destroy

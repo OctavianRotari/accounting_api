@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_24_175237) do
+ActiveRecord::Schema.define(version: 2018_04_24_191746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,12 @@ ActiveRecord::Schema.define(version: 2018_04_24_175237) do
   create_table "active_invoices_revenues", id: false, force: :cascade do |t|
     t.bigint "active_invoice_id", null: false
     t.bigint "revenue_id", null: false
+  end
+
+  create_table "contribution_types", force: :cascade do |t|
+    t.string "desc"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "credit_notes", force: :cascade do |t|
@@ -62,6 +68,8 @@ ActiveRecord::Schema.define(version: 2018_04_24_175237) do
     t.date "date"
     t.decimal "total"
     t.bigint "user_id"
+    t.bigint "contribution_type_id"
+    t.index ["contribution_type_id"], name: "index_financial_contributions_on_contribution_type_id"
     t.index ["user_id"], name: "index_financial_contributions_on_user_id"
   end
 
@@ -286,6 +294,12 @@ ActiveRecord::Schema.define(version: 2018_04_24_175237) do
     t.index ["vehicle_id"], name: "index_vehicle_taxes_on_vehicle_id"
   end
 
+  create_table "vehicle_types", force: :cascade do |t|
+    t.string "desc"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "vehicles", force: :cascade do |t|
     t.string "plate"
     t.string "type_of_vehicle"
@@ -293,7 +307,9 @@ ActiveRecord::Schema.define(version: 2018_04_24_175237) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "user_id"
+    t.bigint "vehicle_type_id"
     t.index ["user_id"], name: "index_vehicles_on_user_id"
+    t.index ["vehicle_type_id"], name: "index_vehicles_on_vehicle_type_id"
   end
 
   create_table "vendors", force: :cascade do |t|
@@ -309,6 +325,7 @@ ActiveRecord::Schema.define(version: 2018_04_24_175237) do
   add_foreign_key "active_invoices", "vendors"
   add_foreign_key "credit_notes", "vendors"
   add_foreign_key "employees", "users"
+  add_foreign_key "financial_contributions", "contribution_types"
   add_foreign_key "financial_contributions", "users"
   add_foreign_key "fuel_receipts", "vehicles"
   add_foreign_key "fuel_receipts", "vendors"
@@ -327,5 +344,6 @@ ActiveRecord::Schema.define(version: 2018_04_24_175237) do
   add_foreign_key "sold_line_items", "active_invoices"
   add_foreign_key "vehicle_taxes", "vehicles"
   add_foreign_key "vehicles", "users"
+  add_foreign_key "vehicles", "vehicle_types"
   add_foreign_key "vendors", "users"
 end

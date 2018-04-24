@@ -29,5 +29,16 @@ RSpec.describe OtherExpense, type: :model do
       expect(user.other_expenses).to eq([])
       expect(user_two.other_expenses).to eq([other_expenses_two])
     end
+
+    describe 'record created successfully' do
+      before :each do
+        create(:other_expense, user_id: user.id)
+        create(:other_expense, user_id: user.id)
+      end
+
+      it 'returns the total of all recors' do
+        expect(user.other_expenses.total).to eq(20.6)
+      end
+    end
   end
 end

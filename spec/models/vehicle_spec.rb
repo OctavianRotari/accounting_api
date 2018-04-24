@@ -6,6 +6,7 @@ RSpec.describe Vehicle, type: :model do
   it { should have_many(:vehicle_taxes) }
   it { should have_many(:maintenances) }
   it { should have_many(:loads) }
+  it { should belong_to(:vehicle_type) }
 
   it { should have_and_belong_to_many(:invoices) }
   it { should have_and_belong_to_many(:insurances) }
