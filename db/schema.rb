@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_22_192522) do
+ActiveRecord::Schema.define(version: 2018_04_24_175237) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,7 +58,7 @@ ActiveRecord::Schema.define(version: 2018_04_22_192522) do
   end
 
   create_table "financial_contributions", force: :cascade do |t|
-    t.string "type"
+    t.string "desc"
     t.date "date"
     t.decimal "total"
     t.bigint "user_id"

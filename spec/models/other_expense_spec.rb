@@ -22,7 +22,7 @@ RSpec.describe OtherExpense, type: :model do
       expect(other_expense.errors.full_messages).to eq(["Desc required", "Total required", "Date required"])
     end
 
-    it 'does note return other users other expenses' do
+    it 'does note return other users' do
       user_two = create(:user, email: 'test@test.com')
       other_expenses_two = build(:other_expense, user_id: user_two.id)
       other_expenses_two.save
