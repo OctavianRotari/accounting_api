@@ -28,13 +28,41 @@ RSpec.describe Salary, type: :model do
       end
 
       it 'return an error if the payment is bigger that the salary' do
+        salary.create_payment({
+          paid: 200,
+          method_of_payment: 'banca',
+          payment_date: Date.current.beginning_of_month + 3
+        })
         expect{
           salary.create_payment({
-            paid: salary.total + 1,
+            paid: 1500,
             method_of_payment: 'banca',
             payment_date: Date.current.beginning_of_month + 3
           })
         }.to raise_error('The payment total is bigger than the salary total')
+      end
+
+      it 'returns false if salary has not been paid yet' do
+        salary.create_payment({
+          paid: 200,
+          method_of_payment: 'banca',
+          payment_date: Date.current.beginning_of_month + 3
+        })
+        salary.create_payment({
+          paid: 200,
+          method_of_payment: 'banca',
+          payment_date: Date.current.beginning_of_month + 3
+        })
+        expect(salary.paid?).to eq(false)
+      end
+
+      it 'returns true if salary has not been paid yet' do
+        salary.create_payment({
+          paid: 1600.22,
+          method_of_payment: 'banca',
+          payment_date: Date.current.beginning_of_month + 3
+        })
+        expect(salary.paid?).to eq(true)
       end
     end
   end
