@@ -4,7 +4,7 @@ RSpec.describe Salary, type: :model do
   it { should belong_to(:employee) }
   it { should have_and_belong_to_many(:payments) }
 
-  describe 'a salary is paid' do
+  describe 'a salary is created' do
     it 'fails if there is no desc or total or date' do
       salary = build(:salary, total: nil, month: nil, deadline: nil)
       salary.save
@@ -67,4 +67,3 @@ RSpec.describe Salary, type: :model do
     end
   end
 end
-
