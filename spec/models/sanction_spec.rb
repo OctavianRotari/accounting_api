@@ -27,23 +27,18 @@ RSpec.describe Sanction, type: :model do
 
       before :each do
         sanction
+        @payment = sanction.create_payment({
+          paid: 200,
+          method_of_payment: 'banca',
+          payment_date: Date.current.beginning_of_month + 3
+        })
       end
 
       it 'it pays part of sanction and creates payment' do
-        payment = sanction.create_payment({
-          paid: 200,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
-        expect(sanction.payments).to eq([payment])
+        expect(sanction.payments).to eq([@payment])
       end
 
       it 'return an error if the payment is bigger that the sanction' do
-        sanction.create_payment({
-          paid: 200,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
         expect{
           sanction.create_payment({
             paid: 1500,
@@ -59,21 +54,22 @@ RSpec.describe Sanction, type: :model do
           method_of_payment: 'banca',
           payment_date: Date.current.beginning_of_month + 3
         })
-        sanction.create_payment({
-          paid: 200,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
         expect(sanction.paid?).to eq(false)
       end
 
       it 'returns true if sanction has not been paid yet' do
         sanction.create_payment({
-          paid: 1600.22,
+          paid: 1400.22,
           method_of_payment: 'banca',
           payment_date: Date.current.beginning_of_month + 3
         })
         expect(sanction.paid?).to eq(true)
+      end
+
+      it 'calculates total sactions' do
+        user = User.first
+        create(:sanction, user_id: user.id)
+        expect(user.sanctions.total).to eq(3200.44)
       end
     end
   end

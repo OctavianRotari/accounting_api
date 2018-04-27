@@ -16,23 +16,18 @@ RSpec.describe Salary, type: :model do
 
       before :each do
         salary
+        @payment = salary.create_payment({
+          paid: 200,
+          method_of_payment: 'banca',
+          payment_date: Date.current.beginning_of_month + 3
+        })
       end
 
       it 'it pays part of salary and creates payment' do
-        payment = salary.create_payment({
-          paid: 200,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
-        expect(salary.payments).to eq([payment])
+        expect(salary.payments).to eq([@payment])
       end
 
       it 'return an error if the payment is bigger that the salary' do
-        salary.create_payment({
-          paid: 200,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
         expect{
           salary.create_payment({
             paid: 1500,
@@ -48,21 +43,22 @@ RSpec.describe Salary, type: :model do
           method_of_payment: 'banca',
           payment_date: Date.current.beginning_of_month + 3
         })
-        salary.create_payment({
-          paid: 200,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
         expect(salary.paid?).to eq(false)
       end
 
       it 'returns true if salary has not been paid yet' do
         salary.create_payment({
-          paid: 1600.22,
+          paid: 1400.22,
           method_of_payment: 'banca',
           payment_date: Date.current.beginning_of_month + 3
         })
         expect(salary.paid?).to eq(true)
+      end
+
+      it 'calculates total sactions' do
+        employee = Employee.first
+        create(:salary, employee_id: employee.id)
+        expect(employee.salaries.total).to eq(3200.44)
       end
     end
   end

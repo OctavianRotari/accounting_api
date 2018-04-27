@@ -19,5 +19,9 @@ class Salary < ApplicationRecord
     total_payments = self.payments.sum(:paid)
     self.total === total_payments ? true : false;
   end
+
+  def self.total
+    self.sum(:total).to_f
+  end
 end
 
