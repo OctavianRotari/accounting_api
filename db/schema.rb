@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_28_155929) do
+ActiveRecord::Schema.define(version: 2018_04_28_175604) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -73,9 +73,9 @@ ActiveRecord::Schema.define(version: 2018_04_28_155929) do
     t.index ["user_id"], name: "index_financial_contributions_on_user_id"
   end
 
-  create_table "financial_contributions_payments", id: false, force: :cascade do |t|
+  create_table "financial_contributions_vehicles", id: false, force: :cascade do |t|
     t.bigint "financial_contribution_id", null: false
-    t.bigint "payment_id", null: false
+    t.bigint "vehicle_id", null: false
   end
 
   create_table "fuel_receipts", force: :cascade do |t|
@@ -214,11 +214,6 @@ ActiveRecord::Schema.define(version: 2018_04_28_155929) do
     t.bigint "payment_id", null: false
   end
 
-  create_table "payments_vehicle_taxes", id: false, force: :cascade do |t|
-    t.bigint "vehicle_tax_id", null: false
-    t.bigint "payment_id", null: false
-  end
-
   create_table "revenues", force: :cascade do |t|
     t.decimal "total"
     t.date "date"
@@ -286,14 +281,6 @@ ActiveRecord::Schema.define(version: 2018_04_28_155929) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "vehicle_taxes", force: :cascade do |t|
-    t.bigint "vehicle_id"
-    t.date "date"
-    t.date "deadline"
-    t.decimal "total"
-    t.index ["vehicle_id"], name: "index_vehicle_taxes_on_vehicle_id"
-  end
-
   create_table "vehicle_types", force: :cascade do |t|
     t.string "desc"
     t.datetime "created_at", null: false
@@ -342,7 +329,6 @@ ActiveRecord::Schema.define(version: 2018_04_28_155929) do
   add_foreign_key "salaries", "employees"
   add_foreign_key "sanctions", "users"
   add_foreign_key "sold_line_items", "active_invoices"
-  add_foreign_key "vehicle_taxes", "vehicles"
   add_foreign_key "vehicles", "users"
   add_foreign_key "vehicles", "vehicle_types"
   add_foreign_key "vendors", "users"

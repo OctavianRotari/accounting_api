@@ -5,12 +5,13 @@ class Vehicle < ApplicationRecord
   has_many :fuel_receipts, dependent: :destroy
   has_many :maintenances, dependent: :destroy
 
-  has_many :vehicle_taxes
   has_many :loads
 
   has_and_belongs_to_many :insurances
   has_and_belongs_to_many :invoices
   has_and_belongs_to_many :sanctions
+  has_and_belongs_to_many :sanctions
+  has_and_belongs_to_many :financial_contributions
 
   validates :roadworthiness_check_date, presence: {message: 'required'}
   validates :plate, presence: {message: 'required'}
@@ -26,11 +27,9 @@ class Vehicle < ApplicationRecord
     end
   end
 
-  def expiring_maintenances
-    self.maintenances.where(deadline: (Date.today.beginning_of_month..Date.today.end_of_month))
-  end
-
-  def sanctions_total
-    self.sanctions.sum(:total).to_f
+  def deadline_tax
+    tax = self.financial_contributions.last
+    date = Date.parse(tax.date.to_s)
+    date.next_year
   end
 end

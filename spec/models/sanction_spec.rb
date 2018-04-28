@@ -17,7 +17,7 @@ RSpec.describe Sanction, type: :model do
         sanction = create(:sanction)
         user = User.first
         vehicle = create(:vehicle, user_id: user.id)
-        sanction.create_fine_association(vehicle.id)
+        sanction.associate_to(vehicle.id)
         expect(sanction.vehicles).to eq([vehicle])
       end
     end

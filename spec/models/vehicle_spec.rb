@@ -3,7 +3,6 @@ require 'rails_helper'
 RSpec.describe Vehicle, type: :model do
   it { should belong_to(:user) }
   it { should have_many(:fuel_receipts) }
-  it { should have_many(:vehicle_taxes) }
   it { should have_many(:maintenances) }
   it { should have_many(:loads) }
   it { should belong_to(:vehicle_type) }
@@ -11,6 +10,7 @@ RSpec.describe Vehicle, type: :model do
   it { should have_and_belong_to_many(:invoices) }
   it { should have_and_belong_to_many(:insurances) }
   it { should have_and_belong_to_many(:sanctions) }
+  it { should have_and_belong_to_many(:financial_contributions) }
 
   describe 'is created' do
     it 'fails if there is no desc or total or date' do
@@ -19,16 +19,16 @@ RSpec.describe Vehicle, type: :model do
       expect(vehicle.errors.full_messages).to eq(["Vehicle type must exist", "Roadworthiness check date required", "Plate required"])
     end
 
-    describe 'all maintenances deadlines' do
+    describe 'tax deadlines' do
       before :each do
         @user = create(:user)
         @vehicle = create(:vehicle, user_id: @user.id)
-        @maintenance = create(:maintenance, vehicle_id: @vehicle.id)
       end
 
-      it 'returns all the maintenance exipring this month' do
-        create(:maintenance_next_month, vehicle_id: @vehicle.id)
-        expect(@vehicle.expiring_maintenances).to eq([@maintenance])
+      it 'returns exipring date tax' do
+        financial_contribution = create(:financial_contribution, user_id: @user.id)
+        @vehicle.financial_contributions << financial_contribution
+        expect(@vehicle.deadline_tax).to eq(Date.today.next_year)
       end
     end
   end
@@ -47,7 +47,7 @@ RSpec.describe Vehicle, type: :model do
     end
 
     it 'total all fuel receipts' do
-      expect(@vehicle.sanctions_total).to eq(3200.44)
+      expect(@vehicle.sanctions.total).to eq(3200.44)
     end
 
     it 'returns all sanctions between dates' do

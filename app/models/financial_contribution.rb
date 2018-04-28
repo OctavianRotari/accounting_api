@@ -13,4 +13,8 @@ class FinancialContribution < Expense
   def self.calc_total_where(contribution_type_id)
     self.where(contribution_type_id: contribution_type_id).sum(:total).to_f
   end
+
+  def self.total_paid
+    self.sum(:total).to_f
+  end
 end

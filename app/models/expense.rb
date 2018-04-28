@@ -20,7 +20,4 @@ class Expense < ApplicationRecord
     )
   end
 
-  def self.total_paid
-    self.sum(:total).to_f
-  end
 end
