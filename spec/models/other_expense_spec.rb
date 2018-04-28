@@ -22,6 +22,10 @@ RSpec.describe OtherExpense, type: :model do
       it 'returns the total of all recors' do
         expect(user.other_expenses.total).to eq(20.6)
       end
+
+      it 'returns payd the total of all recors' do
+        expect(user.other_expenses.total_paid).to eq(20.6)
+      end
     end
   end
 end

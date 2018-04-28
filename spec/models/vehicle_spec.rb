@@ -19,20 +19,79 @@ RSpec.describe Vehicle, type: :model do
       expect(vehicle.errors.full_messages).to eq(["Vehicle type must exist", "Roadworthiness check date required", "Plate required"])
     end
 
-    describe 'fuel receipts' do
-      let(:user) { create(:user) }
-
+    describe 'all maintenances deadlines' do
       before :each do
-        @user = user
+        @user = create(:user)
         @vehicle = create(:vehicle, user_id: @user.id)
-        @vendor = create(:vendor, user_id: @user.id)
+        @maintenance = create(:maintenance, vehicle_id: @vehicle.id)
       end
 
-      it 'total all fuel receipts' do
-        create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
-        create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
-        expect(@vehicle.fuel_receipts_total).to eq(21)
+      it 'returns all the maintenance exipring this month' do
+        create(:maintenance_next_month, vehicle_id: @vehicle.id)
+        expect(@vehicle.expiring_maintenances).to eq([@maintenance])
       end
+    end
+  end
+
+  describe 'sanctions' do
+    before :each do
+      @user = create(:user)
+      @vehicle = create(:vehicle, user_id: @user.id)
+      @vendor = create(:vendor, user_id: @user.id)
+
+      sanction1 = create(:sanction, user_id: @user.id)
+      sanction2 = create(:sanction, user_id: @user.id)
+
+      @vehicle.sanctions << sanction1
+      @vehicle.sanctions << sanction2
+    end
+
+    it 'total all fuel receipts' do
+      expect(@vehicle.sanctions_total).to eq(3200.44)
+    end
+
+    it 'returns all sanctions between dates' do
+      sanction_next_month = create(
+        :sanction,
+        user_id: @user.id,
+        date: Date.today.next_month
+      )
+      @vehicle.sanctions << sanction_next_month
+      expect(
+        @vehicle.sanctions.all_between_dates(
+          Date.today.next_month.beginning_of_month,
+          Date.today.next_month.end_of_month)
+      ).to eq([sanction_next_month])
+    end
+  end
+
+  describe 'fuel receipts' do
+    let(:user) { create(:user) }
+
+    before :each do
+      @user = user
+      @vehicle = create(:vehicle, user_id: @user.id)
+      @vendor = create(:vendor, user_id: @user.id)
+      create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
+      create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
+    end
+
+    it 'total all fuel receipts' do
+      expect(@vehicle.fuel_receipts_total).to eq(460.0)
+    end
+
+    it 'total fuel receipts between period' do
+      fuel_receipt_next_month = create(
+        :fuel_receipt,
+        vehicle_id: @vehicle.id,
+        vendor_id: @vendor.id,
+        date_of_issue: Date.today.next_month
+      )
+      expect(
+        @vehicle.fuel_receipts_total(
+          Date.today.next_month.beginning_of_month,
+          Date.today.next_month.end_of_month)
+      ).to eq(fuel_receipt_next_month.total.to_f)
     end
   end
 end

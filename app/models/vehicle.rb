@@ -15,5 +15,22 @@ class Vehicle < ApplicationRecord
   validates :roadworthiness_check_date, presence: {message: 'required'}
   validates :plate, presence: {message: 'required'}
 
+  def fuel_receipts_total(start_date = nil, end_date = nil)
+    if(start_date and end_date)
+      fuel_receipts = self.fuel_receipts.where(
+        date_of_issue: (start_date..end_date)
+      )
+      fuel_receipts.sum(:total).to_f
+    else
+      self.fuel_receipts.sum(:total).to_f
+    end
+  end
 
+  def expiring_maintenances
+    self.maintenances.where(deadline: (Date.today.beginning_of_month..Date.today.end_of_month))
+  end
+
+  def sanctions_total
+    self.sanctions.sum(:total).to_f
+  end
 end

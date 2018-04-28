@@ -27,43 +27,8 @@ RSpec.describe Sanction, type: :model do
 
       before :each do
         sanction
-        @payment = sanction.create_payment({
-          paid: 200,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
-      end
-
-      it 'it pays part of sanction and creates payment' do
-        expect(sanction.payments).to eq([@payment])
-      end
-
-      it 'return an error if the payment is bigger that the sanction' do
-        expect{
-          sanction.create_payment({
-            paid: 1500,
-            method_of_payment: 'banca',
-            payment_date: Date.current.beginning_of_month + 3
-          })
-        }.to raise_error('The payment total is bigger than the sanction total')
-      end
-
-      it 'returns false if sanction has not been paid yet' do
-        sanction.create_payment({
-          paid: 200,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
-        expect(sanction.paid?).to eq(false)
-      end
-
-      it 'returns true if sanction has not been paid yet' do
-        sanction.create_payment({
-          paid: 1400.22,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
-        expect(sanction.paid?).to eq(true)
+        payment = attributes_for(:payment, total: 200)
+        sanction.payments.create(payment)
       end
 
       it 'calculates total sactions' do
@@ -71,6 +36,44 @@ RSpec.describe Sanction, type: :model do
         create(:sanction, user_id: user.id)
         expect(user.sanctions.total).to eq(3200.44)
       end
+    end
+  end
+
+  describe 'get sanctions between dates' do
+    before :each do
+      create(:sanction)
+      @user = User.first
+      @sanction = create(:sanction, date: Date.today.next_month, user_id: @user.id)
+    end
+
+    it 'return an error if the no params to function' do
+      expect{
+        Sanction.all_between_dates()
+      }.to raise_error('Supply start_date & end_date params')
+    end
+
+    it 'returns sanctions registered between dates' do
+      expect(
+        Sanction.all_between_dates(
+          Date.today.next_month.beginning_of_month,
+          Date.today.next_month.end_of_month
+        )
+      ).to eq([@sanction])
+    end
+
+    it 'return an error if the no params to function' do
+      expect{
+        Sanction.total_between_dates()
+      }.to raise_error('Supply start_date & end_date params')
+    end
+
+    it 'returns total between dates' do
+      expect(
+        Sanction.total_between_dates(
+          Date.today.next_month.beginning_of_month,
+          Date.today.next_month.end_of_month
+        )
+      ).to eq(1600.22)
     end
   end
 end

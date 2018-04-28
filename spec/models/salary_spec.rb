@@ -15,43 +15,19 @@ RSpec.describe Salary, type: :model do
       let(:salary) { create(:salary) }
 
       before :each do
-        salary
-        @payment = salary.create_payment({
-          paid: 200,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
-      end
-
-      it 'it pays part of salary and creates payment' do
-        expect(salary.payments).to eq([@payment])
-      end
-
-      it 'return an error if the payment is bigger that the salary' do
-        expect{
-          salary.create_payment({
-            paid: 1500,
-            method_of_payment: 'banca',
-            payment_date: Date.current.beginning_of_month + 3
-          })
-        }.to raise_error('The payment total is bigger than the salary total')
+        payment = attributes_for(:payment, total: 200)
+        salary.payments.create(payment)
       end
 
       it 'returns false if salary has not been paid yet' do
-        salary.create_payment({
-          paid: 200,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
+        payment2 = attributes_for(:payment, total: 200)
+        salary.payments.create(payment2)
         expect(salary.paid?).to eq(false)
       end
 
-      it 'returns true if salary has not been paid yet' do
-        salary.create_payment({
-          paid: 1400.22,
-          method_of_payment: 'banca',
-          payment_date: Date.current.beginning_of_month + 3
-        })
+      it 'returns true if salary has been paid yet' do
+        payment2 = attributes_for(:payment, total: 1400.22)
+        salary.payments.create(payment2)
         expect(salary.paid?).to eq(true)
       end
 
@@ -59,6 +35,14 @@ RSpec.describe Salary, type: :model do
         employee = Employee.first
         create(:salary, employee_id: employee.id)
         expect(employee.salaries.total).to eq(3200.44)
+      end
+
+      it 'calculates total paid sactions' do
+        employee = Employee.first
+        salary = create(:salary, employee_id: employee.id)
+        payment2 = attributes_for(:payment, total: 1400.22)
+        salary.payments.create(payment2)
+        expect(salary.total_paid).to eq(1400.22)
       end
     end
   end
