@@ -1,4 +1,5 @@
 class FinancialContribution < Expense
+  include Vehicles::Associatable
   belongs_to :user
   belongs_to :contribution_type
 

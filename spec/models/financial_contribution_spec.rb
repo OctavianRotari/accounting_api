@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe FinancialContribution, type: :model do
   it { should belong_to(:user) }
   it { should belong_to(:contribution_type) }
+  it { should have_and_belong_to_many(:vehicles) }
 
   describe 'user creates a financial contribution' do
     it 'fails if there is no desc or total or date' do
