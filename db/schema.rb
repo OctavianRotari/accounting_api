@@ -25,14 +25,14 @@ ActiveRecord::Schema.define(version: 2018_04_28_175604) do
     t.index ["vendor_id"], name: "index_active_invoices_on_vendor_id"
   end
 
-  create_table "active_invoices_loads", id: false, force: :cascade do |t|
-    t.bigint "load_id", null: false
-    t.bigint "active_invoice_id", null: false
-  end
-
   create_table "active_invoices_revenues", id: false, force: :cascade do |t|
     t.bigint "active_invoice_id", null: false
     t.bigint "revenue_id", null: false
+  end
+
+  create_table "companies_fuel_receipts", id: false, force: :cascade do |t|
+    t.bigint "fuel_receipt_id", null: false
+    t.bigint "company_id", null: false
   end
 
   create_table "contribution_types", force: :cascade do |t|
@@ -89,8 +89,8 @@ ActiveRecord::Schema.define(version: 2018_04_28_175604) do
     t.index ["vendor_id"], name: "index_fuel_receipts_on_vendor_id"
   end
 
-  create_table "fuel_receipts_invoices", id: false, force: :cascade do |t|
-    t.bigint "invoice_id", null: false
+  create_table "fuel_receipts_line_items", id: false, force: :cascade do |t|
+    t.bigint "line_item_id", null: false
     t.bigint "fuel_receipt_id", null: false
   end
 
@@ -177,6 +177,11 @@ ActiveRecord::Schema.define(version: 2018_04_28_175604) do
     t.decimal "price"
     t.index ["vehicle_id"], name: "index_loads_on_vehicle_id"
     t.index ["vendor_id"], name: "index_loads_on_vendor_id"
+  end
+
+  create_table "loads_sold_line_items", id: false, force: :cascade do |t|
+    t.bigint "load_id", null: false
+    t.bigint "sold_line_item_id", null: false
   end
 
   create_table "maintenances", force: :cascade do |t|

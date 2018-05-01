@@ -4,7 +4,7 @@ RSpec.describe FuelReceipt, type: :model do
   it { should belong_to(:vendor) }
   it { should belong_to(:vehicle) }
 
-  it { should have_and_belong_to_many(:invoices) }
+  it { should have_and_belong_to_many(:line_item) }
 
   describe 'is created' do
     let(:user) { create(:user) }
