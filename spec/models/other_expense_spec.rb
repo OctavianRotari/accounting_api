@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe OtherExpense, type: :model do
   it { should belong_to(:user) }
 
-  describe 'user creates a other expense' do
+  describe 'create' do
     it 'fails if there is no desc or total or date' do
       other_expense = build(:other_expense, desc: nil, total: nil, date: nil)
       other_expense.save

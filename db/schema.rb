@@ -10,14 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_28_175604) do
+ActiveRecord::Schema.define(version: 2018_05_01_191702) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "active_invoices", force: :cascade do |t|
     t.datetime "date_of_issue"
-    t.boolean "collected", default: false
     t.datetime "deadline"
     t.string "serial_number", default: ""
     t.string "description", default: ""
@@ -85,6 +84,7 @@ ActiveRecord::Schema.define(version: 2018_04_28_175604) do
     t.datetime "updated_at"
     t.bigint "vehicle_id"
     t.bigint "vendor_id"
+    t.decimal "litres", default: "0.0"
     t.index ["vehicle_id"], name: "index_fuel_receipts_on_vehicle_id"
     t.index ["vendor_id"], name: "index_fuel_receipts_on_vendor_id"
   end
@@ -132,12 +132,8 @@ ActiveRecord::Schema.define(version: 2018_04_28_175604) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "description"
-    t.boolean "paid", default: false
     t.string "serial_number"
     t.bigint "vendor_id"
-    t.bigint "user_id"
-    t.boolean "general_expense", default: false
-    t.index ["user_id"], name: "index_invoices_on_user_id"
     t.index ["vendor_id"], name: "index_invoices_on_vendor_id"
   end
 
@@ -324,7 +320,6 @@ ActiveRecord::Schema.define(version: 2018_04_28_175604) do
   add_foreign_key "insurance_receipts", "insurances"
   add_foreign_key "insurances", "users"
   add_foreign_key "insurances", "vendors"
-  add_foreign_key "invoices", "users"
   add_foreign_key "invoices", "vendors"
   add_foreign_key "line_items", "invoices"
   add_foreign_key "loads", "vehicles"
