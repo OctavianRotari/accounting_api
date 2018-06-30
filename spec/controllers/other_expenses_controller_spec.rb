@@ -1,10 +1,11 @@
 require 'rails_helper'
 
-class OtherExpensesController < ActionDispatch::IntegrationTest
+RSpec.describe Api::V1::OtherExpensesController, type: :controller do
   describe 'index' do
     it 'returns and empty array if no other expenses' do
-      byebug
-      expect(get :other_expenses).to eq([]);
+      get '/api/v1/other_expenses'
+      other_expenses = JSON.parse(response.body)
+      expect(other_expenses).to eq([]);
     end
   end
 end
