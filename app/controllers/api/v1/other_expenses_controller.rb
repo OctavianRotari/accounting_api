@@ -3,9 +3,8 @@ module Api::V1
     # before_action :authenticate_user!
 
     def index
-      other_expenses = OtherExpense.all
-      [] if other_expenses.length === 0
-      other_expenses
+      @other_expenses = OtherExpense.all
+      json_response(@other_expenses)
     end
   end
 end

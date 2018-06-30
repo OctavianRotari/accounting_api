@@ -22,3 +22,6 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+* Resources
+(Tutorial Rails 5 Api)[https://scotch.io/tutorials/build-a-restful-json-api-with-rails-5-part-one]
