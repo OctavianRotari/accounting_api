@@ -15,6 +15,7 @@ class Vehicle < ApplicationRecord
 
   validates :roadworthiness_check_date, presence: {message: 'required'}
   validates :plate, presence: {message: 'required'}
+  validates :vehicle_type_id, presence: {message: 'required'}
 
   def fuel_receipts_total(start_date = nil, end_date = nil)
     if(start_date and end_date)

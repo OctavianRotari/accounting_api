@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       constraints format: :json do
         resources :other_expenses
+        resources :vendors
       end
     end
   end
