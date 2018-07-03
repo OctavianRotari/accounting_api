@@ -16,7 +16,8 @@ RSpec.describe Sanction, type: :model do
       it 'if vehicle id supplied' do
         sanction = create(:sanction)
         user = User.first
-        vehicle = create(:vehicle, user_id: user.id)
+        vehicle_type = create(:vehicle_type, user_id: user.id)
+        vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
         sanction.associate_to(vehicle.id)
         expect(sanction.vehicles).to eq([vehicle])
       end

@@ -13,6 +13,7 @@ RSpec.describe Vehicle, type: :model do
   it { should have_and_belong_to_many(:financial_contributions) }
 
   describe 'is created' do
+
     it 'fails if there is no desc or total or date' do
       vehicle = build(:vehicle, plate: nil, roadworthiness_check_date: nil, vehicle_type_id: nil)
       vehicle.save
@@ -22,7 +23,8 @@ RSpec.describe Vehicle, type: :model do
     describe 'tax deadlines' do
       before :each do
         @user = create(:user)
-        @vehicle = create(:vehicle, user_id: @user.id)
+        @vehicle_type = create(:vehicle_type, user_id: @user.id)
+        @vehicle = create(:vehicle, vehicle_type_id: @vehicle_type.id, user_id: @user.id)
       end
 
       it 'returns exipring date tax' do
@@ -36,7 +38,8 @@ RSpec.describe Vehicle, type: :model do
   describe 'sanctions' do
     before :each do
       @user = create(:user)
-      @vehicle = create(:vehicle, user_id: @user.id)
+      @vehicle_type = create(:vehicle_type, user_id: @user.id)
+      @vehicle = create(:vehicle, vehicle_type_id: @vehicle_type.id, user_id: @user.id)
       @vendor = create(:vendor, user_id: @user.id)
 
       sanction1 = create(:sanction, user_id: @user.id)
@@ -70,7 +73,8 @@ RSpec.describe Vehicle, type: :model do
 
     before :each do
       @user = user
-      @vehicle = create(:vehicle, user_id: @user.id)
+      @vehicle_type = create(:vehicle_type, user_id: @user.id)
+      @vehicle = create(:vehicle, vehicle_type_id: @vehicle_type.id, user_id: @user.id)
       @vendor = create(:vendor, user_id: @user.id)
       create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
       create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)

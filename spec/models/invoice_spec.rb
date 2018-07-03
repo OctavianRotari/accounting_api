@@ -35,7 +35,8 @@ RSpec.describe Invoice, type: :model do
       it 'connects line items to fuel receipts' do
         user = User.first
         vendor = create(:vendor, user_id: user.id)
-        vehicle = create(:vehicle, user_id: user.id)
+        vehicle_type = create(:vehicle_type, user_id: user.id)
+        vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
         fuel_receipts_ids = [
           create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id).id,
           create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id).id

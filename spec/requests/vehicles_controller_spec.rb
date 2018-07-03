@@ -6,7 +6,8 @@ RSpec.describe 'Vehicle Api', type: :request do
     let(:auth_headers) { user.create_new_auth_token }
 
     before do
-      create(:vehicle, user_id: user.id)
+      vehicle_type = create(:vehicle_type, user_id: user.id)
+      create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
       get '/v1/vehicles', headers: auth_headers
     end
 

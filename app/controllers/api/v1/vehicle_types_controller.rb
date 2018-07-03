@@ -5,6 +5,16 @@ module Api::V1
       json_response(@vehicle_types)
     end
 
+    def update
+      vehicle_type = current_user.vehicle_types.find_by(id: params[:id])
+      vehicle_type.update(vehicle_params)
+      if(vehicle_type.save) 
+        head :no_content
+      else
+        head :unprocessable_entity
+      end
+    end
+
     def create
       begin
         vehicle_type = current_user.vehicle_types.new(vehicle_params)
@@ -19,6 +29,7 @@ module Api::V1
     end
 
     private
+
     def vehicle_params
       params.require(:vehicle_type).permit(:desc)
     end

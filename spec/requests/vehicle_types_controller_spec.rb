@@ -53,4 +53,27 @@ RSpec.describe 'Vehicle types Api', type: :request do
       expect(json['message']).to eq('param is missing or the value is empty: vehicle_type')
     end
   end
+
+  describe 'PUT /v1/vehicle_type/:id' do
+    let(:user) { create(:user) }
+    let(:auth_headers) { user.create_new_auth_token }
+    let(:valid_params) do
+      {
+        vehicle_type: {
+          desc: 'rimorchio'
+        }
+      }
+    end
+
+    before do
+      @vehicle_type = create(:vehicle_type, user_id: user.id)
+    end
+
+    it 'updates a vehicle type' do
+      put "/v1/vehicle_types/#{@vehicle_type[:id]}",
+      headers: auth_headers,
+      params: valid_params
+      expect(response).to have_http_status :no_content
+    end
+  end
 end
