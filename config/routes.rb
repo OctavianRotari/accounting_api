@@ -9,6 +9,8 @@ Rails.application.routes.draw do
       constraints format: :json do
         resources :other_expenses
         resources :vendors
+        resources :vehicles
+        resources :vehicle_types
       end
     end
   end

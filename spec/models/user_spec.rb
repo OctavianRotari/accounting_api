@@ -7,4 +7,5 @@ RSpec.describe User, type: :model do
   it { should have_many(:employees) }
   it { should have_many(:sanctions) }
   it { should have_many(:vehicles) }
+  it { should have_many(:vehicle_types) }
 end

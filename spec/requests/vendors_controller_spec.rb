@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Other expenses Api', type: :request do
+RSpec.describe 'Vendors Api', type: :request do
   describe 'GET /v1/vendors' do
     let(:user) { create(:user) }
     let(:auth_headers) { user.create_new_auth_token }
@@ -15,8 +15,8 @@ RSpec.describe 'Other expenses Api', type: :request do
     end
 
     it 'checks that the address of the vendor is correct' do
-      other_expense = json[0]
-      expect(other_expense['adress']).to eq('5 fowler terrace')
+      vendor = json[0]
+      expect(vendor['adress']).to eq('5 fowler terrace')
     end
   end
 end
