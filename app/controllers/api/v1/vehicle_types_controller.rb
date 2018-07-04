@@ -7,7 +7,7 @@ module Api::V1
 
     def update
       vehicle_type = current_user.vehicle_types.find_by(id: params[:id])
-      vehicle_type.update(vehicle_params)
+      vehicle_type.update(vehicle_type_params)
       if(vehicle_type.save) 
         head :no_content
       else
@@ -17,7 +17,7 @@ module Api::V1
 
     def create
       begin
-        vehicle_type = current_user.vehicle_types.new(vehicle_params)
+        vehicle_type = current_user.vehicle_types.new(vehicle_type_params)
         if vehicle_type.save
           head :created, location: v1_vehicle_types_url(vehicle_type)
         else
@@ -30,7 +30,7 @@ module Api::V1
 
     private
 
-    def vehicle_params
+    def vehicle_type_params
       params.require(:vehicle_type).permit(:desc)
     end
   end
