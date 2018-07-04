@@ -83,4 +83,20 @@ RSpec.describe 'Vehicle Api', type: :request do
       expect(response).to have_http_status :no_content
     end
   end
+
+  describe 'DELETE /v1/vehicles/:id' do
+    let(:user) { create(:user) }
+    let(:auth_headers) { user.create_new_auth_token }
+    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+
+    before do
+      @vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
+    end
+
+    it 'updates a vehicle' do
+      delete "/v1/vehicles/#{@vehicle[:id]}",
+        headers: auth_headers
+      expect(response).to have_http_status :no_content
+    end
+  end
 end

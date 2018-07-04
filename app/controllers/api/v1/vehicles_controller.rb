@@ -28,6 +28,12 @@ module Api::V1
       end
     end
 
+    def destroy
+      vehicle = current_user.vehicles.find_by(id: params[:id])
+      vehicle.destroy
+      head :no_content
+    end
+
     private
 
     def vehicle_params
