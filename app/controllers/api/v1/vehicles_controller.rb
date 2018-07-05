@@ -19,7 +19,7 @@ module Api::V1
       begin
         vehicle = current_user.vehicles.new(vehicle_params)
         if vehicle.save
-          head :created, location: v1_vehicle_types_url(vehicle)
+          head :created, location: v1_vehicle_url(vehicle)
         else
           head :unprocessable_entity
         end
