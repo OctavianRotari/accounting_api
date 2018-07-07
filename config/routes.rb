@@ -9,7 +9,9 @@ Rails.application.routes.draw do
       constraints format: :json do
         resources :other_expenses
         resources :employees do
-          resources :salaries
+          resources :salaries do
+            resources :payments, controller: "salaries_payments"
+          end
         end
         resources :vendors
         resources :vehicles do

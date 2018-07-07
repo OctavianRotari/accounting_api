@@ -42,6 +42,9 @@ RSpec.describe 'Salary Api', type: :request do
     end
 
     it 'create a salary' do
+      post "/v1/employees/#{employee.id}/salaries",
+      headers: auth_headers,
+      params: valid_params
       expect {
         post "/v1/employees/#{employee.id}/salaries",
         headers: auth_headers,
