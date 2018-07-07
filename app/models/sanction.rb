@@ -7,5 +7,4 @@ class Sanction < Expense
   validates :total, presence: {message: 'required'}
   validates :date, presence: {message: 'required'}
   validates :deadline, presence: {message: 'required'}
-
 end

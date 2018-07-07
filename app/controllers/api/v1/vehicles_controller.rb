@@ -1,12 +1,10 @@
 module Api::V1
   class VehiclesController < ApiController
-    def index
-      @vehicles = current_user.vehicles
-      json_response(@vehicles)
+    def index vehicles = current_user.vehicles
+      json_response(vehicles)
     end
 
     def update
-      vehicle = current_user.vehicles.find_by(id: params[:id])
       vehicle.update(vehicle_params)
       if(vehicle.save)
         head :no_content
@@ -17,7 +15,6 @@ module Api::V1
 
     def create
       begin
-        vehicle = current_user.vehicles.new(vehicle_params)
         if vehicle.save
           head :created, location: v1_vehicle_url(vehicle)
         else
@@ -29,7 +26,6 @@ module Api::V1
     end
 
     def destroy
-      vehicle = current_user.vehicles.find_by(id: params[:id])
       vehicle.destroy
       head :no_content
     end
@@ -43,6 +39,10 @@ module Api::V1
         :roadworthiness_check_date,
         :vehicle_type_id
       )
+    end
+
+    def vehicle
+      current_user.vehicles.find_by(id: params[:id])
     end
   end
 end
