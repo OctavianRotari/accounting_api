@@ -1,13 +1,13 @@
 module Api::V1
   class SalariesPaymentsController < ApiController
     def index
-      salaries = current_user.salaries
-      json_response(salaries)
+      payments = salary.payments
+      json_response(payments)
     end
 
     def update
-      salary.update(payment_params)
-      if(salary.save)
+      payment.update(payment_params)
+      if(payment.save)
         head :no_content
       else
         head :unprocessable_entity
@@ -20,11 +20,9 @@ module Api::V1
         if payment
           head :created, location: v1_employee_salary_payments_url(payment)
         else
-          puts('here')
           head :unprocessable_entity
         end
       rescue => e
-        puts('erro' + e.to_s)
         json_response({message: e}, :unprocessable_entity)
       end
     end
@@ -48,7 +46,11 @@ module Api::V1
     end
 
     def salary
-      current_user.salaries.find_by(id: params[:salary_id])
+      employee.salaries.find_by(id: params[:salary_id])
+    end
+
+    def payment
+      salary.payments.find_by(id: params[:id])
     end
 
     def hash_payment
