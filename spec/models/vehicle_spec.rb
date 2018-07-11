@@ -28,7 +28,8 @@ RSpec.describe Vehicle, type: :model do
       end
 
       it 'returns exipring date tax' do
-        financial_contribution = create(:financial_contribution, user_id: @user.id)
+        contribution_type = create(:contribution_type, user_id: @user.id)
+        financial_contribution = create(:financial_contribution, user_id: @user.id, contribution_type_id: contribution_type.id)
         @vehicle.financial_contributions << financial_contribution
         expect(@vehicle.deadline_tax).to eq(Date.today.next_year)
       end
