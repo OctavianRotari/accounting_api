@@ -18,7 +18,7 @@ module Api::V1
       begin
         payment = sanction.create_payment(hash_payment)
         if payment
-          head :created, location: v1_employee_sanction_payments_url(payment)
+          head :created, location: v1_sanction_payments_url(payment)
         else
           head :unprocessable_entity
         end
@@ -28,7 +28,7 @@ module Api::V1
     end
 
     def destroy
-      sanction.destroy
+      payment.destroy
       head :no_content
     end
 

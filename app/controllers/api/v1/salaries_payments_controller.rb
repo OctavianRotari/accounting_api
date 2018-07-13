@@ -28,7 +28,7 @@ module Api::V1
     end
 
     def destroy
-      salary.destroy
+      payment.destroy
       head :no_content
     end
 
