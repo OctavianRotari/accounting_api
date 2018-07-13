@@ -15,6 +15,7 @@ module Api::V1
 
     def create
       begin
+        vehicle = current_user.vehicles.new(vehicle_params)
         if vehicle.save
           head :created, location: v1_vehicle_url(vehicle)
         else

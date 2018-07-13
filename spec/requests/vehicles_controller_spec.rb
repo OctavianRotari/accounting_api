@@ -36,7 +36,8 @@ RSpec.describe 'Vehicle Api', type: :request do
     end
     let(:invalid_params) do
       {
-        vehicle: {}
+        vehicle: {
+        }
       }
     end
 
@@ -50,9 +51,7 @@ RSpec.describe 'Vehicle Api', type: :request do
     end
 
     it 'create a vehicle error' do
-      post "/v1/vehicles",
-        headers: auth_headers,
-        params: invalid_params
+      post "/v1/vehicles", headers: auth_headers, params: invalid_params
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: vehicle')
     end
