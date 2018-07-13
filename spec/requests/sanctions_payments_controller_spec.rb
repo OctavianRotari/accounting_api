@@ -1,26 +1,26 @@
 require 'rails_helper'
 
-RSpec.describe 'Salary Payments Api', type: :request do
-  # describe 'GET /v1/sanctions/#{sanction.id}/payments' do
-  #   let(:user) { create(:user) }
-  #   let(:auth_headers) { user.create_new_auth_token }
-  #   let(:sanction) { create(:salary, user_id: user.id) }
+RSpec.describe 'Sanction Payments Api', type: :request do
+  describe 'GET /v1/sanctions/#{sanction.id}/payments' do
+    let(:user) { create(:user) }
+    let(:auth_headers) { user.create_new_auth_token }
+    let(:sanction) { create(:sanction, user_id: user.id) }
 
-  #   before do
-  #     payment = attributes_for(:payment)
-  #     sanction.payments.create(payment)
-  #     get "/v1/sanction/#{sanction.id}//payments", headers: auth_headers
-  #   end
+    before do
+      payment = attributes_for(:payment)
+      sanction.payments.create(payment)
+      get "/v1/sanctions/#{sanction.id}/payments", headers: auth_headers
+    end
 
-  #   it 'return salaries for user' do
-  #     expect(json.count).to eq(1)
-  #   end
+    it 'return sanctions for user' do
+      expect(json.count).to eq(1)
+    end
 
-  #   it 'checks that the address of the vendor is correct' do
-  #     payment = json[0]
-  #     expect(payment['total']).to eq('100.0')
-  #   end
-  # end
+    it 'checks that the address of the vendor is correct' do
+      payment = json[0]
+      expect(payment['total']).to eq('100.0')
+    end
+  end
 
   # describe 'POST /v1/employees/#{employee.id}/salaries/#{salary.id}/payments' do
   #   let(:user) { create(:user) }

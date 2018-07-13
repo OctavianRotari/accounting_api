@@ -8,7 +8,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       constraints format: :json do
         resources :other_expenses
-        resources :sanctions
+        resources :sanctions do
+          resources :payments, controller: "sanctions_payments"
+        end
         resources :employees do
           resources :salaries do
             resources :payments, controller: "salaries_payments"
