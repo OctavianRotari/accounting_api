@@ -26,4 +26,8 @@ class Invoice < Expense
       self.line_items.create(line_item)
     end
   end
+
+  def total
+    self.line_items.sum(:amount)
+  end
 end

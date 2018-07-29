@@ -46,4 +46,17 @@ RSpec.describe Invoice, type: :model do
       end
     end
   end
+
+  describe 'total' do
+    before :each do 
+      @invoice = create(:invoice)
+    end
+
+    it 'returns the total of all the line items' do
+      line_item_1 = attributes_for(:line_item, invoice_id: @invoice.id)
+      line_item_2 = attributes_for(:line_item, invoice_id: @invoice.id)
+      @invoice.create_line_items([line_item_1, line_item_2])
+      expect(@invoice.total).to eq(19.98)
+    end
+  end
 end

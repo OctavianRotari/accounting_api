@@ -16,7 +16,11 @@ Rails.application.routes.draw do
             resources :payments, controller: "salaries_payments"
           end
         end
-        resources :vendors
+        resources :vendors do 
+          resources :invoices do
+            resources :payments, controller: "invoices_payments"
+          end
+        end
         resources :vehicles do
           resources :maintenances, controller: "vehicle_maintenances"
         end
