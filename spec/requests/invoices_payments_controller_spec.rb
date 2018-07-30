@@ -28,10 +28,11 @@ RSpec.describe 'Invoice Payments Api', type: :request do
     let(:auth_headers) { user.create_new_auth_token }
     let(:vendor) { create(:vendor, user_id: user.id) }
     let(:invoice) { create(:invoice, vendor_id: vendor.id) }
+
     let(:valid_params) do
       {
         payment: {
-          total: 1600.03,
+          total: 9.00,
           method_of_payment: 'Bonifico',
           date: Date.today.at_beginning_of_month.next_month,
         }
@@ -42,6 +43,10 @@ RSpec.describe 'Invoice Payments Api', type: :request do
       {
         payment: {}
       }
+    end
+
+    before :each do
+      create(:line_item, invoice_id: invoice.id)
     end
 
     it 'create a payments for a invoice invoice' do

@@ -8,7 +8,7 @@ module Expenses
     def create_payment(payment)
       total_payments = self.payments.sum(:total)
       if(payment[:total].to_d > self.total - total_payments)
-        raise "The payment total is bigger than the salary total"
+        raise "The payment total is bigger than the total to pay"
       else
         self.payments.create(payment)
       end
