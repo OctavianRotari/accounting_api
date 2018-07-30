@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_30_214505) do
+ActiveRecord::Schema.define(version: 2018_07_30_220854) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -104,9 +104,12 @@ ActiveRecord::Schema.define(version: 2018_07_30_214505) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "insurance_id"
-    t.bigint "payment_id"
     t.index ["insurance_id"], name: "index_insurance_receipts_on_insurance_id"
-    t.index ["payment_id"], name: "index_insurance_receipts_on_payment_id"
+  end
+
+  create_table "insurance_receipts_payments", id: false, force: :cascade do |t|
+    t.bigint "insurance_receipt_id", null: false
+    t.bigint "payment_id", null: false
   end
 
   create_table "insurances", force: :cascade do |t|
@@ -325,7 +328,6 @@ ActiveRecord::Schema.define(version: 2018_07_30_214505) do
   add_foreign_key "fuel_receipts", "vehicles"
   add_foreign_key "fuel_receipts", "vendors"
   add_foreign_key "insurance_receipts", "insurances"
-  add_foreign_key "insurance_receipts", "payments"
   add_foreign_key "insurances", "users"
   add_foreign_key "insurances", "vendors"
   add_foreign_key "invoices", "vendors"
