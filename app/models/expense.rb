@@ -19,5 +19,4 @@ class Expense < ApplicationRecord
       date: (start_date..end_date)
     )
   end
-
 end
