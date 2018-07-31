@@ -4,6 +4,7 @@ class Invoice < Expense
 
   belongs_to :vendor
   has_many :line_items
+  has_and_belongs_to_many :vehicles
 
   validates :date_of_issue, presence: {message: 'required'}
   validates :deadline, presence: {message: 'required'}

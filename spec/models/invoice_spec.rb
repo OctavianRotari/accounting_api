@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Invoice, type: :model do
   it { should belong_to(:vendor) }
+  it { should have_many(:line_items) }
   it { should have_and_belong_to_many(:payments) }
   it { should have_and_belong_to_many(:vehicles) }
 
@@ -26,6 +27,12 @@ RSpec.describe Invoice, type: :model do
       end
 
       it 'creates one line item' do
+        line_item_1 = attributes_for(:line_item, invoice_id: @invoice.id)
+        @invoice.create_line_items([line_item_1])
+        expect(@invoice.line_items.length).to eq(1)
+      end
+
+      it 'creates more line item' do
         line_item_1 = attributes_for(:line_item, invoice_id: @invoice.id)
         line_item_2 = attributes_for(:line_item, invoice_id: @invoice.id)
         @invoice.create_line_items([line_item_1, line_item_2])

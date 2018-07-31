@@ -16,7 +16,7 @@ module Expenses
 
     def paid?
       total_payments = self.payments.sum(:total)
-      self.total === total_payments ? true : false;
+      self.total === total_payments
     end
 
     def total_paid
