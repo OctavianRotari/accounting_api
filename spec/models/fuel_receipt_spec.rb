@@ -17,7 +17,6 @@ RSpec.describe FuelReceipt, type: :model do
     end
 
     it 'total all fuel receipts' do
-
       create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
       create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
       expect(@vehicle.fuel_receipts.total).to eq(460.0)

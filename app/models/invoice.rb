@@ -6,7 +6,7 @@ class Invoice < Expense
   has_many :line_items
   has_and_belongs_to_many :vehicles
 
-  validates :date_of_issue, presence: {message: 'required'}
+  validates :date, presence: {message: 'required'}
   validates :deadline, presence: {message: 'required'}
   validates :description, presence: {message: 'required'}
   validates :serial_number, presence: {message: 'required'}

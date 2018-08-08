@@ -10,14 +10,14 @@ RSpec.describe Invoice, type: :model do
     it 'fails if there is no desc all fields ' do
       invoice = build(
         :invoice,
-        date_of_issue: nil,
+        date: nil,
         deadline: nil,
         description: nil,
         serial_number: nil
       )
       invoice.save
       expect(invoice.errors.full_messages).to eq(
-        [ "Date of issue required", "Deadline required", "Description required", "Serial number required"]
+        [ "Date required", "Deadline required", "Description required", "Serial number required"]
       )
     end
 
