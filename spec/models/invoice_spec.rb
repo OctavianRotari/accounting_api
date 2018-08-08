@@ -66,4 +66,33 @@ RSpec.describe Invoice, type: :model do
       expect(@invoice.total).to eq(19.98)
     end
   end
+
+  describe 'get invoices between dates' do
+    before :each do
+      create(:invoice)
+      user = User.first
+      vendor = create(:vendor, user_id: user.id)
+      @invoice = create(:invoice, date: Date.today.next_month, vendor_id: vendor.id)
+    end
+
+    it 'returns invoices between dates' do
+      expect(
+        Invoice.all_between_dates(
+          Date.today.next_month.beginning_of_month,
+          Date.today.next_month.end_of_month
+        )
+      ).to eq([@invoice])
+    end
+
+    it 'returns total between dates' do
+      create(:line_item, invoice_id: @invoice.id)
+      create(:line_item, invoice_id: @invoice.id)
+      expect(
+        Invoice.total_between_dates(
+          Date.today.next_month.beginning_of_month,
+          Date.today.next_month.end_of_month
+        )
+      ).to eq(19.98)
+    end
+  end
 end

@@ -11,6 +11,16 @@ class Invoice < Expense
   validates :description, presence: {message: 'required'}
   validates :serial_number, presence: {message: 'required'}
 
+  def self.total_between_dates(start_date = nil, end_date = nil)
+    raise 'Supply start_date & end_date params' if !(start_date and end_date)
+    invoices = self.all_between_dates(start_date, end_date)
+    total = 0
+    invoices.each do |invoice|
+      total += invoice.line_items.sum(:amount)
+    end
+    total.to_f
+  end
+
   def create_line_items(line_items, type = :default)
     if(type === :fuel_receipt)
       line_items = line_items.map do |fuel_receipt_id|
