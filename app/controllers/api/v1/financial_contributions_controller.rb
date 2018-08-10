@@ -7,9 +7,13 @@ module Api::V1
 
     def create
       begin
-        financial_contribution = FinancialContribution.new(other_expense_params)
+        financial_contribution = FinancialContribution.new(finacial_contribution_params)
         financial_contribution[:user_id] = current_user.id
         if financial_contribution.save
+          if(vehicle_param[:vehicle_id]) 
+            vehicle_id = vehicle_param[:vehicle_id]
+            financial_contribution.associate_to(vehicle_id)
+          end 
           head :created, location: v1_other_expenses_url(financial_contribution)
         else
           head :unprocessable_entity
@@ -20,7 +24,7 @@ module Api::V1
     end
 
     def update
-      financial_contribution.update(other_expense_params)
+      financial_contribution.update(finacial_contribution_params)
       if(financial_contribution.save) 
         head :no_content
       else
@@ -34,12 +38,19 @@ module Api::V1
     end
 
     private
-    def other_expense_params
+
+    def finacial_contribution_params
       params.require(:financial_contribution).permit(
         :desc,
         :total,
         :date,
         :contribution_type_id,
+      )
+    end
+
+    def vehicle_param
+      params.require(:financial_contribution).permit(
+        :vehicle_id,
       )
     end
 

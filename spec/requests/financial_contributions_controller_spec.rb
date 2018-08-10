@@ -40,7 +40,7 @@ RSpec.describe 'Other expenses Api', type: :request do
       { financial_contribution: {} }
     end
 
-    it 'creates other expense' do
+    it 'creates financial_contributions' do
       expect {
         post '/v1/financial_contributions',
         headers: auth_headers,
@@ -55,6 +55,37 @@ RSpec.describe 'Other expenses Api', type: :request do
       params: invalid_params 
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: financial_contribution')
+    end
+
+    describe 'POST a vehicle finacial contribution' do
+      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+
+      before do
+        @vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
+      end
+
+      let(:valid_params) do
+        {
+          financial_contribution: {
+            desc: 'caffe',
+            total: 10.3,
+            date: Date.today(),
+            vehicle_id: @vehicle.id,
+            contribution_type_id: contribution_type.id,
+          }
+        }
+      end
+
+      it 'creates financial_contributions vehicle' do
+        vehicle = Vehicle.all.find(@vehicle.id)
+        expect {
+          post '/v1/financial_contributions',
+          headers: auth_headers,
+          params: valid_params
+        }.to change(FinancialContribution, :count).by(+1)
+        expect(vehicle.financial_contributions).to eq(FinancialContribution.all)
+        expect(response).to have_http_status :created
+      end
     end
   end
 
