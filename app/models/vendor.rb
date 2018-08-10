@@ -8,6 +8,6 @@ class Vendor < ApplicationRecord
   has_many :credit_notes, dependent: :destroy
 
   validates :name, presence: {message: 'required'}
-  validates :adress, presence: {message: 'required'}
+  validates :address, presence: {message: 'required'}
   validates :number, presence: {message: 'required'}
 end

@@ -21,10 +21,10 @@ RSpec.describe Vendor, type: :model do
       expect(vendor.errors.full_messages).to eq(["User must exist"])
     end
 
-    it 'fails if there is no name, adress or number' do
-      vendor = build(:vendor, name: '', number: '', adress: '', user_id: user.id)
+    it 'fails if there is no name, address or number' do
+      vendor = build(:vendor, name: '', number: '', address: '', user_id: user.id)
       vendor.save
-      expect(vendor.errors.full_messages).to eq(["Name required", "Adress required", "Number required"])
+      expect(vendor.errors.full_messages).to eq(["Name required", "address required", "Number required"])
     end
 
     it 'does not return others users vendors' do
