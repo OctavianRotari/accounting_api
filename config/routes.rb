@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   scope module: 'api' do
     namespace :v1 do
       constraints format: :json do
+        resources :financial_contributions
         resources :contribution_types
         resources :other_expenses
         resources :sanctions do
