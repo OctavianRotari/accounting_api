@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Other expenses Api', type: :request do
+RSpec.describe 'FinancialContributions Api', type: :request do
   describe 'GET /v1/financial_contributions' do
     let(:user) { create(:user) }
     let(:auth_headers) { user.create_new_auth_token }
@@ -121,6 +121,23 @@ RSpec.describe 'Other expenses Api', type: :request do
     it 'deletes financial_contribution' do
       delete "/v1/financial_contributions/#{financial_contribution.id}", headers: auth_headers
       expect(response).to have_http_status :no_content
+    end
+
+    describe 'vehicle_contribution' do
+      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+
+      before :each do
+        @vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
+        @financial_contribution = create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id) 
+        @financial_contribution.vehicles << @vehicle
+      end
+
+      it 'deletes the related vehicle_contribution' do 
+        delete "/v1/financial_contributions/#{@financial_contribution.id}", headers: auth_headers
+        expect(response).to have_http_status :no_content
+        expect(@vehicle.financial_contributions).to eq([])
+        expect(FinancialContribution.all).to eq([])
+      end
     end
   end
 end
