@@ -21,6 +21,22 @@ RSpec.describe 'Vehicle Api', type: :request do
     end
   end
 
+  describe 'GET /v1/vehicles/:id' do
+    let(:user) { create(:user) }
+    let(:auth_header) { user.create_new_auth_token }
+    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+    let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
+
+    before :each do
+      @vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
+    end
+
+    it 'success' do
+      get "/v1/vehicles/#{@vehicle.id}", headers: auth_header
+      expect(json['plate']).to eq(@vehicle.plate)
+    end
+  end
+
   describe 'POST /v1/vehicles' do
     let(:user) { create(:user) }
     let(:auth_headers) { user.create_new_auth_token }

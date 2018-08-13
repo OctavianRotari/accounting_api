@@ -61,7 +61,7 @@ RSpec.describe 'Vehicle Api', type: :request do
     end
   end
 
-  describe 'PUT /v1/vehicles/:id/maintenances/:id' do
+  describe 'PUT /v1/maintenances/:id' do
     let(:user) { create(:user) }
     let(:auth_headers) { user.create_new_auth_token }
     let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
@@ -81,7 +81,7 @@ RSpec.describe 'Vehicle Api', type: :request do
     end
 
     it 'updates a maintenance' do
-      put "/v1/vehicles/#{vehicle.id}/maintenances/#{@maintenance.id}",
+      put "/v1/maintenances/#{@maintenance.id}",
         headers: auth_headers,
         params: valid_params
       expect(response).to have_http_status :no_content
@@ -99,7 +99,7 @@ RSpec.describe 'Vehicle Api', type: :request do
     end
 
     it 'updates a vehicle' do
-      delete "/v1/vehicles/#{vehicle.id}/maintenances/#{@maintenance.id}",
+      delete "/v1/maintenances/#{@maintenance.id}",
         headers: auth_headers
       expect(response).to have_http_status :no_content
     end

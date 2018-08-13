@@ -1,12 +1,14 @@
 module Api::V1
   class VehicleMaintenancesController < ApiController
+    before_action :set_maintenance, only: [:show, :update, :destroy]
+
     def index
       json_response(vehicle.maintenances)
     end
 
     def update
-      maintenance.update(maintenances_params)
-      if(vehicle.save)
+      @maintenance.update(maintenances_params)
+      if(@maintenance.save)
         head :no_content
       else
         head :unprocessable_entity
@@ -27,7 +29,7 @@ module Api::V1
     end
 
     def destroy
-      maintenance.destroy
+      @maintenance.destroy
       head :no_content
     end
 
@@ -46,8 +48,8 @@ module Api::V1
       current_user.vehicles.find_by(id: params[:vehicle_id])
     end
 
-    def maintenance
-      vehicle.maintenances.find_by(id: params[:id])
+    def set_maintenance
+      @maintenance = Maintenance.find(params[:id])
     end
   end
 end

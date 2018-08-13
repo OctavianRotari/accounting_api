@@ -1,12 +1,18 @@
 module Api::V1
   class VehiclesController < ApiController
+    before_action :set_vehicle, only: [:show, :update, :destroy]
+
     def index vehicles = current_user.vehicles
       json_response(vehicles)
     end
 
+    def show
+      json_response(@vehicle)
+    end
+
     def update
-      vehicle.update(vehicle_params)
-      if(vehicle.save)
+      @vehicle.update(vehicle_params)
+      if(@vehicle.save)
         head :no_content
       else
         head :unprocessable_entity
@@ -27,7 +33,7 @@ module Api::V1
     end
 
     def destroy
-      vehicle.destroy
+      @vehicle.destroy
       head :no_content
     end
 
@@ -42,8 +48,8 @@ module Api::V1
       )
     end
 
-    def vehicle
-      current_user.vehicles.find_by(id: params[:id])
+    def set_vehicle
+      @vehicle = current_user.vehicles.find_by(id: params[:id])
     end
   end
 end

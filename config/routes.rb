@@ -10,22 +10,31 @@ Rails.application.routes.draw do
         resources :financial_contributions
         resources :contribution_types
         resources :other_expenses
+
         resources :sanctions do
-          resources :payments, controller: "sanctions_payments"
+          get 'payments', to: 'sanctions_payments#index'
+          post 'payments', to: 'sanctions_payments#create'
         end
-        resources :employees do
+
+        resources :employees, shallow: true do
           resources :salaries do
-            resources :payments, controller: "salaries_payments"
+            get 'payments', to: 'salaries_payments#index'
+            post 'payments', to: 'salaries_payments#create'
           end
         end
-        resources :vendors do 
+
+        resources :vendors, shallow: true do 
           resources :invoices do
-            resources :payments, controller: "invoices_payments"
+            get 'payments', to: 'invoices_payments#index'
+            post 'payments', to: 'invoices_payments#create'
           end
         end
-        resources :vehicles do
+
+        resources :vehicles, shallow: true do
           resources :maintenances, controller: "vehicle_maintenances"
         end
+
+        resources :payments, only: [:show, :edit, :update, :destroy], controller: "payments"
         resources :vehicle_types
       end
     end

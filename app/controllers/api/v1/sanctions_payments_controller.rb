@@ -5,15 +5,6 @@ module Api::V1
       json_response(payments)
     end
 
-    def update
-      payment.update(payment_params)
-      if(payment.save)
-        head :no_content
-      else
-        head :unprocessable_entity
-      end
-    end
-
     def create
       begin
         payment = sanction.create_payment(hash_payment)
@@ -27,11 +18,6 @@ module Api::V1
       end
     end
 
-    def destroy
-      payment.destroy
-      head :no_content
-    end
-
     private
     def payment_params
       params.require(:payment).permit(
@@ -42,11 +28,7 @@ module Api::V1
     end
 
     def sanction
-      current_user.sanctions.find_by(id: params[:sanction_id])
-    end
-
-    def payment
-      sanction.payments.find_by(id: params[:id])
+      current_user.sanctions.find(params[:sanction_id])
     end
 
     def hash_payment

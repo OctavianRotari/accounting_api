@@ -62,7 +62,7 @@ RSpec.describe 'Salary Api', type: :request do
     end
   end
 
-  describe 'PUT /v1/employees/#{employee.id}/salaries/:id' do
+  describe 'PUT /v1/salaries/:id' do
     let(:user) { create(:user) }
     let(:auth_headers) { user.create_new_auth_token }
     let(:employee) { create(:employee, user_id: user.id) }
@@ -82,7 +82,7 @@ RSpec.describe 'Salary Api', type: :request do
     end
 
     it 'updates a salary' do
-      put "/v1/employees/#{employee.id}/salaries/#{@salary[:id]}",
+      put "/v1/salaries/#{@salary[:id]}",
         headers: auth_headers,
         params: valid_params
       expect(response).to have_http_status :no_content
@@ -99,7 +99,7 @@ RSpec.describe 'Salary Api', type: :request do
     end
 
     it 'updates a salary' do
-      delete "/v1/employees/#{employee.id}/salaries/#{@salary[:id]}",
+      delete "/v1/salaries/#{@salary[:id]}",
         headers: auth_headers
       expect(response).to have_http_status :no_content
     end

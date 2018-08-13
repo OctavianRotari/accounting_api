@@ -59,47 +59,4 @@ RSpec.describe 'Sanction Payments Api', type: :request do
       expect(json['message']).to eq('param is missing or the value is empty: payment')
     end
   end
-
-  describe 'PUT /v1/sanctions/#{sanction.id}/payments/#{payment.id}' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
-    let(:sanction) { create(:sanction, user_id: user.id) }
-    let(:valid_params) do
-      {
-        payment: {
-          total: 1600.03,
-          method_of_payment: 'Bonifico',
-          date: Date.today.at_beginning_of_month.next_month,
-        }
-      }
-    end
-
-    before do
-      payment = attributes_for(:payment)
-      @payment = sanction.payments.create(payment)
-    end
-
-    it 'updates a sanction' do
-      put "/v1/sanctions/#{sanction.id}/payments/#{@payment.id}",
-        headers: auth_headers,
-        params: valid_params
-      expect(response).to have_http_status :no_content
-    end
-  end
-
-  describe 'DELETE /v1/sanctions/#{sanction.id}/payments/#{payment.id}' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
-    let(:sanction) { create(:sanction, user_id: user.id) }
-
-    before do
-      payment = attributes_for(:payment)
-      @payment = sanction.payments.create(payment)
-    end
-
-    it 'deletes a sanction' do
-      delete "/v1/sanctions/#{sanction.id}/payments/#{@payment.id}", headers: auth_headers
-      expect(response).to have_http_status :no_content
-    end
-  end
 end

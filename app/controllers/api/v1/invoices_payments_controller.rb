@@ -1,5 +1,7 @@
 module Api::V1
   class InvoicesPaymentsController < ApiController
+    before_action :set_payment, only: [:show, :update, :destroy]
+
     def index
       payments = invoice.payments
       json_response(payments)
@@ -28,7 +30,7 @@ module Api::V1
     end
 
     def destroy
-      payment.destroy
+      @payment.destroy
       head :no_content
     end
 
@@ -42,15 +44,11 @@ module Api::V1
     end
 
     def invoice
-      vendor.invoices.find_by(id: params[:invoice_id])
+      Invoice.find(params[:invoice_id])
     end
 
-    def vendor
-      current_user.vendors.find_by(id: params[:vendor_id])
-    end
-
-    def payment
-      invoice.payments.find_by(id: params[:id])
+    def set_payment
+      @payment = Payment.find(params[:id])
     end
 
     def hash_payment
