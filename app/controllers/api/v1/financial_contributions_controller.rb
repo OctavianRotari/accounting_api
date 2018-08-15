@@ -10,10 +10,7 @@ module Api::V1
         financial_contribution = FinancialContribution.new(finacial_contribution_params)
         financial_contribution[:user_id] = current_user.id
         if financial_contribution.save
-          if(vehicle_param[:vehicle_id]) 
-            vehicle_id = vehicle_param[:vehicle_id]
-            financial_contribution.associate_to(vehicle_id)
-          end 
+          link_to_vehicle(financial_contribution)
           head :created, location: v1_other_expenses_url(financial_contribution)
         else
           head :unprocessable_entity
@@ -56,6 +53,13 @@ module Api::V1
 
     def financial_contribution
       current_user.financial_contributions.find_by(id: params[:id])
+    end
+
+    def link_to_vehicle(financial_contribution)
+      if(vehicle_param[:vehicle_id]) 
+        vehicle_id = vehicle_param[:vehicle_id]
+        financial_contribution.associate_to(vehicle_id)
+      end 
     end
   end
 end

@@ -1,13 +1,19 @@
 module Api::V1
   class SanctionsController < ApiController
+    before_action :set_sanction, only: [:show, :update, :destroy]
+
     def index
       sanctions = current_user.sanctions
       json_response(sanctions)
     end
 
+    def show
+      json_response(@sanction)
+    end
+
     def update
-      sanction.update(sanction_params)
-      if(sanction.save)
+      @sanction.update(sanction_params)
+      if(@sanction.save)
         head :no_content
       else
         head :unprocessable_entity
@@ -28,7 +34,7 @@ module Api::V1
     end
 
     def destroy
-      sanction.destroy
+      @sanction.destroy
       head :no_content
     end
 
@@ -42,8 +48,19 @@ module Api::V1
       )
     end
 
-    def sanction
-      current_user.sanctions.find_by(id: params[:id])
+    def vehicle_param
+      params.require(:sanction).permit(:vehicle_id)
+    end
+
+    def set_sanction
+      @sanction = current_user.sanctions.find(params[:id])
+    end
+
+    def link_to_vehicle(sanction)
+      if(vehicle_param[:vehicle_id])
+        vehicle_id = vehicle_param[:vehicle_id]
+        sanction.associate_to(vehicle_id)
+      end
     end
   end
 end
