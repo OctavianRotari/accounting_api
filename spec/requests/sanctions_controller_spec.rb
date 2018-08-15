@@ -54,6 +54,36 @@ RSpec.describe 'sanction Api', type: :request do
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: sanction')
     end
+
+    describe 'POST a vehicle finacial contribution' do
+      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+
+      before do
+        @vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
+      end
+
+      let(:valid_params) do
+        {
+          sanction: {
+            total: 1600,
+            date: Date.today.last_month.beginning_of_month,
+            deadline: Date.today + 5,
+            vehicle_id: @vehicle.id,
+          }
+        }
+      end
+
+      it 'creates sanction vehicle' do
+        vehicle = Vehicle.all.find(@vehicle.id)
+        expect {
+          post '/v1/sanctions',
+          headers: auth_headers,
+          params: valid_params
+        }.to change(Sanction, :count).by(+1)
+        expect(vehicle.sanctions).to eq(Sanction.all)
+        expect(response).to have_http_status :created
+      end
+    end
   end
 
   describe 'PUT /v1/sanctions/:id' do
@@ -64,7 +94,7 @@ RSpec.describe 'sanction Api', type: :request do
         sanction: {
           total: 'Gianni',
           date: Date.today + 5,
-          deadline: 'autista'
+          description: 'autista, multa'
         }
       }
     end

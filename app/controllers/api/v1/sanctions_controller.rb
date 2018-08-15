@@ -24,6 +24,7 @@ module Api::V1
       begin
         sanction = current_user.sanctions.new(sanction_params)
         if sanction.save
+          link_to_vehicle(sanction)
           head :created, location: v1_sanctions_url(sanction)
         else
           head :unprocessable_entity
@@ -44,6 +45,7 @@ module Api::V1
       params.require(:sanction).permit(
         :total,
         :date,
+        :description,
         :deadline,
       )
     end

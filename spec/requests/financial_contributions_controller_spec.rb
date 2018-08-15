@@ -7,7 +7,7 @@ RSpec.describe 'FinancialContributions Api', type: :request do
 
     before do
       contribution_type = create(:contribution_type, user_id: user.id)
-      financial_contribution = create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id)
+      create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id)
       get '/v1/financial_contributions', headers: auth_headers
     end
 
