@@ -31,6 +31,7 @@ Rails.application.routes.draw do
         end
 
         resources :vehicles, shallow: true do
+          get 'sanctions', on: :member
           resources :maintenances, controller: "vehicle_maintenances"
         end
 
