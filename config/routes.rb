@@ -31,9 +31,16 @@ Rails.application.routes.draw do
         end
 
         resources :vehicles, shallow: true do
-          get 'sanctions', on: :member
           resources :maintenances, controller: "vehicle_maintenances"
         end
+
+        get 'vehicles/:id/sanctions', 
+          to: 'vehicles#sanctions', 
+          as: 'vehicles_sanctions'
+
+        get 'vehicles/:id/financial_contributions', 
+          to: 'vehicles#financial_contributions', 
+          as: 'vehicle_financial_contributions'
 
         resources :payments, only: [:show, :edit, :update, :destroy], controller: "payments"
         resources :vehicle_types

@@ -114,4 +114,39 @@ RSpec.describe 'Vehicle Api', type: :request do
       expect(response).to have_http_status :no_content
     end
   end
+
+  describe 'gets all sanctions for vehicle' do
+    let(:user) { create(:user) }
+    let(:auth_headers) { user.create_new_auth_token }
+    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+    let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
+    let(:sanction) {create(:sanction, user_id: user.id)}
+
+    before do
+      vehicle.sanctions << sanction
+      get "/v1/vehicles/#{vehicle.id}/sanctions", headers: auth_headers
+    end
+
+    it 'returns all' do
+      expect(json.count).to eq(1)
+    end
+  end
+
+  describe 'geta all financial_contributions for vehicle' do
+    let(:user) { create(:user) }
+    let(:auth_headers) { user.create_new_auth_token }
+    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+    let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
+    let(:contribution_type) { create(:contribution_type, user_id: user.id) }
+    let(:financial_contribution) { create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id) }
+
+    before do
+      vehicle.financial_contributions << financial_contribution
+      get "/v1/vehicles/#{vehicle.id}/financial_contributions", headers: auth_headers
+    end
+
+    it 'returns all' do
+      expect(json.count).to eq(1)
+    end
+  end
 end
