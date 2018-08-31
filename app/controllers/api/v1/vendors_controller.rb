@@ -1,5 +1,7 @@
 module Api::V1
   class VendorsController < ApiController
+    before_action :set_vendor, only: [:show, :update, :destroy, :fuel_receipts]
+
     def index
       vendors = current_user.vendors
       json_response(vendors)
@@ -20,8 +22,8 @@ module Api::V1
     end
 
     def update
-      vendor.update(vendors_params)
-      if(vendor.save) 
+      @vendor.update(vendors_params)
+      if(@vendor.save) 
         head :no_content
       else
         head :unprocessable_entity
@@ -29,8 +31,12 @@ module Api::V1
     end
 
     def destroy
-      vendor.destroy
+      @vendor.destroy
       head :no_content
+    end
+
+    def fuel_receipts
+      json_response(@vendor.fuel_receipts)
     end
 
     private
@@ -42,8 +48,8 @@ module Api::V1
       )
     end
 
-    def vendor
-      current_user.vendors.find_by(id: params[:id])
+    def set_vendor
+      @vendor = Vendor.find(params[:id])
     end
   end
 end

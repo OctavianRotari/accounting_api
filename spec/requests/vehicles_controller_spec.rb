@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe 'Vehicle Api', type: :request do
-  describe 'GET /v1/vehicles' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
+  let(:user) { create(:user) }
+  let(:auth_headers) { user.create_new_auth_token }
+  let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
 
+  describe 'GET /v1/vehicles' do
     before do
-      vehicle_type = create(:vehicle_type, user_id: user.id)
       create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
       get '/v1/vehicles', headers: auth_headers
     end
@@ -22,9 +22,6 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'GET /v1/vehicles/:id' do
-    let(:user) { create(:user) }
-    let(:auth_header) { user.create_new_auth_token }
-    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
     let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
 
     before :each do
@@ -32,15 +29,12 @@ RSpec.describe 'Vehicle Api', type: :request do
     end
 
     it 'success' do
-      get "/v1/vehicles/#{@vehicle.id}", headers: auth_header
+      get "/v1/vehicles/#{@vehicle.id}", headers: auth_headers
       expect(json['plate']).to eq(@vehicle.plate)
     end
   end
 
   describe 'POST /v1/vehicles' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
-    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
     let(:valid_params) do
       {
         vehicle: {
@@ -74,9 +68,6 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'PUT /v1/vehicles/:id' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
-    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
     let(:valid_params) do
       {
         vehicle: {
@@ -100,10 +91,6 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'DELETE /v1/vehicles/:id' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
-    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
-
     before do
       @vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
     end
@@ -111,14 +98,11 @@ RSpec.describe 'Vehicle Api', type: :request do
     it 'updates a vehicle' do
       delete "/v1/vehicles/#{@vehicle[:id]}",
         headers: auth_headers
-      expect(response).to have_http_status :no_content
+        expect(response).to have_http_status :no_content
     end
   end
 
   describe 'gets all sanctions for vehicle' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
-    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
     let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
     let(:sanction) {create(:sanction, user_id: user.id)}
 
@@ -133,9 +117,6 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'gets all financial_contributions for vehicle' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
-    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
     let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
     let(:contribution_type) { create(:contribution_type, user_id: user.id) }
     let(:financial_contribution) { create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id) }

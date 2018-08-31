@@ -30,6 +30,10 @@ Rails.application.routes.draw do
           end
         end
 
+        get 'vendors/:id/fuel_receipts', 
+          to: 'vendors#fuel_receipts', 
+          as: 'vendor_fuel_receipts'
+
         resources :vehicles, shallow: true do
           resources :fuel_receipts
           resources :maintenances, controller: "vehicle_maintenances"
