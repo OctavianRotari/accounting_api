@@ -132,7 +132,7 @@ RSpec.describe 'Vehicle Api', type: :request do
     end
   end
 
-  describe 'geta all financial_contributions for vehicle' do
+  describe 'gets all financial_contributions for vehicle' do
     let(:user) { create(:user) }
     let(:auth_headers) { user.create_new_auth_token }
     let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }

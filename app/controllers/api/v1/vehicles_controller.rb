@@ -57,7 +57,7 @@ module Api::V1
     end
 
     def set_vehicle
-      @vehicle = current_user.vehicles.find_by(id: params[:id])
+      @vehicle = current_user.vehicles.find(params[:id])
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_10_192557) do
+ActiveRecord::Schema.define(version: 2018_08_31_062219) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,11 +27,6 @@ ActiveRecord::Schema.define(version: 2018_08_10_192557) do
   create_table "active_invoices_revenues", id: false, force: :cascade do |t|
     t.bigint "active_invoice_id", null: false
     t.bigint "revenue_id", null: false
-  end
-
-  create_table "companies_fuel_receipts", id: false, force: :cascade do |t|
-    t.bigint "fuel_receipt_id", null: false
-    t.bigint "company_id", null: false
   end
 
   create_table "contribution_types", force: :cascade do |t|
@@ -81,7 +76,7 @@ ActiveRecord::Schema.define(version: 2018_08_10_192557) do
 
   create_table "fuel_receipts", force: :cascade do |t|
     t.decimal "total"
-    t.datetime "date_of_issue"
+    t.datetime "date"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "vehicle_id"

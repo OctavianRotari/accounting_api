@@ -4,6 +4,6 @@ FactoryBot.define do
     vendor
     total(230)
     litres(200.43)
-    date_of_issue(Date.today)
+    date(Date.today)
   end
 end
