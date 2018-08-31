@@ -88,6 +88,8 @@ RSpec.describe 'Vendors Api', type: :request do
     let(:vehicle) { create(:vehicle, user_id: user.id, vehicle_type_id: vehicle_type.id) }
 
     before :each do
+      vendor2 = create(:vendor, user_id: user.id)
+      create(:fuel_receipt, vendor_id: vendor2.id, vehicle_id: vehicle.id)
       create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id)
       create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id)
     end

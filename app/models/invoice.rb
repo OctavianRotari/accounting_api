@@ -3,7 +3,8 @@ class Invoice < Expense
   include Vehicles::Associatable
 
   belongs_to :vendor
-  has_many :line_items
+  has_many :line_items, dependent: :destroy
+  validates :line_items, presence: true
   has_and_belongs_to_many :vehicles
 
   validates :date, presence: {message: 'required'}

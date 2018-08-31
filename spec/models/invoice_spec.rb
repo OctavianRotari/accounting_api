@@ -17,7 +17,7 @@ RSpec.describe Invoice, type: :model do
       )
       invoice.save
       expect(invoice.errors.full_messages).to eq(
-        [ "Date required", "Deadline required", "Description required", "Serial number required"]
+        [ "Line items can't be blank", "Date required", "Deadline required", "Description required", "Serial number required"]
       )
     end
 
@@ -29,14 +29,14 @@ RSpec.describe Invoice, type: :model do
       it 'creates one line item' do
         line_item_1 = attributes_for(:line_item, invoice_id: @invoice.id)
         @invoice.create_line_items([line_item_1])
-        expect(@invoice.line_items.length).to eq(1)
+        expect(@invoice.line_items.length).to eq(2)
       end
 
       it 'creates more line item' do
         line_item_1 = attributes_for(:line_item, invoice_id: @invoice.id)
         line_item_2 = attributes_for(:line_item, invoice_id: @invoice.id)
         @invoice.create_line_items([line_item_1, line_item_2])
-        expect(@invoice.line_items.length).to eq(2)
+        expect(@invoice.line_items.length).to eq(3)
       end
 
       it 'connects line items to fuel receipts' do
@@ -49,7 +49,7 @@ RSpec.describe Invoice, type: :model do
           create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id).id
         ]
         @invoice.create_line_items(fuel_receipts_ids, :fuel_receipt)
-        expect(@invoice.line_items.length).to eq(2)
+        expect(@invoice.line_items.length).to eq(3)
       end
     end
   end
@@ -63,7 +63,7 @@ RSpec.describe Invoice, type: :model do
       line_item_1 = attributes_for(:line_item, invoice_id: @invoice.id)
       line_item_2 = attributes_for(:line_item, invoice_id: @invoice.id)
       @invoice.create_line_items([line_item_1, line_item_2])
-      expect(@invoice.total).to eq(19.98)
+      expect(@invoice.total).to eq(29.97)
     end
   end
 
@@ -92,7 +92,7 @@ RSpec.describe Invoice, type: :model do
           Date.today.next_month.beginning_of_month,
           Date.today.next_month.end_of_month
         )
-      ).to eq(19.98)
+      ).to eq(29.97)
     end
   end
 end
