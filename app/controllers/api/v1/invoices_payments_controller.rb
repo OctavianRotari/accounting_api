@@ -20,7 +20,7 @@ module Api::V1
       begin
         payment = invoice.create_payment(hash_payment)
         if payment
-          head :created, location: v1_sanction_payments_url(payment)
+          head :created, location: v1_invoices_payments_url(payment)
         else
           head :unprocessable_entity
         end
