@@ -130,4 +130,19 @@ RSpec.describe 'Vehicle Api', type: :request do
       expect(json.count).to eq(1)
     end
   end
+
+  describe 'get all invoices for vehicle' do
+    let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
+    let(:vendor) { create(:vendor, user_id: user.id) }
+    let(:invoice) { create(:invoice, vendor_id: vendor.id) }
+
+    before do
+      vehicle.invoices << invoice
+      get "/v1/vehicles/#{vehicle.id}/invoices", headers: auth_headers
+    end
+
+    it 'returns all' do
+      expect(json.count).to eq(1)
+    end
+  end
 end
