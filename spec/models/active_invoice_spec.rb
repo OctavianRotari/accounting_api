@@ -16,7 +16,7 @@ RSpec.describe ActiveInvoice, type: :model do
       )
       active_invoice.save
       expect(active_invoice.errors.full_messages).to eq(
-        [ "Date required", "Deadline required", "Description required", "Serial number required"]
+        [ "Sold line items can't be blank", "Date required", "Deadline required", "Description required", "Serial number required"]
       )
     end
 
@@ -26,16 +26,16 @@ RSpec.describe ActiveInvoice, type: :model do
       end
 
       it 'creates one line item' do
-        sold_line_item_1 = attributes_for(:line_item, active_invoice_id: @active_invoice.id)
+        sold_line_item_1 = attributes_for(:sold_line_item, active_invoice_id: @active_invoice.id)
         @active_invoice.create_sold_line_items([sold_line_item_1])
-        expect(@active_invoice.sold_line_items.length).to eq(1)
+        expect(@active_invoice.sold_line_items.length).to eq(2)
       end
 
       it 'creates one line item' do
-        sold_line_item_1 = attributes_for(:line_item, active_invoice_id: @active_invoice.id)
-        sold_line_item_2 = attributes_for(:line_item, active_invoice_id: @active_invoice.id)
+        sold_line_item_1 = attributes_for(:sold_line_item, active_invoice_id: @active_invoice.id)
+        sold_line_item_2 = attributes_for(:sold_line_item, active_invoice_id: @active_invoice.id)
         @active_invoice.create_sold_line_items([sold_line_item_1, sold_line_item_2])
-        expect(@active_invoice.sold_line_items.length).to eq(2)
+        expect(@active_invoice.sold_line_items.length).to eq(3)
       end
     end
   end
@@ -46,10 +46,10 @@ RSpec.describe ActiveInvoice, type: :model do
     end
 
     it 'returns the total of all the line items' do
-      sold_line_item_1 = attributes_for(:line_item, active_invoice_id: @active_invoice.id)
-      sold_line_item_2 = attributes_for(:line_item, active_invoice_id: @active_invoice.id)
+      sold_line_item_1 = attributes_for(:sold_line_item, active_invoice_id: @active_invoice.id)
+      sold_line_item_2 = attributes_for(:sold_line_item, active_invoice_id: @active_invoice.id)
       @active_invoice.create_sold_line_items([sold_line_item_1, sold_line_item_2])
-      expect(@active_invoice.total).to eq(19.98)
+      expect(@active_invoice.total).to eq(3000.0)
     end
   end
 
@@ -78,7 +78,7 @@ RSpec.describe ActiveInvoice, type: :model do
           Date.today.next_month.beginning_of_month,
           Date.today.next_month.end_of_month
         )
-      ).to eq(2000)
+      ).to eq(3000)
     end
   end
 end

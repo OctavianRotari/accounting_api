@@ -29,6 +29,12 @@ Rails.application.routes.draw do
             get 'payments', to: 'invoices_payments#index'
             post 'payments', to: 'invoices_payments#create'
           end
+
+          resources :active_invoices, shallow: true do
+            delete 'sold_line_item/:id', to: 'active_invoices#destroy_sold_line_item'
+            get 'payments', to: 'active_invoices_revenues#index'
+            post 'payments', to: 'active_invoices_revenues#create'
+          end
         end
 
         get 'vendors/:id/fuel_receipts', 

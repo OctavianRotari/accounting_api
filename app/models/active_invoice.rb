@@ -1,11 +1,10 @@
 class ActiveInvoice < Expense
   include Profits::Cashable
-  include Vehicles::Associatable
 
   belongs_to :vendor
   has_many :sold_line_items, dependent: :destroy
-  has_and_belongs_to_many :vehicles
 
+  validates :sold_line_items, presence: true
   validates :date, presence: {message: 'required'}
   validates :deadline, presence: {message: 'required'}
   validates :description, presence: {message: 'required'}
