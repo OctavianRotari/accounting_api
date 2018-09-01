@@ -24,7 +24,8 @@ Rails.application.routes.draw do
         end
 
         resources :vendors, shallow: true do 
-          resources :invoices do
+          resources :invoices, shallow: true do
+            delete 'line_item/:id', to: 'invoices#destroy_line_item'
             get 'payments', to: 'invoices_payments#index'
             post 'payments', to: 'invoices_payments#create'
           end

@@ -83,14 +83,6 @@ RSpec.describe 'Invoices Api', type: :request do
       expect(response).to have_http_status :no_content
     end
 
-    it 'fails if line_items empty' do
-      put "/v1/invoices/#{invoice.id}",
-        headers: auth_headers,
-        params: not_valid_params
-      expect(response).to have_http_status :unprocessable_entity
-      expect(json['message']).to eq('Line items cannot be empty')
-    end
-
     it 'updates line items too' do
       line_item = create(:line_item, invoice_id: invoice.id)
       line_item = line_item.as_json
@@ -114,6 +106,31 @@ RSpec.describe 'Invoices Api', type: :request do
     it 'deletes invoice' do
       delete "/v1/invoices/#{invoice.id}", headers: auth_headers
       expect(response).to have_http_status :no_content
+    end
+
+    it 'deletes errors' do
+      delete "/v1/invoices/#{22}", headers: auth_headers
+      expect(response).to have_http_status :unprocessable_entity
+      expect(json['message']).to eq("undefined method `destroy' for nil:NilClass")
+    end
+
+    describe 'Delete /v1/invoices/:invoice_id/line_item/:id' do
+      let(:line_item) { create(:line_item, invoice_id: invoice.id) }
+
+      it 'deletes line items' do
+        create(:line_item, invoice_id: invoice.id)
+        delete "/v1/invoices/#{invoice.id}/line_item/#{line_item.id}", headers: auth_headers
+        expect(response).to have_http_status :no_content
+        expect(LineItem.where(id: line_item['id'])).to eq([])
+      end
+
+      it 'deletes line items' do
+        first_line_item = Invoice.find(invoice.id).line_items.first
+        LineItem.delete(first_line_item.id)
+        delete "/v1/invoices/#{invoice.id}/line_item/#{line_item.id}", headers: auth_headers
+        expect(response).to have_http_status :unprocessable_entity
+        expect(json['message']).to eq('Invoice should have at leat one line item')
+      end
     end
   end
 

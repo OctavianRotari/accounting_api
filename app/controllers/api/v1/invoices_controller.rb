@@ -31,19 +31,44 @@ module Api::V1
         update_line_item(line_items)
       else
         if !invoice_params["invoice"].blank?
-          @invoice.update(invoice_params)
-          if(@invoice.save) 
-            head :no_content
-          else
-            head :unprocessable_entity
+          begin
+            @invoice.update(invoice_params)
+            if(@invoice.save) 
+              head :no_content
+            else
+              head :unprocessable_entity
+            end
+          rescue => e
+            json_response({message: e}, :unprocessable_entity)
           end
         end
       end
     end
 
     def destroy
-      @invoice.destroy
-      head :no_content
+      begin
+        @invoice.destroy
+        head :no_content
+      rescue => e
+        json_response({message: e}, :unprocessable_entity)
+      end
+    end
+
+    def destroy_line_item
+      begin
+        line_items = Invoice.find(params[:invoice_id]).line_items
+        if line_items.length == 1
+          if line_items.first.id == params[:id].to_i
+            json_response({message: 'Invoice should have at leat one line item'}, :unprocessable_entity)
+          end
+        else
+          line_item = LineItem.find(params[:id])
+          line_item.destroy
+          head :no_content
+        end
+      rescue => e
+        json_response({message: e}, :unprocessable_entity)
+      end
     end
 
     def fuel_receipts
@@ -67,21 +92,21 @@ module Api::V1
     end
 
     def set_invoice
-      @invoice = Invoice.find(params[:id])
+      begin
+        @invoice = Invoice.find(params[:id])
+      rescue => e
+        e
+      end
     end
 
     def update_line_item(line_items)
-      if line_items.length == 0
-        json_response({message: 'Line items cannot be empty'}, :unprocessable_entity)
-      else
-        begin
+      begin
         line_items.map do |line_item|
           db_line_item = LineItem.find(line_item['id'])
           db_line_item.update(line_item)
         end
-        rescue => e
-          json_response({message: e}, :unprocessable_entity)
-        end
+      rescue => e
+        json_response({message: e}, :unprocessable_entity)
       end
     end
   end
