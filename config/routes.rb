@@ -43,6 +43,7 @@ Rails.application.routes.draw do
 
         resources :vehicles, shallow: true do
           resources :fuel_receipts
+          resources :loads
           resources :maintenances, controller: "vehicle_maintenances"
         end
 
