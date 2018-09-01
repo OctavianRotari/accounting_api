@@ -90,7 +90,7 @@ RSpec.describe Vehicle, type: :model do
         :fuel_receipt,
         vehicle_id: @vehicle.id,
         vendor_id: @vendor.id,
-        date_of_issue: Date.today.next_month
+        date: Date.today.next_month
       )
       expect(
         @vehicle.fuel_receipts_total(

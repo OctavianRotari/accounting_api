@@ -22,6 +22,7 @@ module Api::V1
           invoice.line_items << LineItem.new(line_item) 
         end
         if invoice.save
+          link_to_vehicle(invoice)
           head :created, location: v1_other_expenses_url(invoice)
         else
           head :unprocessable_entity
@@ -114,6 +115,19 @@ module Api::V1
       rescue => e
         json_response({message: e}, :unprocessable_entity)
       end
+    end
+
+    def vehicle_param
+      params.require(:invoice).permit(
+        :vehicle_id,
+      )
+    end
+
+    def link_to_vehicle(invoice)
+      if(vehicle_param[:vehicle_id]) 
+        vehicle_id = vehicle_param[:vehicle_id]
+        invoice.associate_to(vehicle_id)
+      end 
     end
   end
 end

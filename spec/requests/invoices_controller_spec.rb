@@ -49,10 +49,40 @@ RSpec.describe 'Invoices Api', type: :request do
 
     it 'creates invoice error' do
       post "/v1/vendors/#{vendor.id}/invoices",
-      headers: auth_headers,
-      params: invalid_params 
+        headers: auth_headers,
+        params: invalid_params 
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: invoice')
+    end
+
+    describe 'vehicle' do
+      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+      let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
+      let(:valid_params_vehicle) do
+        {
+          invoice: {
+            date: Date.today(),
+            deadline: Date.today.next_month(),
+            description: 'Pezzi di ricambio',
+            serial_number: '324321',
+            vehicle_id: vehicle.id,
+            line_items: [{vat: 1, amount: '9.99', description: 'bulloni'}]
+          }
+        }
+      end
+
+      before :each do
+        @vehicle = vehicle
+      end
+
+      it 'links to invoice on create' do
+        vehicle = Vehicle.find(@vehicle.id)
+        post "/v1/vendors/#{vendor.id}/invoices", 
+          headers: auth_headers, 
+          params: valid_params_vehicle
+        expect(response).to have_http_status :created
+        expect(vehicle.invoices).to eq(Invoice.all)
+      end
     end
   end
 

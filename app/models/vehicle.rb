@@ -20,7 +20,7 @@ class Vehicle < ApplicationRecord
   def fuel_receipts_total(start_date = nil, end_date = nil)
     if(start_date and end_date)
       fuel_receipts = self.fuel_receipts.where(
-        date_of_issue: (start_date..end_date)
+        date: (start_date..end_date)
       )
       fuel_receipts.sum(:total).to_f
     else
