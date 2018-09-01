@@ -45,7 +45,7 @@ RSpec.describe 'ActiveInvoiceRevenues Api', type: :request do
     end
 
     it 'create a revenues for a active_invoice active_invoice' do
-      expect {
+     expect {
         post "/v1/active_invoices/#{active_invoice.id}/revenues",
         headers: auth_headers,
         params: valid_params

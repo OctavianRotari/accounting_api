@@ -60,6 +60,7 @@ Rails.application.routes.draw do
           as: 'vehicle_invoices'
 
         resources :payments, only: [:show, :edit, :update, :destroy], controller: "payments"
+        resources :revenues, only: [:show, :edit, :update, :destroy], controller: "revenues"
         resources :vehicle_types
       end
     end
