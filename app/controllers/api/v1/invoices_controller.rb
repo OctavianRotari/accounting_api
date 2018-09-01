@@ -8,6 +8,12 @@ module Api::V1
       json_response(invoices)
     end
 
+    def show
+      invoice = @invoice.as_json
+      invoice['line_items'] = @invoice.line_items
+      json_response(invoice)
+    end
+
     def create
       begin
         invoice = Invoice.new(invoice_params)
@@ -93,7 +99,7 @@ module Api::V1
 
     def set_invoice
       begin
-        @invoice = Invoice.find(params[:id])
+        @invoice = Invoice.includes(:line_items).find(params[:id])
       rescue => e
         e
       end

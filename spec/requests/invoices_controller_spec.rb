@@ -56,6 +56,16 @@ RSpec.describe 'Invoices Api', type: :request do
     end
   end
 
+  describe 'SHOW /v1/invoice' do
+    let(:invoice) { create(:invoice, vendor_id: vendor.id) }
+
+    it 'returns the invoice with line items' do
+      get "/v1/invoices/#{invoice.id}", headers: auth_headers
+      expect(json['description']).to eq("Pezzi di ricambio")
+      expect(json['line_items'].length).to eq(1)
+    end
+  end
+
   describe 'PUT /v1/invoice' do
     let(:invoice) { create(:invoice, vendor_id: vendor.id) }
     let(:valid_params) do
