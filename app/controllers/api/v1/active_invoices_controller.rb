@@ -115,11 +115,5 @@ module Api::V1
         json_response({message: e}, :unprocessable_entity)
       end
     end
-
-    def vehicle_param
-      params.require(:active_invoice).permit(
-        :vehicle_id,
-      )
-    end
   end
 end
