@@ -33,4 +33,17 @@ class Vehicle < ApplicationRecord
     date = Date.parse(tax.date.to_s)
     date.next_year
   end
+
+  def has_active_insurance
+    if(self.insurances.length == 0)
+      false
+    else
+      insurances = self.insurances.where('"date" > ?', Date.today)
+      if(insurances.length > 1)
+        'Vehicle has multiple active insurance check the database'
+      else
+        true
+      end
+    end
+  end
 end

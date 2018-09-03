@@ -4,6 +4,10 @@ FactoryBot.define do
       vendor
     end
 
+    trait :with_vehicle do
+      vehicle
+    end
+
     trait :valid do
       date(Date.today())
       deadline(Date.today.next_year())

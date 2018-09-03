@@ -15,20 +15,53 @@ class Insurance < Expense
 
   def add_receipt(receipt)
     begin
-      payment = {
-        total: receipt[:total],
-        method_of_payment: receipt[:method_of_payment],
-        date: receipt[:date],
-      }
-      payment = Payment.new(payment)
+      payment = create_payment(receipt)
       if payment.save
+        receipt[:insurance_id] = self.id
         receipt = InsuranceReceipt.new(receipt)
-        self.insurance_receipts << receipt
+        if receipt.save
+          self.insurance_receipts << receipt
+          receipt.payments << payment
+        else
+          receipt
+        end
       else
         payment
       end
     rescue => e
       e
     end
+  end
+
+  def self.vehicle_new(insurance)
+    begin
+      vehicle_id = insurance[:vehicle_id]
+      'Pass vehicle id' if !vehicle_id
+      if(Vehicle.find(vehicle_id).has_active_insurance) 
+        'A vehicle cannot have more than one active insurance.'
+      else
+        insurance.delete(:vehicle_id)
+        insurance = Insurance.new(insurance)
+        if insurance.save
+          vehicle = Vehicle.find(vehicle_id)
+          vehicle.insurances << insurance
+        else
+          insurance
+        end
+      end
+    rescue => e
+      e
+    end
+  end
+
+  private
+
+  def create_payment(receipt)
+    payment = {
+      total: receipt[:total],
+      method_of_payment: receipt[:method_of_payment],
+      date: receipt[:date],
+    }
+    Payment.new(payment)
   end
 end
