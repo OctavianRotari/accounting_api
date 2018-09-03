@@ -8,7 +8,7 @@ RSpec.describe 'Salary Payments Api', type: :request do
     let(:salary) { create(:salary, employee_id: employee.id) }
 
     before do
-      payment = attributes_for(:payment)
+      payment = attributes_for(:payment, :valid)
       salary.payments.create(payment)
       get "/v1/salaries/#{salary.id}/payments", headers: auth_headers
     end

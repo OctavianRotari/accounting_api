@@ -6,7 +6,7 @@ RSpec.describe 'Payments Api', type: :request do
     let(:auth_headers) { user.create_new_auth_token }
 
     before :each do
-      @payment = create(:payment)
+      @payment = create(:payment, :valid)
     end
 
     it 'returns the requested payment' do
@@ -30,7 +30,7 @@ RSpec.describe 'Payments Api', type: :request do
     end
 
     before do
-      @payment = create(:payment)
+      @payment = create(:payment, :valid)
     end
 
     it 'updates a payment' do
@@ -46,7 +46,7 @@ RSpec.describe 'Payments Api', type: :request do
     let(:auth_headers) { user.create_new_auth_token }
 
     before do
-      @payment = create(:payment)
+      @payment = create(:payment, :valid)
     end
 
     it 'deletes a invoice' do

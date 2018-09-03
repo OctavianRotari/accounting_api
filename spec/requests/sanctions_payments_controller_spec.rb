@@ -7,7 +7,7 @@ RSpec.describe 'Sanction Payments Api', type: :request do
     let(:sanction) { create(:sanction, user_id: user.id) }
 
     before do
-      payment = attributes_for(:payment)
+      payment = attributes_for(:payment, :valid)
       sanction.payments.create(payment)
       get "/v1/sanctions/#{sanction.id}/payments", headers: auth_headers
     end

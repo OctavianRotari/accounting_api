@@ -8,7 +8,7 @@ RSpec.describe 'Invoice Payments Api', type: :request do
     let(:invoice) { create(:invoice, vendor_id: vendor.id) }
 
     before do
-      payment = attributes_for(:payment)
+      payment = attributes_for(:payment, :valid)
       invoice.payments.create(payment)
       get "/v1/invoices/#{invoice.id}/payments", headers: auth_headers
     end
