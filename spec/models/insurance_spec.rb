@@ -6,7 +6,10 @@ RSpec.describe Insurance, type: :model do
   it { should have_many(:insurance_receipts) }
 
   describe 'create' do
-    it 'fails if there is no fields' do
+    it 'fails if there is no filled fields' do
+      insurance = build(:insurance, :invalid)
+      insurance.save
+      expect(insurance.errors.full_messages).to eq(["Vendor must exist", "Date required", "Deadline required", "Description required", "Total required", "Serial of contract required", "Payment recurrence required"])
     end
   end
 end
