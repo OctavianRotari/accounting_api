@@ -20,28 +20,6 @@ RSpec.describe Insurance, type: :model do
       ])
     end
 
-    describe 'create insurance_receipts' do
-      before :each do
-        @insurance = create(:insurance, :with_vendor, :valid)
-      end
-
-      it 'creates a new insurance receipt connected to a payment' do
-        insurance_receipt = attributes_for(:insurance_receipt, :valid)
-        @insurance.add_receipt(insurance_receipt)
-        expect(@insurance.insurance_receipts.length).to eq(1)
-        expect(Payment.all.length).to eq(1)
-        expect(InsuranceReceipt.first.payments).to eq(Payment.all)
-      end
-
-      it 'returns error if receipt is not valid' do
-        insurance_receipt = attributes_for(:insurance_receipt, :invalid)
-        receipt = @insurance.add_receipt(insurance_receipt)
-        expect(receipt.errors.full_messages).to eq([
-          "Date required", "Total required", "Method of payment required"
-        ])
-      end
-    end
-
     describe 'create insurance with vehicle' do
       before :each do
         user = create(:user)

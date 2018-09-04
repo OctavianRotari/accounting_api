@@ -13,26 +13,6 @@ class Insurance < Expense
   validates :serial_of_contract, presence: {message: 'required'}
   validates :payment_recurrence, presence: {message: 'required'}
 
-  def add_receipt(receipt)
-    begin
-      payment = create_payment(receipt)
-      if payment.save
-        receipt[:insurance_id] = self.id
-        receipt = InsuranceReceipt.new(receipt)
-        if receipt.save
-          self.insurance_receipts << receipt
-          receipt.payments << payment
-        else
-          receipt
-        end
-      else
-        payment
-      end
-    rescue => e
-      e
-    end
-  end
-
   def self.vehicle_new(insurance)
     begin
       vehicle_id = insurance[:vehicle_id]
@@ -55,7 +35,6 @@ class Insurance < Expense
   end
 
   private
-
   def create_payment(receipt)
     payment = {
       total: receipt[:total],
