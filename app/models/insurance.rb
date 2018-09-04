@@ -13,7 +13,7 @@ class Insurance < Expense
   validates :serial_of_contract, presence: {message: 'required'}
   validates :payment_recurrence, presence: {message: 'required'}
 
-  def self.vehicle_new(insurance)
+  def self.vehicle(insurance)
     begin
       vehicle_id = insurance[:vehicle_id]
       'Pass vehicle id' if !vehicle_id

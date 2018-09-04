@@ -24,6 +24,8 @@ Rails.application.routes.draw do
         end
 
         resources :vendors, shallow: true do 
+          resources :insurances, shallow: true
+
           resources :credit_notes, shallow: true do
             get 'revenues', to: 'credit_notes_revenues#index'
             post 'revenues', to: 'credit_notes_revenues#create'

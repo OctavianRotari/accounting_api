@@ -13,11 +13,11 @@ RSpec.describe 'FuelReceipts Api', type: :request do
       get "/v1/vehicles/#{vehicle.id}/fuel_receipts", headers: auth_headers
     end
 
-    it 'returns all fuel receipts for vendor' do
+    it 'returns all fuel receipts for vehicle' do
       expect(json.count).to eq(1)
     end
 
-    it 'checks that the total of the first other expense is correct' do
+    it 'checks that the total of the first fuel_receipt is correct' do
       fuel_receipt = json[0]
       expect(fuel_receipt['total']).to eq('230.0')
     end
@@ -48,7 +48,7 @@ RSpec.describe 'FuelReceipts Api', type: :request do
       expect(response).to have_http_status :created
     end
 
-    it 'creates invoice error' do
+    it 'creates fuel_receipt error' do
       post "/v1/vehicles/#{vehicle.id}/fuel_receipts",
       headers: auth_headers,
       params: invalid_params 

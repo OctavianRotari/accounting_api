@@ -30,12 +30,12 @@ RSpec.describe Insurance, type: :model do
       end
 
       it 'error no vehicle_id' do
-        expect(Insurance.vehicle_new(@insurance).message).to eq("Couldn't find Vehicle without an ID")
+        expect(Insurance.vehicle(@insurance).message).to eq("Couldn't find Vehicle without an ID")
       end
 
       it 'success' do
         @insurance[:vehicle_id] = @vehicle.id
-        Insurance.vehicle_new(@insurance)
+        Insurance.vehicle(@insurance)
         expect(Insurance.all.length).to eq(1)
         expect(@vehicle.insurances).to eq(Insurance.all)
       end
@@ -43,9 +43,9 @@ RSpec.describe Insurance, type: :model do
       it 'error multiple insurance for vehicle' do
         insurance_1 = attributes_for(:insurance, :valid, vendor_id: @vendor.id)
         @insurance[:vehicle_id] = @vehicle.id
-        Insurance.vehicle_new(@insurance)
+        Insurance.vehicle(@insurance)
         insurance_1[:vehicle_id] = @vehicle.id
-        expect(Insurance.vehicle_new(insurance_1)).to eq(
+        expect(Insurance.vehicle(insurance_1)).to eq(
           'A vehicle cannot have more than one active insurance.'
         )
       end

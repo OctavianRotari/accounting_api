@@ -17,6 +17,11 @@ FactoryBot.define do
       payment_recurrence(2)
     end
 
+    trait :put do
+      description("RCA")
+      total(3400.00)
+    end
+
     trait :invalid do
       date(nil)
       deadline(nil)
