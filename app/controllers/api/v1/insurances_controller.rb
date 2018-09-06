@@ -13,7 +13,8 @@ module Api::V1
         insurance = Insurance.new(insurance_params)
         insurance.vendor_id = params[:vendor_id]
         if insurance.save
-          head :created, location: v1_insurances_url(insurance)
+          link_to_vehicle(insurance)
+          head :created, location: v1_insurance_url(insurance)
         else
           head :unprocessable_entity
         end
@@ -66,6 +67,19 @@ module Api::V1
         @insurance = Insurance.find(params[:id])
       rescue => e
         e
+      end
+    end
+
+    def vehicle_param
+      params.require(:insurance).permit(
+        :vehicle_id
+      )
+    end
+
+    def link_to_vehicle(insurance)
+      if(vehicle_param[:vehicle_id])
+        vehicle_id = vehicle_param[:vehicle_id]
+        insurance.associate_to(vehicle_id)
       end
     end
   end

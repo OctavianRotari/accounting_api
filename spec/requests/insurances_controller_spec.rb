@@ -47,6 +47,29 @@ RSpec.describe 'Insurances Api', type: :request do
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: insurance')
     end
+
+    describe 'vehicle' do
+      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+      let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
+      let(:valid_params_vehicle) do
+        {
+          insurance: attributes_for(:insurance, :valid, vendor_id: vendor.id)
+        }
+      end
+
+      before :each do
+        @vehicle = vehicle
+        valid_params_vehicle[:insurance][:vehicle_id] = vehicle.id
+      end
+
+      it 'links to vehicle on create' do
+        post "/v1/vendors/#{vendor.id}/insurances",
+          headers: auth_headers,
+          params: valid_params_vehicle
+        expect(response).to have_http_status :created
+        expect(vehicle.insurances).to eq(Insurance.all)
+      end
+    end
   end
 
   describe 'Put /v1/insurances/#{insurance.id}' do
