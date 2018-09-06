@@ -23,7 +23,7 @@ module Api::V1
         end
         if invoice.save
           link_to_vehicle(invoice)
-          head :created, location: v1_invoices_url(invoice)
+          head :created, location: v1_invoice_url(invoice)
         else
           head :unprocessable_entity
         end
