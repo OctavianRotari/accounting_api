@@ -55,6 +55,34 @@ RSpec.describe 'Invoices Api', type: :request do
       expect(json['message']).to eq('param is missing or the value is empty: invoice')
     end
 
+    describe 'fuel_receipts as line_items' do
+      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+      let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
+
+      before :each do
+        fuel_receipt = create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id)
+        fuel_receipt2 = create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id)
+        @valid_params = {
+          invoice: {
+            date: Date.today(),
+            deadline: Date.today.next_month(),
+            description: 'Pezzi di ricambio',
+            serial_number: '324321',
+            line_items: [fuel_receipt, fuel_receipt2]
+          }
+        }
+      end
+
+      it 'creates a line item for each fuel_receipt passed' do
+        expect {
+          post "/v1/vendors/#{vendor.id}/invoices",
+          headers: auth_headers,
+          params: @valid_params
+        }.to change(LineItem, :count).by(+2)
+        expect(response).to have_http_status :created
+      end
+    end
+
     describe 'vehicle' do
       let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
       let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }

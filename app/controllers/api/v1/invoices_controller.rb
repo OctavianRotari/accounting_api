@@ -18,9 +18,6 @@ module Api::V1
       begin
         invoice = Invoice.new(invoice_params)
         invoice.vendor_id = params[:vendor_id]
-        line_items_params["line_items"].map do |line_item| 
-          invoice.line_items << LineItem.new(line_item) 
-        end
         if invoice.save
           link_to_vehicle(invoice)
           head :created, location: v1_invoice_url(invoice)
@@ -89,12 +86,20 @@ module Api::V1
         :deadline,
         :description,
         :serial_number,
+        line_items_params: [[:vat, :amount, :description, :id]],
+        fuel_receipts_params: [[:total, :litres, :date, :id]],
       )
     end
 
     def line_items_params
       params.require(:invoice).permit(
         line_items: [:vat, :amount, :description, :id]
+      )
+    end
+
+    def fuel_receipts_params
+      params.require(:invoice).permit(
+        fuel_receipts: [:total, :litres, :date, :id]
       )
     end
 

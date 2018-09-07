@@ -145,4 +145,29 @@ RSpec.describe 'Vehicle Api', type: :request do
       expect(json.count).to eq(1)
     end
   end
+
+  describe 'insurances' do
+    let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
+    let(:vendor) { create(:vendor, user_id: user.id) }
+
+    before :each do
+      @vehicle = vehicle
+    end
+
+    it 'gets all insurances' do
+      insurance = create(:insurance, :valid, vendor_id: vendor.id)
+      @vehicle.insurances << insurance 
+      get "/v1/vehicles/#{vehicle.id}/insurances", headers: auth_headers
+      expect(json.count).to eq(1)
+    end
+
+    it 'get the active insurance' do
+      insurance = create(:insurance, :valid, vendor_id: vendor.id)
+      insurance1 = create(:insurance, :valid, :expired, vendor_id: vendor.id, )
+      @vehicle.insurances << insurance 
+      @vehicle.insurances << insurance1
+      get "/v1/vehicles/#{vehicle.id}/active_insurance", headers: auth_headers
+      expect(json['total']).to eq("3200.00")
+    end
+  end
 end

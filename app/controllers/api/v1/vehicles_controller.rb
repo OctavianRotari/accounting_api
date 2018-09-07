@@ -1,6 +1,15 @@
 module Api::V1
   class VehiclesController < ApiController
-    before_action :set_vehicle, only: [:show, :update, :destroy, :sanctions, :financial_contributions, :invoices]
+    before_action :set_vehicle, only: [
+      :show, 
+      :update, 
+      :destroy, 
+      :sanctions, 
+      :financial_contributions, 
+      :invoices,
+      :insurances,
+      :active_insurance,
+    ]
 
     def index vehicles = current_user.vehicles
       json_response(vehicles)
@@ -16,6 +25,14 @@ module Api::V1
 
     def invoices
       json_response(@vehicle.invoices)
+    end
+
+    def insurances
+      json_response(@vehicle.insurances)
+    end
+
+    def active_insurance
+      json_response(@vehicle.active_insurance)
     end
 
     def show

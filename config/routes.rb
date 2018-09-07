@@ -66,6 +66,14 @@ Rails.application.routes.draw do
           to: 'vehicles#invoices', 
           as: 'vehicle_invoices'
 
+        get 'vehicles/:id/insurances', 
+          to: 'vehicles#insurances', 
+          as: 'vehicle_insurances'
+
+        get 'vehicles/:id/active_insurance', 
+          to: 'vehicles#active_insurance', 
+          as: 'vehicle_active_insurance'
+
         resources :payments, only: [:show, :edit, :update, :destroy], controller: "payments"
         resources :revenues, only: [:show, :edit, :update, :destroy], controller: "revenues"
         resources :vehicle_types
