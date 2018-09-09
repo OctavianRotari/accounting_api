@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Other expenses Api', type: :request do
-  describe 'GET /v1/other_expenses' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
+  let(:user) { User.first }
+  let(:auth_headers) { user.create_new_auth_token }
 
+  describe 'GET /v1/other_expenses' do
     before do
       create(:other_expense, user_id: user.id)
       get '/v1/other_expenses', headers: auth_headers
@@ -21,8 +21,6 @@ RSpec.describe 'Other expenses Api', type: :request do
   end
 
   describe 'POST /v1/other_expenses' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:valid_params) do
       {
         other_expense: {
@@ -56,8 +54,6 @@ RSpec.describe 'Other expenses Api', type: :request do
   end
 
   describe 'PUT /v1/other_expense' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:other_expense) { create(:other_expense, user_id: user.id) }
     let(:valid_params) do
       {
@@ -78,8 +74,6 @@ RSpec.describe 'Other expenses Api', type: :request do
   end
 
   describe 'Delete /v1/other_expense' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:other_expense) { create(:other_expense, user_id: user.id) }
 
     it 'deletes other_expense' do

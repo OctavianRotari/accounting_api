@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'employee Api', type: :request do
-  describe 'GET /v1/employees' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
+  let(:user) { User.first }
+  let(:auth_headers) { user.create_new_auth_token }
 
+  describe 'GET /v1/employees' do
     before do
       create(:employee, user_id: user.id)
       get '/v1/employees', headers: auth_headers
@@ -21,8 +21,6 @@ RSpec.describe 'employee Api', type: :request do
   end
 
   describe 'POST /v1/employees' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:valid_params) do
       {
         employee: {
@@ -57,8 +55,6 @@ RSpec.describe 'employee Api', type: :request do
   end
 
   describe 'PUT /v1/employees/:id' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:valid_params) do
       {
         employee: {
@@ -82,9 +78,6 @@ RSpec.describe 'employee Api', type: :request do
   end
 
   describe 'DELETE /v1/employees/:id' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
-
     before do
       @employee = create(:employee, user_id: user.id)
     end

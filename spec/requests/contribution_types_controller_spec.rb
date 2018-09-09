@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Other expenses Api', type: :request do
-  describe 'GET /v1/contribution_types' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
+  let(:user) { User.first }
+  let(:auth_headers) { user.create_new_auth_token }
 
+  describe 'GET /v1/contribution_types' do
     before do
       create(:contribution_type, user_id: user.id)
       get '/v1/contribution_types', headers: auth_headers
@@ -21,8 +21,6 @@ RSpec.describe 'Other expenses Api', type: :request do
   end
 
   describe 'POST /v1/contribution_types' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:valid_params) do
       {
         contribution_type: {
@@ -54,8 +52,6 @@ RSpec.describe 'Other expenses Api', type: :request do
   end
 
   describe 'PUT /v1/contribution_type' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:contribution_type) { create(:contribution_type, user_id: user.id) }
     let(:valid_params) do
       {
@@ -74,8 +70,6 @@ RSpec.describe 'Other expenses Api', type: :request do
   end
 
   describe 'Delete /v1/contribution_type' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:contribution_type) { create(:contribution_type, user_id: user.id) }
 
     it 'deletes contribution_type' do

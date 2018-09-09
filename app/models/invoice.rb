@@ -16,13 +16,13 @@ class Invoice < Expense
     invoices = self.all_between_dates(start_date, end_date)
     total = 0
     invoices.each do |invoice|
-      total += invoice.line_items.sum(:amount)
+      total += invoice.line_items.sum(:total)
     end
     total.to_f
   end
 
   def total
-    self.line_items.sum(:amount)
+    self.line_items.sum(:total)
   end
 
   private

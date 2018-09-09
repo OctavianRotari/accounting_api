@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Vehicle Api', type: :request do
-  describe 'GET /v1/vehicles/:id/maintenances' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
+  let(:user) { User.first }
+  let(:auth_headers) { user.create_new_auth_token }
 
+  describe 'GET /v1/vehicles/:id/maintenances' do
     before do
       vehicle_type = create(:vehicle_type, user_id: user.id)
       vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
@@ -23,8 +23,6 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'POST /v1/vehicles' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
     let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id,  user_id: user.id) }
     let(:valid_params) do
@@ -62,8 +60,6 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'PUT /v1/maintenances/:id' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
     let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
     let(:valid_params) do
@@ -89,8 +85,6 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'DELETE /v1/vehicles/:id' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
     let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
 

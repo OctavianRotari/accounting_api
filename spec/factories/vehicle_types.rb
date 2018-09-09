@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :vehicle_type do
-    user
+    user(User.first)
     desc "MyString"
   end
 end

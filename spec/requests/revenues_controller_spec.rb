@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Revenues Api', type: :request do
-  describe 'SHOW /v1/revenues/#{revenue.id}' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
+  let(:user) { User.first }
+  let(:auth_headers) { user.create_new_auth_token }
 
+  describe 'SHOW /v1/revenues/#{revenue.id}' do
     before :each do
       @revenue = create(:revenue)
     end
@@ -17,8 +17,6 @@ RSpec.describe 'Revenues Api', type: :request do
   end
 
   describe 'PUT /v1/revenues/#{revenue.id}' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:valid_params) do
       {
         revenue: {
@@ -42,9 +40,6 @@ RSpec.describe 'Revenues Api', type: :request do
   end
 
   describe 'DELETE /v1/revenues/#{revenue.id}' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
-
     before do
       @revenue = create(:revenue)
     end

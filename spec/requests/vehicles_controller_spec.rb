@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Vehicle Api', type: :request do
-  let(:user) { create(:user) }
+  let(:user) { User.first }
   let(:auth_headers) { user.create_new_auth_token }
   let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
 
@@ -167,7 +167,7 @@ RSpec.describe 'Vehicle Api', type: :request do
       @vehicle.insurances << insurance 
       @vehicle.insurances << insurance1
       get "/v1/vehicles/#{vehicle.id}/active_insurance", headers: auth_headers
-      expect(json['total']).to eq("3200.00")
+      expect(json['total']).to eq("3200.0")
     end
   end
 end

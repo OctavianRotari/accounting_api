@@ -11,7 +11,7 @@ RSpec.describe OtherExpense, type: :model do
     end
 
     describe 'record created successfully' do
-      let (:user) { create(:user) }
+      let (:user) { User.first }
 
       before :each do
         user

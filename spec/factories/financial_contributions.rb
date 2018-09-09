@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :financial_contribution do
-    user
+    user(User.first)
     desc('IVA')
     total(10.3)
     date(Date.today())

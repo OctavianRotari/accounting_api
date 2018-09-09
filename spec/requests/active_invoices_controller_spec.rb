@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'ActiveInvoices Api', type: :request do
-  let(:user) { create(:user) }
+  let(:user) { User.first }
   let(:auth_headers) { user.create_new_auth_token }
   let(:vendor) { create(:vendor, user_id: user.id) }
 
@@ -29,7 +29,7 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
           deadline: Date.today.next_month(),
           description: 'Pezzi di ricambio',
           serial_number: '324321',
-          sold_line_items: [{vat: 1, amount: '9.99', description: 'bulloni'}]
+          sold_line_items: [{vat: 1, total: '9.99', description: 'bulloni'}]
         }
       }
     end
@@ -122,25 +122,6 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
       delete "/v1/active_invoices/#{22}", headers: auth_headers
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq("undefined method `destroy' for nil:NilClass")
-    end
-
-    describe 'Delete /v1/active_invoices/:invoice_id/sold_line_item/:id' do
-      let(:sold_line_item) { create(:sold_line_item, active_invoice_id: active_invoice.id) }
-
-      it 'deletes line items' do
-        create(:sold_line_item, active_invoice_id: active_invoice.id)
-        delete "/v1/active_invoices/#{active_invoice.id}/sold_line_item/#{sold_line_item.id}", headers: auth_headers
-        expect(response).to have_http_status :no_content
-        expect(SoldLineItem.where(id: sold_line_item['id'])).to eq([])
-      end
-
-      it 'deletes line items' do
-        first_sold_line_item = ActiveInvoice.find(active_invoice.id).sold_line_items.first
-        SoldLineItem.delete(first_sold_line_item.id)
-        delete "/v1/active_invoices/#{active_invoice.id}/sold_line_item/#{sold_line_item.id}", headers: auth_headers
-        expect(response).to have_http_status :unprocessable_entity
-        expect(json['message']).to eq('ActiveInvoice should have at leat one line item')
-      end
     end
   end
 

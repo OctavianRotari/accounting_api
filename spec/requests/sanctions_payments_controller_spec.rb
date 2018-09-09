@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Sanction Payments Api', type: :request do
+  let(:user) { User.first }
+  let(:auth_headers) { user.create_new_auth_token }
+
   describe 'GET /v1/sanctions/#{sanction.id}/payments' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:sanction) { create(:sanction, user_id: user.id) }
 
     before do
@@ -23,8 +24,6 @@ RSpec.describe 'Sanction Payments Api', type: :request do
   end
 
   describe 'POST /v1/sanctions/#{sanction.id}/payments' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:sanction) { create(:sanction, user_id: user.id) }
     let(:valid_params) do
       {

@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Vehicle types Api', type: :request do
-  describe 'GET /v1/vehicle_types' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
+  let(:user) { User.first }
+  let(:auth_headers) { user.create_new_auth_token }
 
+  describe 'GET /v1/vehicle_types' do
     before do
       create(:vehicle_type, user_id: user.id)
       get '/v1/vehicle_types', headers: auth_headers
@@ -21,8 +21,6 @@ RSpec.describe 'Vehicle types Api', type: :request do
   end
 
   describe 'POST /v1/vehicle_types' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:valid_params) do
       {
         vehicle_type: {
@@ -55,8 +53,6 @@ RSpec.describe 'Vehicle types Api', type: :request do
   end
 
   describe 'PUT /v1/vehicle_type/:id' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:valid_params) do
       {
         vehicle_type: {

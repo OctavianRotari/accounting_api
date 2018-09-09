@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'FinancialContributions Api', type: :request do
-  describe 'GET /v1/financial_contributions' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
+  let(:user) { User.first }
+  let(:auth_headers) { user.create_new_auth_token }
 
+  describe 'GET /v1/financial_contributions' do
     before do
       contribution_type = create(:contribution_type, user_id: user.id)
       create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id)
@@ -22,8 +22,6 @@ RSpec.describe 'FinancialContributions Api', type: :request do
   end
 
   describe 'POST /v1/financial_contributions' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:contribution_type) { create(:contribution_type, user_id: user.id) }
     let(:valid_params) do
       {
@@ -90,8 +88,6 @@ RSpec.describe 'FinancialContributions Api', type: :request do
   end
 
   describe 'PUT /v1/financial_contribution' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:contribution_type) { create(:contribution_type, user_id: user.id) }
     let(:financial_contribution) { create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id) }
     let(:valid_params) do
@@ -113,8 +109,6 @@ RSpec.describe 'FinancialContributions Api', type: :request do
   end
 
   describe 'Delete /v1/financial_contribution' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:contribution_type) { create(:contribution_type, user_id: user.id) }
     let(:financial_contribution) { create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id) }
 

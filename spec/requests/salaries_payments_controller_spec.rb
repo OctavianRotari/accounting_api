@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Salary Payments Api', type: :request do
+  let(:user) { User.first }
+  let(:auth_headers) { user.create_new_auth_token }
+
   describe 'GET /v1/salaries/#{salary.id}/payments' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:employee) { create(:employee, user_id: user.id) }
     let(:salary) { create(:salary, employee_id: employee.id) }
 
@@ -24,8 +25,6 @@ RSpec.describe 'Salary Payments Api', type: :request do
   end
 
   describe 'POST /v1/salaries/#{salary.id}/payments' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:employee) { create(:employee, user_id: user.id) }
     let(:salary) { create(:salary, employee_id: employee.id) }
     let(:valid_params) do

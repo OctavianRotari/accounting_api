@@ -1,17 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe 'Vendors Api', type: :request do
-  let(:user) { create(:user) }
+  let(:user) { User.first }
   let(:auth_headers) { user.create_new_auth_token }
 
   describe 'GET /v1/vendors' do
     before do
       create(:vendor, user_id: user.id)
       get '/v1/vendors', headers: auth_headers
-    end
-
-    it 'return vendors for user' do
-      expect(json.count).to eq(1)
     end
 
     it 'checks that the address of the vendor is correct' do

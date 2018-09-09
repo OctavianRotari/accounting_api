@@ -9,7 +9,7 @@ RSpec.describe Vendor, type: :model do
   it { should have_many(:credit_notes) }
 
   describe 'user create a vendor' do
-    let(:user) { create(:user) }
+    let(:user) { User.first }
 
     before :each do
       user

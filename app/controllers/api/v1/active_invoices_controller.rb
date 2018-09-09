@@ -93,7 +93,7 @@ module Api::V1
 
     def sold_line_items_params
       params.require(:active_invoice).permit(
-        sold_line_items: [:vat, :amount, :description, :id]
+        sold_line_items: [:vat, :total, :description, :id]
       )
     end
 

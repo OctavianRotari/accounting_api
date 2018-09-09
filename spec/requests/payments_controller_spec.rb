@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Payments Api', type: :request do
-  describe 'SHOW /v1/payments/#{payment.id}' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
+  let(:user) { User.first }
+  let(:auth_headers) { user.create_new_auth_token }
 
+  describe 'SHOW /v1/payments/#{payment.id}' do
     before :each do
       @payment = create(:payment, :valid)
     end
@@ -17,8 +17,6 @@ RSpec.describe 'Payments Api', type: :request do
   end
 
   describe 'PUT /v1/payments/#{payment.id}' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
     let(:valid_params) do
       {
         payment: {
@@ -42,9 +40,6 @@ RSpec.describe 'Payments Api', type: :request do
   end
 
   describe 'DELETE /v1/payments/#{payment.id}' do
-    let(:user) { create(:user) }
-    let(:auth_headers) { user.create_new_auth_token }
-
     before do
       @payment = create(:payment, :valid)
     end

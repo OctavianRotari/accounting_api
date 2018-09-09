@@ -22,7 +22,7 @@ RSpec.describe Insurance, type: :model do
 
     describe 'create insurance with vehicle' do
       before :each do
-        user = create(:user)
+        user = User.first
         @vendor = create(:vendor, user_id: user.id)
         vehicle_type = create(:vehicle_type, user_id: user.id)
         @insurance = attributes_for(:insurance, :valid, vendor_id: @vendor.id)

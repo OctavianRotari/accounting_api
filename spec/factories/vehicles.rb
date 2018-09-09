@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :vehicle do
-    user
+    user(User.first)
     plate('EH535RV')
     vehicle_type
     charge_general_expenses(true)

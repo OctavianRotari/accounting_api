@@ -22,7 +22,7 @@ RSpec.describe Vehicle, type: :model do
 
     describe 'tax deadlines' do
       before :each do
-        @user = create(:user)
+        @user = User.first
         @vehicle_type = create(:vehicle_type, user_id: @user.id)
         @vehicle = create(:vehicle, vehicle_type_id: @vehicle_type.id, user_id: @user.id)
       end
@@ -38,7 +38,7 @@ RSpec.describe Vehicle, type: :model do
 
   describe 'sanctions' do
     before :each do
-      @user = create(:user)
+      @user = User.first
       @vehicle_type = create(:vehicle_type, user_id: @user.id)
       @vehicle = create(:vehicle, vehicle_type_id: @vehicle_type.id, user_id: @user.id)
       @vendor = create(:vendor, user_id: @user.id)
@@ -70,10 +70,9 @@ RSpec.describe Vehicle, type: :model do
   end
 
   describe 'fuel receipts' do
-    let(:user) { create(:user) }
 
     before :each do
-      @user = user
+      @user = User.first
       @vehicle_type = create(:vehicle_type, user_id: @user.id)
       @vehicle = create(:vehicle, vehicle_type_id: @vehicle_type.id, user_id: @user.id)
       @vendor = create(:vendor, user_id: @user.id)

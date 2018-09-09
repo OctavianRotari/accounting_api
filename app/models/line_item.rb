@@ -13,7 +13,7 @@ class LineItem < ApplicationRecord
   def self.create_fuel_line_item(fuel_receipt, invoice_id)
     line_item = {
       vat: 22,
-      amount: fuel_receipt[:total],
+      total: fuel_receipt[:total],
       description: 'Scontrino Carburante',
       quantity: fuel_receipt[:litres],
       invoice_id: invoice_id,

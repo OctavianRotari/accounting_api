@@ -77,7 +77,7 @@ module Api::V1
       params.require(:line_items).map do |p|
         p.permit(
           :vat,
-          :amount,
+          :total,
           :description,
         )
       end

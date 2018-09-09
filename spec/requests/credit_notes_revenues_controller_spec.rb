@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'CerditNoteRevenues Api', type: :request do
-  let(:user) { create(:user) }
+  let(:user) { User.first }
   let(:auth_headers) { user.create_new_auth_token }
   let(:vendor) { create(:vendor, user_id: user.id) }
   let(:credit_note) { create(:credit_note, vendor_id: vendor.id) }

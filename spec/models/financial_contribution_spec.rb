@@ -13,7 +13,7 @@ RSpec.describe FinancialContribution, type: :model do
     end
 
     describe 'record created successfully' do
-      let (:user) { create(:user) }
+      let (:user) { User.first }
       let (:contribution_type) { create(:contribution_type, user_id: user.id) }
       let (:contribution_type_two) { create(:contribution_type, user_id: user.id) }
       let(:contribution1) {create(:financial_contribution, user_id: user.id, contribution_type_id: contribution_type.id)}

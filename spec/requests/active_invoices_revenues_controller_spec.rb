@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'ActiveInvoiceRevenues Api', type: :request do
-  let(:user) { create(:user) }
+  let(:user) { User.first }
   let(:auth_headers) { user.create_new_auth_token }
   let(:vendor) { create(:vendor, user_id: user.id) }
   let(:active_invoice) { create(:active_invoice, vendor_id: vendor.id) }

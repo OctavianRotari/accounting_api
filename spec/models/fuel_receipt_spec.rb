@@ -7,7 +7,7 @@ RSpec.describe FuelReceipt, type: :model do
   it { should have_one(:line_item_to_fuel_receipt) }
 
   describe 'is created' do
-    let(:user) { create(:user) }
+    let (:user) { User.first }
 
     before :each do
       @user = user

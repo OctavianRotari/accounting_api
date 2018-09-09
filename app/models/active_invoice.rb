@@ -15,7 +15,7 @@ class ActiveInvoice < Expense
     active_invoices = self.all_between_dates(start_date, end_date)
     total = 0
     active_invoices.each do |active_invoice|
-      total += active_invoice.sold_line_items.sum(:amount)
+      total += active_invoice.sold_line_items.sum(:total)
     end
     total.to_f
   end
@@ -27,6 +27,6 @@ class ActiveInvoice < Expense
   end
 
   def total
-    self.sold_line_items.sum(:amount)
+    self.sold_line_items.sum(:total)
   end
 end
