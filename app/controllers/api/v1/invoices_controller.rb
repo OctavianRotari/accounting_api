@@ -10,7 +10,7 @@ module Api::V1
 
     def show
       invoice = @invoice.as_json
-      invoice['line_items'] = @invoice.line_items
+      invoice['items'] = @invoice.line_items
       json_response(invoice)
     end
 
@@ -18,6 +18,7 @@ module Api::V1
       begin
         invoice = Invoice.new(invoice_params)
         invoice.vendor_id = params[:vendor_id]
+        invoice[:items] = items_params
         if invoice.save
           link_to_vehicle(invoice)
           head :created, location: v1_invoice_url(invoice)
@@ -30,14 +31,14 @@ module Api::V1
     end
 
     def update
-      line_items = line_items_params["line_items"]
-      if line_items
-        update_line_item(line_items)
+      items = items_params["items"]
+      if items
+        update_item(line_items)
       else
         if !invoice_params["invoice"].blank?
           begin
             @invoice.update(invoice_params)
-            if(@invoice.save) 
+            if(@invoice.save)
               head :no_content
             else
               head :unprocessable_entity
@@ -60,14 +61,14 @@ module Api::V1
 
     def destroy_line_item
       begin
-        line_items = Invoice.find(params[:invoice_id]).line_items
-        if line_items.length == 1
-          if line_items.first.id == params[:id].to_i
+        items = Invoice.find(params[:invoice_id]).items
+        if items.length == 1
+          if items.first.id == params[:id].to_i
             json_response({message: 'Invoice should have at leat one line item'}, :unprocessable_entity)
           end
         else
-          line_item = LineItem.find(params[:id])
-          line_item.destroy
+          item = LineItem.find(params[:id])
+          item.destroy
           head :no_content
         end
       rescue => e
@@ -86,36 +87,28 @@ module Api::V1
         :deadline,
         :description,
         :serial_number,
-        line_items_params: [[:vat, :amount, :description, :id]],
-        fuel_receipts_params: [[:total, :litres, :date, :id]],
       )
     end
 
-    def line_items_params
+    def items_params
       params.require(:invoice).permit(
-        line_items: [:vat, :amount, :description, :id]
-      )
-    end
-
-    def fuel_receipts_params
-      params.require(:invoice).permit(
-        fuel_receipts: [:total, :litres, :date, :id]
+        items: [:vat, :amount, :description, :id]
       )
     end
 
     def set_invoice
       begin
-        @invoice = Invoice.includes(:line_items).find(params[:id])
+        @invoice = Invoice.includes(:items).find(params[:id])
       rescue => e
         e
       end
     end
 
-    def update_line_item(line_items)
+    def update_item(line_items)
       begin
-        line_items.map do |line_item|
-          db_line_item = LineItem.find(line_item['id'])
-          db_line_item.update(line_item)
+        items.map do |line_item|
+          db_item = LineItem.find(line_item['id'])
+          db_item.update(line_item)
         end
       rescue => e
         json_response({message: e}, :unprocessable_entity)
@@ -129,10 +122,10 @@ module Api::V1
     end
 
     def link_to_vehicle(invoice)
-      if(vehicle_param[:vehicle_id]) 
+      if(vehicle_param[:vehicle_id])
         vehicle_id = vehicle_param[:vehicle_id]
         invoice.associate_to(vehicle_id)
-      end 
+      end
     end
   end
 end

@@ -9,7 +9,7 @@ module Api::V1
     end
 
     def create
-      begin 
+      begin
         insurance = Insurance.new(insurance_params)
         insurance.vendor_id = params[:vendor_id]
         if insurance.save
@@ -63,7 +63,7 @@ module Api::V1
     end
 
     def set_insurance
-      begin 
+      begin
         @insurance = Insurance.find(params[:id])
       rescue => e
         e

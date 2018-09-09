@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_02_115110) do
+ActiveRecord::Schema.define(version: 2018_09_07_192910) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,11 +86,6 @@ ActiveRecord::Schema.define(version: 2018_09_02_115110) do
     t.index ["vendor_id"], name: "index_fuel_receipts_on_vendor_id"
   end
 
-  create_table "fuel_receipts_line_items", id: false, force: :cascade do |t|
-    t.bigint "line_item_id", null: false
-    t.bigint "fuel_receipt_id", null: false
-  end
-
   create_table "insurance_receipts", force: :cascade do |t|
     t.decimal "total"
     t.string "method_of_payment"
@@ -148,6 +143,15 @@ ActiveRecord::Schema.define(version: 2018_09_02_115110) do
     t.bigint "vehicle_id", null: false
     t.decimal "total"
     t.index ["invoice_id", "vehicle_id"], name: "index_invoices_vehicles_on_invoice_id_and_vehicle_id"
+  end
+
+  create_table "line_item_to_fuel_receipts", force: :cascade do |t|
+    t.bigint "line_item_id"
+    t.bigint "fuel_receipt_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fuel_receipt_id"], name: "index_line_item_to_fuel_receipts_on_fuel_receipt_id"
+    t.index ["line_item_id"], name: "index_line_item_to_fuel_receipts_on_line_item_id"
   end
 
   create_table "line_items", force: :cascade do |t|
@@ -323,6 +327,8 @@ ActiveRecord::Schema.define(version: 2018_09_02_115110) do
   add_foreign_key "insurance_receipts", "insurances"
   add_foreign_key "insurances", "vendors"
   add_foreign_key "invoices", "vendors"
+  add_foreign_key "line_item_to_fuel_receipts", "fuel_receipts"
+  add_foreign_key "line_item_to_fuel_receipts", "line_items"
   add_foreign_key "line_items", "invoices"
   add_foreign_key "loads", "vehicles"
   add_foreign_key "loads", "vendors"

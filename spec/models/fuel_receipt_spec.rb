@@ -4,7 +4,7 @@ RSpec.describe FuelReceipt, type: :model do
   it { should belong_to(:vendor) }
   it { should belong_to(:vehicle) }
 
-  it { should have_and_belong_to_many(:line_item) }
+  it { should have_one(:line_item_to_fuel_receipt) }
 
   describe 'is created' do
     let(:user) { create(:user) }
@@ -20,6 +20,17 @@ RSpec.describe FuelReceipt, type: :model do
       create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
       create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
       expect(@vehicle.fuel_receipts.total).to eq(460.0)
+    end
+  end
+
+  describe 'line item to fuel_receipt' do
+    before :each do
+      create(:invoice, :fuel_receipts)
+    end
+
+    it 'return fuel receipt' do
+      fuel_receipt = FuelReceipt.first
+      expect(fuel_receipt.line_item).to eq(LineItem.first)
     end
   end
 end

@@ -7,7 +7,7 @@ RSpec.describe 'Invoices Api', type: :request do
 
   describe 'GET /v1/invoices' do
     before do
-      create(:invoice, vendor_id: vendor.id)
+      create(:invoice, :items, vendor_id: vendor.id)
       get "/v1/vendors/#{vendor.id}/invoices", headers: auth_headers
     end
 
@@ -29,7 +29,7 @@ RSpec.describe 'Invoices Api', type: :request do
           deadline: Date.today.next_month(),
           description: 'Pezzi di ricambio',
           serial_number: '324321',
-          line_items: [{vat: 1, amount: '9.99', description: 'bulloni'}]
+          items: [{vat: 1, amount: '9.99', description: 'bulloni'}]
         }
       }
     end
@@ -50,7 +50,7 @@ RSpec.describe 'Invoices Api', type: :request do
     it 'creates invoice error' do
       post "/v1/vendors/#{vendor.id}/invoices",
         headers: auth_headers,
-        params: invalid_params 
+        params: invalid_params
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: invoice')
     end
@@ -68,7 +68,7 @@ RSpec.describe 'Invoices Api', type: :request do
             deadline: Date.today.next_month(),
             description: 'Pezzi di ricambio',
             serial_number: '324321',
-            line_items: [fuel_receipt, fuel_receipt2]
+            items: [fuel_receipt, fuel_receipt2]
           }
         }
       end
@@ -94,7 +94,7 @@ RSpec.describe 'Invoices Api', type: :request do
             description: 'Pezzi di ricambio',
             serial_number: '324321',
             vehicle_id: vehicle.id,
-            line_items: [{vat: 1, amount: '9.99', description: 'bulloni'}]
+            items: [{vat: 1, amount: '9.99', description: 'bulloni'}]
           }
         }
       end
@@ -105,8 +105,8 @@ RSpec.describe 'Invoices Api', type: :request do
 
       it 'links to invoice on create' do
         vehicle = Vehicle.find(@vehicle.id)
-        post "/v1/vendors/#{vendor.id}/invoices", 
-          headers: auth_headers, 
+        post "/v1/vendors/#{vendor.id}/invoices",
+          headers: auth_headers,
           params: valid_params_vehicle
         expect(response).to have_http_status :created
         expect(vehicle.invoices).to eq(Invoice.all)
@@ -115,17 +115,17 @@ RSpec.describe 'Invoices Api', type: :request do
   end
 
   describe 'SHOW /v1/invoice' do
-    let(:invoice) { create(:invoice, vendor_id: vendor.id) }
+    let(:invoice) { create(:invoice, :items, vendor_id: vendor.id) }
 
     it 'returns the invoice with line items' do
       get "/v1/invoices/#{invoice.id}", headers: auth_headers
       expect(json['description']).to eq("Pezzi di ricambio")
-      expect(json['line_items'].length).to eq(1)
+      expect(json['line_items'].length).to eq(2)
     end
   end
 
   describe 'PUT /v1/invoice' do
-    let(:invoice) { create(:invoice, vendor_id: vendor.id) }
+    let(:invoice) { create(:invoice, :items, vendor_id: vendor.id) }
     let(:valid_params) do
       {
         invoice: {
@@ -169,7 +169,7 @@ RSpec.describe 'Invoices Api', type: :request do
   end
 
   describe 'Delete /v1/invoice' do
-    let(:invoice) { create(:invoice, vendor_id: vendor.id) }
+    let(:invoice) { create(:invoice, :items, vendor_id: vendor.id) }
 
     it 'deletes invoice' do
       delete "/v1/invoices/#{invoice.id}", headers: auth_headers
@@ -202,21 +202,21 @@ RSpec.describe 'Invoices Api', type: :request do
     end
   end
 
-  # describe 'fuel_receipts' do
-  #   let(:invoice) { create(:invoice, user_id: user.id) }
-  #   let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
-  #   let(:vehicle) { create(:vehicle, user_id: user.id, vehicle_type_id: vehicle_type.id) }
+  describe 'fuel_receipts' do
+    let(:invoice) { create(:invoice, :items, user_id: user.id) }
+    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+    let(:vehicle) { create(:vehicle, user_id: user.id, vehicle_type_id: vehicle_type.id) }
 
-  #   before :each do
-  #     invoice2 = create(:invoice, user_id: user.id)
-  #     create(:fuel_receipt, invoice_id: invoice2.id, vehicle_id: vehicle.id)
-  #     create(:fuel_receipt, invoice_id: invoice.id, vehicle_id: vehicle.id)
-  #     create(:fuel_receipt, invoice_id: invoice.id, vehicle_id: vehicle.id)
-  #   end
+    before :each do
+      invoice2 = create(:invoice, :items, user_id: user.id)
+      @fuel_receipt1 = create(:fuel_receipt, invoice_id: invoice2.id, vehicle_id: vehicle.id)
+      @fuel_receipt2 = create(:fuel_receipt, invoice_id: invoice.id, vehicle_id: vehicle.id)
+      @fuel_receipt3 = create(:fuel_receipt, invoice_id: invoice.id, vehicle_id: vehicle.id)
+    end
 
-  #   it 'gets all' do
-  #     get "/v1/invoices/#{invoice.id}/fuel_receipts", headers: auth_headers
-  #     expect(json.count).to eq(2)
-  #   end
-  # end
+    it 'gets all' do
+      get "/v1/invoices/#{invoice.id}/fuel_receipts", headers: auth_headers
+      expect(json.count).to eq(2)
+    end
+  end
 end
