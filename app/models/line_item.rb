@@ -10,6 +10,21 @@ class LineItem < ApplicationRecord
     FuelReceipt.find(relation.fuel_receipt_id)
   end
 
+  def self.create_fuel_line_item(fuel_receipt, invoice_id)
+    line_item = {
+      vat: 22,
+      amount: fuel_receipt[:total],
+      description: 'Scontrino Carburante',
+      quantity: fuel_receipt[:litres],
+      invoice_id: invoice_id,
+    }
+    line_item = LineItem.create(line_item)
+    LineItemToFuelReceipt.create(
+      {line_item_id: line_item[:id], fuel_receipt_id: fuel_receipt[:id]}
+    )
+    true
+  end
+
   private
 
   def check_line_item

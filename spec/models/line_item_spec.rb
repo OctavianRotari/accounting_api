@@ -4,26 +4,19 @@ RSpec.describe LineItem, type: :model do
   it { should belong_to(:invoice) }
   it { should have_one(:line_item_to_fuel_receipt) }
 
-  describe 'line item to fuel_receipt' do
-    before :all do
-      create(:invoice, :fuel_receipts)
-    end
+  describe 'creates line item from fuel_receipt' do
 
-    it 'return fuel receipt' do
-      line_item = LineItem.first
-      expect(line_item.fuel_receipt).to eq(FuelReceipt.first)
-    end
-
-    it 'deletes line item and line_item_to_fuel_receipt' do
-      line_item = LineItem.first
-      expect(line_item.destroy).to eq(line_item)
+    it 'success' do
+      invoice = create(:invoice, :fuel_receipts)
+      fuel_receipt = FuelReceipt.first
+      expect(LineItem.create_fuel_line_item(fuel_receipt, invoice.id)).to eq(true)
     end
   end
 
   describe 'delete line item' do
     before :all do
       line_item = attributes_for(:line_item)
-      @invoice = create(:invoice, items: [line_item], vendor_id: Vendor.first.id)
+      @invoice = create(:invoice)
       line_item[:invoice_id] = @invoice.id 
       @line_items = LineItem.create([line_item])
     end

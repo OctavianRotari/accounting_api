@@ -37,7 +37,7 @@ RSpec.describe 'Invoices Api', type: :request do
       { invoice: {} }
     end
 
-    it 'creates other expense' do
+    it 'creates' do
       expect {
         post "/v1/vendors/#{vendor.id}/invoices",
         headers: auth_headers,
@@ -46,12 +46,65 @@ RSpec.describe 'Invoices Api', type: :request do
       expect(response).to have_http_status :created
     end
 
-    it 'creates invoice error' do
+    it 'creates error' do
       post "/v1/vendors/#{vendor.id}/invoices",
         headers: auth_headers,
         params: invalid_params
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: invoice')
+    end
+
+    describe 'line_items' do
+      let(:valid_params) do
+        {
+          invoice: {
+            date: Date.today(),
+            deadline: Date.today.next_month(),
+            description: 'Pezzi di ricambio',
+            serial_number: '324321',
+          },
+          line_items: [attributes_for(:line_item), attributes_for(:line_item)],
+        }
+      end
+
+      it 'creates line_items' do
+        expect {
+          post "/v1/vendors/#{vendor.id}/invoices",
+          headers: auth_headers,
+          params: valid_params
+        }.to change(Invoice, :count).by(+1)
+        expect(LineItem.all.count).to eq(2)
+        expect(response).to have_http_status :created
+      end
+    end
+
+    describe 'line_items fuel_receipt' do
+      let(:vendor) { create(:vendor, user_id: user.id) }
+      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+      let(:vehicle) { create(:vehicle, user_id: user.id, vehicle_type_id: vehicle_type.id) }
+      let(:fuel_receipt) { create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id) }
+      let(:fuel_receipt_1) { create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id) }
+      let(:valid_params) do
+        {
+          invoice: {
+            date: Date.today(),
+            deadline: Date.today.next_month(),
+            description: 'Pezzi di ricambio',
+            serial_number: '324321',
+          },
+          fuel_receipts_ids: [fuel_receipt.id, fuel_receipt_1.id],
+        }
+      end
+
+      it 'creates line_items' do
+        expect {
+          post "/v1/vendors/#{vendor.id}/invoices",
+          headers: auth_headers,
+          params: valid_params
+        }.to change(Invoice, :count).by(+1)
+        expect(LineItem.all.count).to eq(2)
+        expect(response).to have_http_status :created
+      end
     end
 
     describe 'vehicle' do

@@ -27,18 +27,4 @@ class Invoice < Expense
 
   private
 
-  # def save_fuel_receipts
-  #   items.map do |fuel_receipt|
-  #     line_item = {
-  #       vat: 22,
-  #       amount: fuel_receipt[:total],
-  #       description: 'Scontrino Carburante',
-  #       quantity: fuel_receipt[:litres],
-  #     }
-  #     line_item = self.line_items.create(line_item)
-  #     line_item.line_item_to_fuel_receipt = LineItemToFuelReceipt.create(
-  #       {line_item_id: line_item.id, fuel_receipt_id: fuel_receipt.id}
-  #     )
-  #   end
-  # end
 end

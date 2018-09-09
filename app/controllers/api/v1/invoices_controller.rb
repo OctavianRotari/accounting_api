@@ -18,6 +18,12 @@ module Api::V1
         invoice = Invoice.new(invoice_params)
         invoice.vendor_id = params[:vendor_id]
         if invoice.save
+          if(line_items_params)
+            create_line_items(invoice)
+          end
+          if(fuel_receipts_ids_params)
+            link_fuel_receipt_to(invoice)
+          end
           link_to_vehicle(invoice)
           head :created, location: v1_invoice_url(invoice)
         else
@@ -64,6 +70,36 @@ module Api::V1
         :description,
         :serial_number,
       )
+    end
+
+    def line_items_params
+      return false if !params.has_key?(:line_items)
+      params.require(:line_items).map do |p|
+        p.permit(
+          :vat,
+          :amount,
+          :description,
+        )
+      end
+    end
+
+    def fuel_receipts_ids_params
+      return false if !params.has_key?(:fuel_receipts_ids)
+      params.require(:fuel_receipts_ids).map { |p| p }
+    end
+
+    def create_line_items(invoice)
+      line_items_params.map do |line_item_param|
+        line_item_param[:invoice_id] = invoice.id
+        LineItem.create(line_item_param)
+      end
+    end
+
+    def link_fuel_receipt_to(invoice)
+      fuel_receipts_ids_params.map do |id|
+        fuel_receipt = FuelReceipt.find(id)
+        LineItem.create_fuel_line_item(fuel_receipt, invoice.id)
+      end
     end
 
     def set_invoice
