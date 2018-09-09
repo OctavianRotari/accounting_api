@@ -18,7 +18,6 @@ RSpec.describe Invoice, type: :model do
       invoice.save
       expect(invoice.errors.full_messages).to eq(
         [
-          "Items can't be blank",
           "Date required",
           "Deadline required",
           "Description required",
@@ -34,12 +33,6 @@ RSpec.describe Invoice, type: :model do
 
       it 'creates more line item' do
         expect(@invoice.line_items.length).to eq(2)
-      end
-
-      it 'connects line items to fuel receipts' do
-        vendor = Vendor.first
-        invoice = create(:invoice, :fuel_receipts, vendor_id: vendor.id)
-        expect(invoice.line_items.length).to eq(1)
       end
     end
   end

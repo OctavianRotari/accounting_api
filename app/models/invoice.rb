@@ -1,16 +1,11 @@
 class Invoice < Expense
   include Expenses::Payable
   include Vehicles::Associatable
-  attr_accessor :items
-  attr_accessor :items_type
 
   belongs_to :vendor
   has_many :line_items, dependent: :destroy
   has_and_belongs_to_many :vehicles
 
-  after_save :save_items
-
-  validates :items, presence: true
   validates :date, presence: {message: 'required'}
   validates :deadline, presence: {message: 'required'}
   validates :description, presence: {message: 'required'}
@@ -32,33 +27,18 @@ class Invoice < Expense
 
   private
 
-  def save_items
-    case items_type
-    when 'line_item'
-      save_line_items
-    when 'fuel_receipt'
-      save_fuel_receipts
-    end
-  end
-
-  def save_line_items
-    items.each do |line_item|
-      self.line_items.create(line_item)
-    end
-  end
-
-  def save_fuel_receipts
-    items.map do |fuel_receipt|
-      line_item = {
-        vat: 22,
-        amount: fuel_receipt[:total],
-        description: 'Scontrino Carburante',
-        quantity: fuel_receipt[:litres],
-      }
-      line_item = self.line_items.create(line_item)
-      line_item.line_item_to_fuel_receipt = LineItemToFuelReceipt.create(
-        {line_item_id: line_item.id, fuel_receipt_id: fuel_receipt.id}
-      )
-    end
-  end
+  # def save_fuel_receipts
+  #   items.map do |fuel_receipt|
+  #     line_item = {
+  #       vat: 22,
+  #       amount: fuel_receipt[:total],
+  #       description: 'Scontrino Carburante',
+  #       quantity: fuel_receipt[:litres],
+  #     }
+  #     line_item = self.line_items.create(line_item)
+  #     line_item.line_item_to_fuel_receipt = LineItemToFuelReceipt.create(
+  #       {line_item_id: line_item.id, fuel_receipt_id: fuel_receipt.id}
+  #     )
+  #   end
+  # end
 end
