@@ -16,7 +16,10 @@ RSpec.describe LineItem, type: :model do
       line_item_params = {
         'total': 300.0
       }
-      expect(LineItem.first.update(line_item_params)).to eq(true)
+      line_item = LineItem.first
+      expect(line_item.update(line_item_params)).to eq(true)
+      fuel_receipt = line_item.fuel_receipt
+      expect(fuel_receipt[:total]).to eq(300.0)
     end
   end
 

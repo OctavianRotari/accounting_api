@@ -1,9 +1,10 @@
 class LineItem < ApplicationRecord
   belongs_to :invoice
-  has_one :line_item_to_fuel_receipt
+  has_one :line_item_to_fuel_receipt, dependent: :destroy 
 
   has_one :fuel_receipt, through: :line_item_to_fuel_receipt
   before_destroy :check_line_item
+  after_update :update_fuel_receipt
 
   def fuel_receipt
     relation = self.line_item_to_fuel_receipt
@@ -38,6 +39,13 @@ class LineItem < ApplicationRecord
     invoice_line_items = self.invoice.line_items
     if(invoice_line_items.length === 1 and invoice_line_items === [self]) 
       errors.add(:last, 'line_item for invoice cannot be deleted')
+    end
+  end
+
+  def update_fuel_receipt
+    if(self.fuel_receipt) 
+      fuel_receipt = self.fuel_receipt
+      fuel_receipt.update({total: self.total})
     end
   end
 end
