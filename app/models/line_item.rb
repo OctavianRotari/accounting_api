@@ -7,8 +7,10 @@ class LineItem < ApplicationRecord
   after_update :update_fuel_receipt
 
   def fuel_receipt
-    relation = self.line_item_to_fuel_receipt
-    FuelReceipt.find(relation.fuel_receipt_id)
+    if(self.line_item_to_fuel_receipt)
+      relation = self.line_item_to_fuel_receipt
+      FuelReceipt.find(relation.fuel_receipt_id)
+    end
   end
 
   def self.create_fuel_line_item(fuel_receipt, invoice_id)

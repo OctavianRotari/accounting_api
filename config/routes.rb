@@ -32,13 +32,13 @@ Rails.application.routes.draw do
           end
 
           resources :invoices, shallow: true do
-            resources :line_items, shallow: true, only: [:update, :destroy]
+            resources :line_items, shallow: true, only: [:update, :destroy, :show]
             get 'payments', to: 'invoices_payments#index'
             post 'payments', to: 'invoices_payments#create'
           end
 
           resources :active_invoices, shallow: true do
-            resources :sold_line_items, shallow: true, only: [:update, :destroy]
+            resources :sold_line_items, shallow: true, only: [:update, :destroy, :show]
             get 'revenues', to: 'active_invoices_revenues#index'
             post 'revenues', to: 'active_invoices_revenues#create'
           end
