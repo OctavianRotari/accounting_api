@@ -14,7 +14,7 @@ FactoryBot.define do
     end
 
     trait :fuel_receipts do
-      before(:create) do |invoice|
+      after(:create) do |invoice|
         user = User.first
         vendor = FactoryBot.create(:vendor, user_id: user.id)
         vehicle_type = FactoryBot.create(:vehicle_type, user_id: user.id)
@@ -23,11 +23,13 @@ FactoryBot.define do
           vehicle_type_id: vehicle_type.id, 
           user_id: user.id
         )
-        FactoryBot.create(
+        fuel_receipt = FactoryBot.create(
           :fuel_receipt, 
           vehicle_id: vehicle.id, 
           vendor_id: vendor.id
         )
+        line_item = FactoryBot.create(:line_item, invoice_id: invoice.id)
+        LineItemToFuelReceipt.create({line_item_id: line_item.id, fuel_receipt_id: fuel_receipt.id})
       end
     end
   end

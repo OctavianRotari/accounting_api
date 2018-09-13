@@ -6,6 +6,7 @@ class FuelReceipt < Expense
 
   def line_item
     relation = self.line_item_to_fuel_receipt
+    byebug
     LineItem.find(relation.line_item_id)
   end
 end
