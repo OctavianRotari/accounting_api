@@ -4,7 +4,6 @@ class ActiveInvoice < Expense
   belongs_to :vendor
   has_many :sold_line_items, dependent: :destroy
 
-  validates :sold_line_items, presence: true
   validates :date, presence: {message: 'required'}
   validates :deadline, presence: {message: 'required'}
   validates :description, presence: {message: 'required'}

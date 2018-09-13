@@ -24,12 +24,7 @@ RSpec.describe 'Invoices Api', type: :request do
   describe 'POST /v1/vendors/#{vendor.id}/invoices' do
     let(:valid_params) do
       {
-        invoice: {
-          date: Date.today(),
-          deadline: Date.today.next_month(),
-          description: 'Pezzi di ricambio',
-          serial_number: '324321',
-        }
+        invoice: attributes_for(:invoice)
       }
     end
 
@@ -57,12 +52,7 @@ RSpec.describe 'Invoices Api', type: :request do
     describe 'line_items' do
       let(:valid_params) do
         {
-          invoice: {
-            date: Date.today(),
-            deadline: Date.today.next_month(),
-            description: 'Pezzi di ricambio',
-            serial_number: '324321',
-          },
+          invoice: attributes_for(:invoice),
           line_items: [attributes_for(:line_item), attributes_for(:line_item)],
         }
       end
@@ -86,12 +76,7 @@ RSpec.describe 'Invoices Api', type: :request do
       let(:fuel_receipt_1) { create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id) }
       let(:valid_params) do
         {
-          invoice: {
-            date: Date.today(),
-            deadline: Date.today.next_month(),
-            description: 'Pezzi di ricambio',
-            serial_number: '324321',
-          },
+          invoice: attributes_for(:invoice),
           fuel_receipts_ids: [fuel_receipt.id, fuel_receipt_1.id],
         }
       end
@@ -112,13 +97,7 @@ RSpec.describe 'Invoices Api', type: :request do
       let(:vehicle) { create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id) }
       let(:valid_params_vehicle) do
         {
-          invoice: {
-            date: Date.today(),
-            deadline: Date.today.next_month(),
-            description: 'Pezzi di ricambio',
-            serial_number: '324321',
-            vehicle_id: vehicle.id,
-          }
+          invoice: attributes_for(:invoice, vehicle_id: vehicle.id),
         }
       end
 
@@ -139,7 +118,6 @@ RSpec.describe 'Invoices Api', type: :request do
 
   describe 'SHOW /v1/invoice' do
     let(:invoice) { create(:invoice, vendor_id: vendor.id) }
-
     it 'returns the invoice with line items' do
       get "/v1/invoices/#{invoice.id}", headers: auth_headers
       expect(json['description']).to eq("Pezzi di ricambio")

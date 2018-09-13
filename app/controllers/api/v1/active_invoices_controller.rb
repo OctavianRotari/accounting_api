@@ -1,6 +1,6 @@
 module Api::V1
   class ActiveInvoicesController < ApiController
-    before_action :set_active_invoice, only: [:show, :update, :destroy, :fuel_receipts]
+    before_action :set_invoice, only: [:show, :update, :destroy, :fuel_receipts]
 
     def index
       vendor = Vendor.find(params[:vendor_id])
@@ -10,7 +10,6 @@ module Api::V1
 
     def show
       active_invoice = @active_invoice.as_json
-      active_invoice['sold_line_items'] = @active_invoice.sold_line_items
       json_response(active_invoice)
     end
 
@@ -18,11 +17,11 @@ module Api::V1
       begin
         active_invoice = ActiveInvoice.new(active_invoice_params)
         active_invoice.vendor_id = params[:vendor_id]
-        sold_line_items_params["sold_line_items"].map do |sold_line_item| 
-          active_invoice.sold_line_items << SoldLineItem.new(sold_line_item) 
-        end
         if active_invoice.save
-          head :created, location: v1_other_expenses_url(active_invoice)
+          if(sold_line_items_params)
+            create_sold_line_items(active_invoice)
+          end
+          head :created, location: v1_invoice_url(active_invoice)
         else
           head :unprocessable_entity
         end
@@ -32,21 +31,16 @@ module Api::V1
     end
 
     def update
-      sold_line_items = sold_line_items_params["sold_line_items"]
-      if sold_line_items
-        update_line_item(sold_line_items)
-      else
-        if !active_invoice_params["active_invoice"].blank?
-          begin
-            @active_invoice.update(active_invoice_params)
-            if(@active_invoice.save) 
-              head :no_content
-            else
-              head :unprocessable_entity
-            end
-          rescue => e
-            json_response({message: e}, :unprocessable_entity)
+      if !active_invoice_params["active_invoice"].blank?
+        begin
+          @active_invoice.update(active_invoice_params)
+          if(@active_invoice.save)
+            head :no_content
+          else
+            head :unprocessable_entity
           end
+        rescue => e
+          json_response({message: e}, :unprocessable_entity)
         end
       end
     end
@@ -55,23 +49,6 @@ module Api::V1
       begin
         @active_invoice.destroy
         head :no_content
-      rescue => e
-        json_response({message: e}, :unprocessable_entity)
-      end
-    end
-
-    def destroy_sold_line_item
-      begin
-        sold_line_items = ActiveInvoice.find(params[:active_invoice_id]).sold_line_items
-        if sold_line_items.length == 1
-          if sold_line_items.first.id == params[:id].to_i
-            json_response({message: 'ActiveInvoice should have at leat one line item'}, :unprocessable_entity)
-          end
-        else
-          sold_line_item = SoldLineItem.find(params[:id])
-          sold_line_item.destroy
-          head :no_content
-        end
       rescue => e
         json_response({message: e}, :unprocessable_entity)
       end
@@ -92,28 +69,31 @@ module Api::V1
     end
 
     def sold_line_items_params
-      params.require(:active_invoice).permit(
-        sold_line_items: [:vat, :total, :description, :id]
-      )
-    end
-
-    def set_active_invoice
-      begin
-        @active_invoice = ActiveInvoice.includes(:sold_line_items).find(params[:id])
-      rescue => e
-        e
+      return false if !params.has_key?(:sold_line_items)
+      params.require(:sold_line_items).map do |p|
+        p.permit(
+          :vat,
+          :total,
+          :description,
+        )
       end
     end
 
-    def update_line_item(sold_line_items)
-      begin
-        sold_line_items.map do |sold_line_item|
-          db_line_item = SoldLineItem.find(sold_line_item['id'])
-          db_line_item.update(sold_line_item)
-        end
-      rescue => e
-        json_response({message: e}, :unprocessable_entity)
+    def fuel_receipts_ids_params
+      return false if !params.has_key?(:fuel_receipts_ids)
+      params.require(:fuel_receipts_ids).map { |p| p }
+    end
+
+    def create_sold_line_items(active_invoice)
+      sold_line_items_params.map do |sold_line_item_param|
+        sold_line_item_param[:active_invoice_id] = active_invoice.id
+        SoldLineItem.create(sold_line_item_param)
       end
+    end
+
+
+    def set_invoice
+      @active_invoice = ActiveInvoice.includes(:sold_line_items).find(params[:id])
     end
   end
 end

@@ -24,7 +24,4 @@ class Invoice < Expense
   def total
     self.line_items.sum(:total)
   end
-
-  private
-
 end
