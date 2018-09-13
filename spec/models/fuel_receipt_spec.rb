@@ -32,5 +32,18 @@ RSpec.describe FuelReceipt, type: :model do
       fuel_receipt = FuelReceipt.first
       expect(fuel_receipt.line_item).to eq(LineItem.first)
     end
+
+    it 'updates success' do
+      create(:invoice, :fuel_receipts)
+      fuel_receipt_params = {
+        'total': 300.0,
+        'litres': 400,
+      }
+      fuel_receipt = FuelReceipt.first
+      expect(fuel_receipt.update(fuel_receipt_params)).to eq(true)
+      line_item = fuel_receipt.line_item
+      expect(line_item[:total]).to eq(300.0)
+      expect(line_item[:quantity]).to eq(400)
+    end
   end
 end

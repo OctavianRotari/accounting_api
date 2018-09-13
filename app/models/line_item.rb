@@ -43,7 +43,7 @@ class LineItem < ApplicationRecord
   end
 
   def update_fuel_receipt
-    if(self.fuel_receipt) 
+    if(self.fuel_receipt and self.fuel_receipt[:total] != self.total) 
       fuel_receipt = self.fuel_receipt
       fuel_receipt.update({total: self.total})
     end
