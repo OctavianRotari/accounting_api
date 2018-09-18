@@ -10,8 +10,10 @@ class Load < ApplicationRecord
   end
 
   def sold_line_item
-    relation = self.sold_line_item_to_load
-    SoldLineItem.find(relation.sold_line_item_id)
+    if(self.sold_line_item_to_load)
+      relation = self.sold_line_item_to_load
+      SoldLineItem.find(relation.sold_line_item_id)
+    end
   end
 
   private

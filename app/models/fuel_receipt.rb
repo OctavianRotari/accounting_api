@@ -6,8 +6,10 @@ class FuelReceipt < Expense
   after_update :update_line_item
 
   def line_item
-    relation = self.line_item_to_fuel_receipt
-    LineItem.find(relation.line_item_id)
+    if(self.line_item_to_fuel_receipt)
+      relation = self.line_item_to_fuel_receipt
+      LineItem.find(relation.line_item_id)
+    end
   end
 
   private

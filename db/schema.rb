@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_18_182048) do
+ActiveRecord::Schema.define(version: 2018_09_18_190805) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,6 +84,13 @@ ActiveRecord::Schema.define(version: 2018_09_18_182048) do
     t.decimal "litres", default: "0.0"
     t.index ["vehicle_id"], name: "index_fuel_receipts_on_vehicle_id"
     t.index ["vendor_id"], name: "index_fuel_receipts_on_vendor_id"
+  end
+
+  create_table "insurance_receipt_to_payments", force: :cascade do |t|
+    t.bigint "insurance_receipt_id"
+    t.bigint "payment_id"
+    t.index ["insurance_receipt_id"], name: "index_insurance_receipt_to_payments_on_insurance_receipt_id"
+    t.index ["payment_id"], name: "index_insurance_receipt_to_payments_on_payment_id"
   end
 
   create_table "insurance_receipts", force: :cascade do |t|
@@ -332,6 +339,8 @@ ActiveRecord::Schema.define(version: 2018_09_18_182048) do
   add_foreign_key "financial_contributions", "users"
   add_foreign_key "fuel_receipts", "vehicles"
   add_foreign_key "fuel_receipts", "vendors"
+  add_foreign_key "insurance_receipt_to_payments", "insurance_receipts"
+  add_foreign_key "insurance_receipt_to_payments", "payments"
   add_foreign_key "insurance_receipts", "insurances"
   add_foreign_key "insurances", "vendors"
   add_foreign_key "invoices", "vendors"

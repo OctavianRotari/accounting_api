@@ -13,7 +13,15 @@ RSpec.describe InsuranceReceipt, type: :model do
       create(:insurance_receipt, :valid, insurance_id: @insurance.id)
       expect(InsuranceReceipt.all.length).to eq(1)
       expect(Payment.all.length).to eq(1)
-      expect(InsuranceReceipt.first.payments).to eq(Payment.all)
+    end
+
+    it 'updates a new insurance receipt connected to a payment' do
+      insurance_receipt = create(:insurance_receipt, :valid, insurance_id: @insurance.id)
+      insurance_receipt_params = {
+        'total': 60
+      }
+      expect(insurance_receipt.update(insurance_receipt_params)).to eq(true)
+      expect(insurance_receipt.payment[:total]).to eq(60)
     end
 
     it 'returns error if receipt is not valid' do
