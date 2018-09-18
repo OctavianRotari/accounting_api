@@ -24,7 +24,9 @@ Rails.application.routes.draw do
         end
 
         resources :vendors, shallow: true do 
-          resources :insurances, shallow: true
+          resources :insurances, shallow: true do
+            resources :insurance_receipts
+          end
 
           resources :credit_notes, shallow: true do
             get 'revenues', to: 'credit_notes_revenues#index'
