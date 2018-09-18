@@ -67,6 +67,30 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
         expect(response).to have_http_status :created
       end
     end
+
+    describe 'sold_line_items loads' do
+      let(:vendor) { create(:vendor, user_id: user.id) }
+      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+      let(:vehicle) { create(:vehicle, user_id: user.id, vehicle_type_id: vehicle_type.id) }
+      let(:load) { create(:load, vendor_id: vendor.id, vehicle_id: vehicle.id) }
+      let(:load_1) { create(:load, vendor_id: vendor.id, vehicle_id: vehicle.id) }
+      let(:valid_params) do
+        {
+          active_invoice: attributes_for(:active_invoice),
+          loads_ids: [load.id, load_1.id],
+        }
+      end
+
+      it 'creates sold_line_item' do
+        expect {
+          post "/v1/vendors/#{vendor.id}/active_invoices",
+          headers: auth_headers,
+          params: valid_params
+        }.to change(ActiveInvoice, :count).by(+1)
+        expect(SoldLineItem.all.count).to eq(2)
+        expect(response).to have_http_status :created
+      end
+    end
   end
 
   describe 'SHOW /v1/active_invoice' do

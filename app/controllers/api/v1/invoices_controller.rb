@@ -1,6 +1,6 @@
 module Api::V1
   class InvoicesController < ApiController
-    before_action :set_invoice, only: [:show, :update, :destroy, :fuel_receipts]
+    before_action :set_invoice, only: [:show, :update, :destroy]
 
     def index
       vendor = Vendor.find(params[:vendor_id])
@@ -56,10 +56,6 @@ module Api::V1
       rescue => e
         json_response({message: e}, :unprocessable_entity)
       end
-    end
-
-    def fuel_receipts
-      json_response(@invoice.fuel_receipts)
     end
 
     private

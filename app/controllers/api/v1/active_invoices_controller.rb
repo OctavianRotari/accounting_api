@@ -1,6 +1,6 @@
 module Api::V1
   class ActiveInvoicesController < ApiController
-    before_action :set_invoice, only: [:show, :update, :destroy, :fuel_receipts]
+    before_action :set_invoice, only: [:show, :update, :destroy]
 
     def index
       vendor = Vendor.find(params[:vendor_id])
@@ -20,6 +20,9 @@ module Api::V1
         if active_invoice.save
           if(sold_line_items_params)
             create_sold_line_items(active_invoice)
+          end
+          if(loads_ids_params)
+            link_load_to(active_invoice)
           end
           head :created, location: v1_invoice_url(active_invoice)
         else
@@ -54,10 +57,6 @@ module Api::V1
       end
     end
 
-    def fuel_receipts
-      json_response(@active_invoice.fuel_receipts)
-    end
-
     private
     def active_invoice_params
       params.require(:active_invoice).permit(
@@ -79,9 +78,16 @@ module Api::V1
       end
     end
 
-    def fuel_receipts_ids_params
-      return false if !params.has_key?(:fuel_receipts_ids)
-      params.require(:fuel_receipts_ids).map { |p| p }
+    def loads_ids_params
+      return false if !params.has_key?(:loads_ids)
+      params.require(:loads_ids).map { |p| p }
+    end
+
+    def link_load_to(active_invoice)
+      loads_ids_params.map do |id|
+        load = Load.find(id)
+        SoldLineItem.create_load_line_item(load, active_invoice.id)
+      end
     end
 
     def create_sold_line_items(active_invoice)
