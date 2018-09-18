@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_09_121413) do
+ActiveRecord::Schema.define(version: 2018_09_18_182048) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -174,7 +174,7 @@ ActiveRecord::Schema.define(version: 2018_09_09_121413) do
     t.integer "weight"
     t.date "date"
     t.string "desc"
-    t.decimal "price"
+    t.decimal "total"
     t.index ["vehicle_id"], name: "index_loads_on_vehicle_id"
     t.index ["vendor_id"], name: "index_loads_on_vendor_id"
   end
@@ -245,6 +245,13 @@ ActiveRecord::Schema.define(version: 2018_09_09_121413) do
   create_table "sanctions_vehicles", id: false, force: :cascade do |t|
     t.bigint "sanction_id", null: false
     t.bigint "vehicle_id", null: false
+  end
+
+  create_table "sold_line_item_to_loads", force: :cascade do |t|
+    t.bigint "sold_line_item_id"
+    t.bigint "load_id"
+    t.index ["load_id"], name: "index_sold_line_item_to_loads_on_load_id"
+    t.index ["sold_line_item_id"], name: "index_sold_line_item_to_loads_on_sold_line_item_id"
   end
 
   create_table "sold_line_items", force: :cascade do |t|
@@ -337,6 +344,8 @@ ActiveRecord::Schema.define(version: 2018_09_09_121413) do
   add_foreign_key "other_expenses", "users"
   add_foreign_key "salaries", "employees"
   add_foreign_key "sanctions", "users"
+  add_foreign_key "sold_line_item_to_loads", "loads"
+  add_foreign_key "sold_line_item_to_loads", "sold_line_items"
   add_foreign_key "sold_line_items", "active_invoices"
   add_foreign_key "vehicle_types", "users"
   add_foreign_key "vehicles", "users"

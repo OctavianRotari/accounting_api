@@ -28,7 +28,11 @@ FactoryBot.define do
           vehicle_id: vehicle.id, 
           vendor_id: vendor.id
         )
-        line_item = FactoryBot.create(:line_item, invoice_id: invoice.id)
+        line_item = FactoryBot.create(
+          :line_item, 
+          invoice_id: invoice.id, 
+          total: fuel_receipt[:total]
+        )
         LineItemToFuelReceipt.create({line_item_id: line_item.id, fuel_receipt_id: fuel_receipt.id})
       end
     end

@@ -28,14 +28,14 @@ RSpec.describe ActiveInvoice, type: :model do
       it 'creates one line item' do
         sold_line_item_1 = attributes_for(:sold_line_item, active_invoice_id: @active_invoice.id)
         @active_invoice.create_sold_line_items([sold_line_item_1])
-        expect(@active_invoice.sold_line_items.length).to eq(2)
+        expect(@active_invoice.sold_line_items.length).to eq(1)
       end
 
       it 'creates one line item' do
         sold_line_item_1 = attributes_for(:sold_line_item, active_invoice_id: @active_invoice.id)
         sold_line_item_2 = attributes_for(:sold_line_item, active_invoice_id: @active_invoice.id)
         @active_invoice.create_sold_line_items([sold_line_item_1, sold_line_item_2])
-        expect(@active_invoice.sold_line_items.length).to eq(3)
+        expect(@active_invoice.sold_line_items.length).to eq(2)
       end
     end
   end
@@ -45,11 +45,11 @@ RSpec.describe ActiveInvoice, type: :model do
       @active_invoice = create(:active_invoice)
     end
 
-    it 'returns the total of all the line items' do
+    it 'returns the total of all the sold line items' do
       sold_line_item_1 = attributes_for(:sold_line_item, active_invoice_id: @active_invoice.id)
       sold_line_item_2 = attributes_for(:sold_line_item, active_invoice_id: @active_invoice.id)
       @active_invoice.create_sold_line_items([sold_line_item_1, sold_line_item_2])
-      expect(@active_invoice.total).to eq(3000.0)
+      expect(@active_invoice.total).to eq(2000.0)
     end
   end
 
@@ -78,7 +78,7 @@ RSpec.describe ActiveInvoice, type: :model do
           Date.today.next_month.beginning_of_month,
           Date.today.next_month.end_of_month
         )
-      ).to eq(3000)
+      ).to eq(2000)
     end
   end
 end

@@ -2,7 +2,6 @@ class LineItem < ApplicationRecord
   belongs_to :invoice
   has_one :line_item_to_fuel_receipt, dependent: :destroy 
 
-  has_one :fuel_receipt, through: :line_item_to_fuel_receipt
   before_destroy :check_line_item
   after_update :update_fuel_receipt
 
