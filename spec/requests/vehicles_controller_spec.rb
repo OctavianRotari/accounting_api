@@ -7,7 +7,7 @@ RSpec.describe 'Vehicle Api', type: :request do
 
   describe 'GET /v1/vehicles' do
     before do
-      create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
+      @vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
       get '/v1/vehicles', headers: auth_headers
     end
 
@@ -15,7 +15,7 @@ RSpec.describe 'Vehicle Api', type: :request do
       expect(json.count).to eq(1)
     end
 
-    it 'checks that the address of the vendor is correct' do
+    it 'checks that the plate of the vehicle is correct' do
       vehicle = json[0]
       expect(vehicle['plate']).to eq('EH535RV')
     end

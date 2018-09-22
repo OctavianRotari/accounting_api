@@ -67,7 +67,7 @@ RSpec.describe 'Insurances Api', type: :request do
           headers: auth_headers,
           params: valid_params_vehicle
         expect(response).to have_http_status :created
-        expect(vehicle.insurances).to eq(Insurance.all)
+        expect(vehicle.insurances).to eq([Insurance.last])
       end
     end
   end

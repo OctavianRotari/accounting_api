@@ -30,7 +30,7 @@ RSpec.describe FuelReceipt, type: :model do
 
     it 'return fuel receipt' do
       fuel_receipt = FuelReceipt.first
-      expect(fuel_receipt.line_item).to eq(LineItem.first)
+      expect(fuel_receipt.line_item).to eq(LineItem.last)
     end
 
     it 'updates success' do

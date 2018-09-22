@@ -19,36 +19,35 @@ RSpec.describe Insurance, type: :model do
         "Payment recurrence required"
       ])
     end
+  end
 
-    describe 'create insurance with vehicle' do
-      before :each do
-        user = User.first
-        @vendor = create(:vendor, user_id: user.id)
-        vehicle_type = create(:vehicle_type, user_id: user.id)
-        @insurance = attributes_for(:insurance, :valid, vendor_id: @vendor.id)
-        @vehicle = create(:vehicle, user_id: user.id, vehicle_type_id: vehicle_type.id)
-      end
+  describe 'create insurance with vehicle' do
+    before :all do
+      user = User.first
+      @vendor = create(:vendor, user_id: user.id)
+      vehicle_type = create(:vehicle_type, user_id: user.id)
+      @insurance = attributes_for(:insurance, :valid, vendor_id: @vendor.id, total: 4000.0)
+      @vehicle = create(:vehicle, user_id: user.id, vehicle_type_id: vehicle_type.id)
+    end
 
-      it 'error no vehicle_id' do
-        expect(Insurance.vehicle(@insurance).message).to eq("Couldn't find Vehicle without an ID")
-      end
+    it 'error no vehicle_id' do
+      expect(Insurance.vehicle(@insurance).message).to eq("Couldn't find Vehicle without an ID")
+    end
 
-      it 'success' do
-        @insurance[:vehicle_id] = @vehicle.id
-        Insurance.vehicle(@insurance)
-        expect(Insurance.all.length).to eq(1)
-        expect(@vehicle.insurances).to eq(Insurance.all)
-      end
+    it 'success' do
+      @insurance[:vehicle_id] = @vehicle.id
+      Insurance.vehicle(@insurance)
+      expect(@vehicle.insurances).to eq([Insurance.last])
+    end
 
-      it 'error multiple insurance for vehicle' do
-        insurance_1 = attributes_for(:insurance, :valid, vendor_id: @vendor.id)
-        @insurance[:vehicle_id] = @vehicle.id
-        Insurance.vehicle(@insurance)
-        insurance_1[:vehicle_id] = @vehicle.id
-        expect(Insurance.vehicle(insurance_1)).to eq(
-          'A vehicle cannot have more than one active insurance.'
-        )
-      end
+    it 'error multiple insurance for vehicle' do
+      insurance_1 = attributes_for(:insurance, :valid, vendor_id: @vendor.id)
+      @insurance[:vehicle_id] = @vehicle.id
+      Insurance.vehicle(@insurance)
+      insurance_1[:vehicle_id] = @vehicle.id
+      expect(Insurance.vehicle(insurance_1)).to eq(
+        'A vehicle cannot have more than one active insurance.'
+      )
     end
   end
 end

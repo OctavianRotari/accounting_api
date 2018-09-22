@@ -63,7 +63,7 @@ RSpec.describe 'Invoices Api', type: :request do
           headers: auth_headers,
           params: valid_params
         }.to change(Invoice, :count).by(+1)
-        expect(LineItem.all.count).to eq(2)
+        expect(Invoice.last.line_items.count).to eq(2)
         expect(response).to have_http_status :created
       end
     end
@@ -87,7 +87,7 @@ RSpec.describe 'Invoices Api', type: :request do
           headers: auth_headers,
           params: valid_params
         }.to change(Invoice, :count).by(+1)
-        expect(LineItem.all.count).to eq(2)
+        expect(Invoice.last.line_items.count).to eq(2)
         expect(response).to have_http_status :created
       end
     end
@@ -111,7 +111,7 @@ RSpec.describe 'Invoices Api', type: :request do
           headers: auth_headers,
           params: valid_params_vehicle
         expect(response).to have_http_status :created
-        expect(vehicle.invoices).to eq(Invoice.all)
+        expect(vehicle.invoices.count).to eq(1)
       end
     end
   end

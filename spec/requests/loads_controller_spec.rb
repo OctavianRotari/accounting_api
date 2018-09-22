@@ -19,7 +19,7 @@ RSpec.describe 'Loads Api', type: :request do
 
     it 'checks that the total of the first other expense is correct' do
       load = json[0]
-      expect(load['price']).to eq("300.2")
+      expect(load['total']).to eq("300.2")
     end
   end
 
@@ -73,7 +73,7 @@ RSpec.describe 'Loads Api', type: :request do
 
     it 'gets fuel receipt' do
       get "/v1/loads/#{load.id}", headers: auth_headers
-      expect(json["price"]).to eq("300.2")
+      expect(json["total"]).to eq("300.2")
     end
   end
 

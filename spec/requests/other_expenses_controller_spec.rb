@@ -1,13 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe 'Other expenses Api', type: :request do
-  let(:user) { User.first }
-  let(:auth_headers) { user.create_new_auth_token }
+  before :all do
+    user = create(:user)
+    @auth_headers = user.create_new_auth_token
+  end
 
   describe 'GET /v1/other_expenses' do
     before do
-      create(:other_expense, user_id: user.id)
-      get '/v1/other_expenses', headers: auth_headers
+      create(:other_expense)
+      get '/v1/other_expenses', headers: @auth_headers
     end
 
     it 'return other one other expense for user' do
@@ -17,6 +19,13 @@ RSpec.describe 'Other expenses Api', type: :request do
     it 'checks that the total of the first other expense is correct' do
       other_expense = json[0]
       expect(other_expense['total']).to eq('10.3')
+    end
+
+    it 'empty array if other user' do
+      user = create(:user_one)
+      auth_headers = user.create_new_auth_token
+      get '/v1/other_expenses', headers: auth_headers
+      expect(json.count).to eq(0)
     end
   end
 
@@ -38,7 +47,7 @@ RSpec.describe 'Other expenses Api', type: :request do
     it 'creates other expense' do
       expect {
         post '/v1/other_expenses',
-        headers: auth_headers,
+        headers: @auth_headers,
         params: valid_params
       }.to change(OtherExpense, :count).by(+1)
       expect(response).to have_http_status :created
@@ -46,7 +55,7 @@ RSpec.describe 'Other expenses Api', type: :request do
 
     it 'creates invoice error' do
       post '/v1/other_expenses',
-      headers: auth_headers,
+      headers: @auth_headers,
       params: invalid_params 
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: other_expense')
@@ -54,7 +63,7 @@ RSpec.describe 'Other expenses Api', type: :request do
   end
 
   describe 'PUT /v1/other_expense' do
-    let(:other_expense) { create(:other_expense, user_id: user.id) }
+    let(:other_expense) { create(:other_expense) }
     let(:valid_params) do
       {
         other_expense: {
@@ -67,17 +76,17 @@ RSpec.describe 'Other expenses Api', type: :request do
 
     it 'updates other_expense' do
       put "/v1/other_expenses/#{other_expense.id}",
-        headers: auth_headers,
+        headers: @auth_headers,
         params: valid_params
       expect(response).to have_http_status :no_content
     end
   end
 
   describe 'Delete /v1/other_expense' do
-    let(:other_expense) { create(:other_expense, user_id: user.id) }
+    let(:other_expense) { create(:other_expense) }
 
     it 'deletes other_expense' do
-      delete "/v1/other_expenses/#{other_expense.id}", headers: auth_headers
+      delete "/v1/other_expenses/#{other_expense.id}", headers: @auth_headers
       expect(response).to have_http_status :no_content
     end
   end
