@@ -1,13 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe 'employee Api', type: :request do
-  let(:user) { User.first }
-  let(:auth_headers) { user.create_new_auth_token }
+  before :all do
+    user = create(:user)
+    @auth_headers = user.create_new_auth_token
+  end
 
   describe 'GET /v1/employees' do
     before do
-      create(:employee, user_id: user.id)
-      get '/v1/employees', headers: auth_headers
+      create(:employee)
+      get '/v1/employees', headers: @auth_headers
     end
 
     it 'return employees for user' do
@@ -17,6 +19,13 @@ RSpec.describe 'employee Api', type: :request do
     it 'checks that the address of the vendor is correct' do
       employee = json[0]
       expect(employee['name']).to eq('Luigi')
+    end
+
+    it 'empty array if other user' do
+      user = create(:user_one)
+      auth_headers = user.create_new_auth_token
+      get '/v1/employees', headers: auth_headers
+      expect(json.count).to eq(0)
     end
   end
 
@@ -39,7 +48,7 @@ RSpec.describe 'employee Api', type: :request do
     it 'create a employee' do
       expect {
         post "/v1/employees",
-        headers: auth_headers,
+        headers: @auth_headers,
         params: valid_params
       }.to change(Employee, :count).by(+1)
       expect(response).to have_http_status :created
@@ -47,7 +56,7 @@ RSpec.describe 'employee Api', type: :request do
 
     it 'create a employee error' do
       post "/v1/employees",
-        headers: auth_headers,
+        headers: @auth_headers,
         params: invalid_params
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: employee')
@@ -66,12 +75,12 @@ RSpec.describe 'employee Api', type: :request do
     end
 
     before do
-      @employee = create(:employee, user_id: user.id)
+      @employee = create(:employee)
     end
 
     it 'updates a employee' do
       put "/v1/employees/#{@employee[:id]}",
-        headers: auth_headers,
+        headers: @auth_headers,
         params: valid_params
       expect(response).to have_http_status :no_content
     end
@@ -79,12 +88,12 @@ RSpec.describe 'employee Api', type: :request do
 
   describe 'DELETE /v1/employees/:id' do
     before do
-      @employee = create(:employee, user_id: user.id)
+      @employee = create(:employee)
     end
 
     it 'updates a employee' do
       delete "/v1/employees/#{@employee[:id]}",
-        headers: auth_headers
+        headers: @auth_headers
       expect(response).to have_http_status :no_content
     end
   end
