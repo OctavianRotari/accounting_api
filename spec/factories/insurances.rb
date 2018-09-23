@@ -1,8 +1,6 @@
 FactoryBot.define do
   factory :insurance do
-    trait :with_vendor do
-      vendor
-    end
+    vendor
 
     trait :with_vehicle do
       vehicle

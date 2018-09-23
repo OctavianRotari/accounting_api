@@ -17,19 +17,16 @@ RSpec.describe Vehicle, type: :model do
     it 'fails if there is no desc or total or date' do
       vehicle = build(:vehicle, plate: nil, roadworthiness_check_date: nil, vehicle_type_id: nil)
       vehicle.save
-      expect(vehicle.errors.full_messages).to eq(["Vehicle type must exist", "Roadworthiness check date required", "Plate required", "Vehicle type required"])
+      expect(vehicle.errors.full_messages).to eq(["User must exist", "Vehicle type must exist", "Roadworthiness check date required", "Plate required", "Vehicle type required"])
     end
 
     describe 'tax deadlines' do
       before :each do
-        @user = User.first
-        @vehicle_type = create(:vehicle_type, user_id: @user.id)
-        @vehicle = create(:vehicle, vehicle_type_id: @vehicle_type.id, user_id: @user.id)
+        @vehicle = create(:vehicle, :type_one)
       end
 
       it 'returns exipring date tax' do
-        contribution_type = create(:contribution_type, user_id: @user.id)
-        financial_contribution = create(:financial_contribution, user_id: @user.id, contribution_type_id: contribution_type.id)
+        financial_contribution = create(:financial_contribution, :type_one)
         @vehicle.financial_contributions << financial_contribution
         expect(@vehicle.deadline_tax).to eq(Date.today.next_year)
       end
@@ -38,13 +35,11 @@ RSpec.describe Vehicle, type: :model do
 
   describe 'sanctions' do
     before :each do
-      @user = User.first
-      @vehicle_type = create(:vehicle_type, user_id: @user.id)
-      @vehicle = create(:vehicle, vehicle_type_id: @vehicle_type.id, user_id: @user.id)
-      @vendor = create(:vendor, user_id: @user.id)
+      @vehicle = create(:vehicle, :type_one)
+      @vendor = create(:vendor)
 
-      sanction1 = create(:sanction, user_id: @user.id)
-      sanction2 = create(:sanction, user_id: @user.id)
+      sanction1 = create(:sanction)
+      sanction2 = create(:sanction)
 
       @vehicle.sanctions << sanction1
       @vehicle.sanctions << sanction2
@@ -57,7 +52,6 @@ RSpec.describe Vehicle, type: :model do
     it 'returns all sanctions between dates' do
       sanction_next_month = create(
         :sanction,
-        user_id: @user.id,
         date: Date.today.next_month
       )
       @vehicle.sanctions << sanction_next_month
@@ -70,12 +64,9 @@ RSpec.describe Vehicle, type: :model do
   end
 
   describe 'fuel receipts' do
-
     before :each do
-      @user = User.first
-      @vehicle_type = create(:vehicle_type, user_id: @user.id)
-      @vehicle = create(:vehicle, vehicle_type_id: @vehicle_type.id, user_id: @user.id)
-      @vendor = create(:vendor, user_id: @user.id)
+      @vehicle = create(:vehicle, :type_one)
+      @vendor = create(:vendor)
       create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
       create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
     end

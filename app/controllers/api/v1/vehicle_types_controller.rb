@@ -1,14 +1,14 @@
 module Api::V1
   class VehicleTypesController < ApiController
+    before_action :set_vehicle_type, only: [:update]
+
     def index
-      @vehicle_types = current_user.vehicle_types
-      json_response(@vehicle_types)
+      json_response(VehicleType.all)
     end
 
     def update
-      vehicle_type = current_user.vehicle_types.find_by(id: params[:id])
-      vehicle_type.update(vehicle_type_params)
-      if(vehicle_type.save) 
+      @vehicle_type.update(vehicle_type_params)
+      if(@vehicle_type.save) 
         head :no_content
       else
         head :unprocessable_entity
@@ -17,7 +17,8 @@ module Api::V1
 
     def create
       begin
-        vehicle_type = current_user.vehicle_types.new(vehicle_type_params)
+        vehicle_type = VehicleType.new(vehicle_type_params)
+        vehicle_type[:user_id] = current_user.id
         if vehicle_type.save
           head :created, location: v1_vehicle_types_url(vehicle_type)
         else
@@ -32,6 +33,10 @@ module Api::V1
 
     def vehicle_type_params
       params.require(:vehicle_type).permit(:desc)
+    end
+
+    def set_vehicle_type
+      @vehicle_type = VehicleType.find(params[:id])
     end
   end
 end
