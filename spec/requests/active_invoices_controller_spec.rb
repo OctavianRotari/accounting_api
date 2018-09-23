@@ -1,14 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe 'ActiveInvoices Api', type: :request do
-  let(:user) { User.first }
-  let(:auth_headers) { user.create_new_auth_token }
-  let(:vendor) { create(:vendor, user_id: user.id) }
+  before :all do
+    if(User.all.count == 0)
+      user = create(:user)
+    else
+      user = User.find_by(uid: 'octavianrotari@example.com')
+    end
+    @auth_headers = user.create_new_auth_token
+  end
 
   describe 'GET /v1/active_invoices' do
     before do
-      create(:active_invoice, vendor_id: vendor.id)
-      get "/v1/vendors/#{vendor.id}/active_invoices", headers: auth_headers
+      @active_invoice = create(:active_invoice)
+      get "/v1/vendors/#{@active_invoice.vendor.id}/active_invoices", headers: @auth_headers
     end
 
     it 'return active_invoices for user' do
@@ -22,36 +27,34 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
   end
 
   describe 'POST /v1/vendors/#{vendor.id}/active_invoices' do
-    let(:valid_params) do
-      {
+    before :all do
+      @vendor = create(:vendor)
+      @valid_params = {
         active_invoice: attributes_for(:active_invoice)
       }
-    end
-
-    let(:invalid_params) do
-      { active_invoice: {} }
+      @invalid_params = { active_invoice: {} }
     end
 
     it 'creates' do
       expect {
-        post "/v1/vendors/#{vendor.id}/active_invoices",
-        headers: auth_headers,
-        params: valid_params
+        post "/v1/vendors/#{@vendor.id}/active_invoices",
+        headers: @auth_headers,
+        params: @valid_params
       }.to change(ActiveInvoice, :count).by(+1)
       expect(response).to have_http_status :created
     end
 
     it 'creates error' do
-      post "/v1/vendors/#{vendor.id}/active_invoices",
-        headers: auth_headers,
-        params: invalid_params
+      post "/v1/vendors/#{@vendor.id}/active_invoices",
+        headers: @auth_headers,
+        params: @invalid_params
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: active_invoice')
     end
 
     describe 'sold_line_items' do
-      let(:valid_params) do
-        {
+      before :all do
+        @valid_params_item = {
           active_invoice: attributes_for(:active_invoice),
           sold_line_items: [attributes_for(:sold_line_item), attributes_for(:sold_line_item)],
         }
@@ -59,9 +62,9 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
 
       it 'creates sold_line_items' do
         expect {
-          post "/v1/vendors/#{vendor.id}/active_invoices",
-          headers: auth_headers,
-          params: valid_params
+          post "/v1/vendors/#{@vendor.id}/active_invoices",
+          headers: @auth_headers,
+          params: @valid_params_item
         }.to change(ActiveInvoice, :count).by(+1)
         expect(SoldLineItem.all.count).to eq(2)
         expect(response).to have_http_status :created
@@ -69,23 +72,20 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
     end
 
     describe 'sold_line_items loads' do
-      let(:vendor) { create(:vendor, user_id: user.id) }
-      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
-      let(:vehicle) { create(:vehicle, user_id: user.id, vehicle_type_id: vehicle_type.id) }
-      let(:load) { create(:load, vendor_id: vendor.id, vehicle_id: vehicle.id) }
-      let(:load_1) { create(:load, vendor_id: vendor.id, vehicle_id: vehicle.id) }
-      let(:valid_params) do
-        {
-          active_invoice: attributes_for(:active_invoice),
-          loads_ids: [load.id, load_1.id],
-        }
+      before :all do
+        load = create(:load)
+        load_one = create(:load)
+        @valid_params = {
+            active_invoice: attributes_for(:active_invoice),
+            loads_ids: [load.id, load_one.id],
+          }
       end
 
       it 'creates sold_line_item' do
         expect {
-          post "/v1/vendors/#{vendor.id}/active_invoices",
-          headers: auth_headers,
-          params: valid_params
+          post "/v1/vendors/#{@vendor.id}/active_invoices",
+          headers: @auth_headers,
+          params: @valid_params
         }.to change(ActiveInvoice, :count).by(+1)
         expect(SoldLineItem.all.count).to eq(2)
         expect(response).to have_http_status :created
@@ -94,17 +94,17 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
   end
 
   describe 'SHOW /v1/active_invoice' do
-    let(:active_invoice) { create(:active_invoice, vendor_id: vendor.id) }
+    let(:active_invoice) { create(:active_invoice) }
     it 'returns the active_invoice with line items' do
-      get "/v1/active_invoices/#{active_invoice.id}", headers: auth_headers
+      get "/v1/active_invoices/#{active_invoice.id}", headers: @auth_headers
       expect(json['description']).to eq("I bought something")
     end
   end
 
   describe 'PUT /v1/active_invoice' do
-    let(:active_invoice) { create(:active_invoice, vendor_id: vendor.id) }
-    let(:valid_params) do
-      {
+    before :all do
+      @active_invoice = create(:active_invoice)
+      @valid_params = {
         active_invoice: {
           date: Date.today(),
           deadline: Date.today.next_month(),
@@ -112,26 +112,22 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
           serial_number: '324321',
         }
       }
-    end
-    let(:not_valid_params) do
-      {
-        active_invoice: {}
-      }
+      @invalid_params = { active_invoice: {} }
     end
 
     it 'updates active_invoice' do
-      put "/v1/active_invoices/#{active_invoice.id}",
-        headers: auth_headers,
-        params: valid_params
+      put "/v1/active_invoices/#{@active_invoice.id}",
+        headers: @auth_headers,
+        params: @valid_params
       expect(response).to have_http_status :no_content
     end
   end
 
   describe 'Delete /v1/active_invoice' do
-    let(:active_invoice) { create(:active_invoice, vendor_id: vendor.id) }
+    let(:active_invoice) { create(:active_invoice) }
 
     it 'deletes active_invoice' do
-      delete "/v1/active_invoices/#{active_invoice.id}", headers: auth_headers
+      delete "/v1/active_invoices/#{active_invoice.id}", headers: @auth_headers
       expect(response).to have_http_status :no_content
     end
   end

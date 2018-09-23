@@ -12,7 +12,6 @@ RSpec.describe FinancialContribution, type: :model do
       expect(financial_contribution.errors.full_messages).to eq(
         [
           "User must exist", 
-          "Contribution type must exist", 
           "Desc required", 
           "Total required", 
           "Date required"
@@ -22,7 +21,7 @@ RSpec.describe FinancialContribution, type: :model do
 
     describe 'record created successfully' do
       before :all do
-        @constribution1 = create(:financial_contribution, :type_one)
+        @constribution1 = create(:financial_contribution)
         @constribution2 = create(:financial_contribution, :type_two)
         user = attributes_for(:user)
         @user = User.find_by(uid: user[:email])
@@ -33,7 +32,7 @@ RSpec.describe FinancialContribution, type: :model do
       end
 
       it 'returns all records for the specified category' do
-        contribution_factory = attributes_for(:financial_contribution, :type_one)
+        contribution_factory = attributes_for(:financial_contribution)
         expect(@user.financial_contributions.where(contribution_type_id: contribution_factory[:contribution_type_id]).count).to eq(1)
       end
 

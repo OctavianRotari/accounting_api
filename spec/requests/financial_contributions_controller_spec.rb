@@ -2,13 +2,17 @@ require 'rails_helper'
 
 RSpec.describe 'FinancialContributions Api', type: :request do
   before :all do
-    user = create(:user)
+    if(User.all.count == 0)
+      user = create(:user)
+    else
+      user = User.find_by(uid: 'octavianrotari@example.com')
+    end
     @auth_headers = user.create_new_auth_token
   end
 
   describe 'GET /v1/financial_contributions' do
     before do
-      create(:financial_contribution, :type_one)
+      create(:financial_contribution)
       get '/v1/financial_contributions', headers: @auth_headers
     end
 
@@ -25,7 +29,7 @@ RSpec.describe 'FinancialContributions Api', type: :request do
   describe 'POST /v1/financial_contributions' do
     let(:valid_params) do
       {
-        financial_contribution: attributes_for(:financial_contribution, :type_two)
+        financial_contribution: attributes_for(:financial_contribution)
       }
     end
 
@@ -51,15 +55,13 @@ RSpec.describe 'FinancialContributions Api', type: :request do
     end
 
     describe 'POST a vehicle finacial contribution' do
-      let(:vehicle_type) { create(:vehicle_type, :type_one) }
-
       before do
-        @vehicle = create(:vehicle, :type_one)
+        @vehicle = create(:vehicle)
       end
 
       let(:valid_params) do
         {
-          financial_contribution: attributes_for(:financial_contribution, :type_two)
+          financial_contribution: attributes_for(:financial_contribution)
         }
       end
 
@@ -78,7 +80,7 @@ RSpec.describe 'FinancialContributions Api', type: :request do
   end
 
   describe 'PUT /v1/financial_contribution' do
-    let(:financial_contribution) { create(:financial_contribution, :type_one) }
+    let(:financial_contribution) { create(:financial_contribution) }
     let(:valid_params) do
       {
         financial_contribution: {
@@ -98,7 +100,7 @@ RSpec.describe 'FinancialContributions Api', type: :request do
   end
 
   describe 'Delete /v1/financial_contribution' do
-    let(:financial_contribution) { create(:financial_contribution, :type_one) }
+    let(:financial_contribution) { create(:financial_contribution) }
 
     it 'deletes financial_contribution' do
       delete "/v1/financial_contributions/#{financial_contribution.id}", headers: @auth_headers
@@ -107,8 +109,8 @@ RSpec.describe 'FinancialContributions Api', type: :request do
 
     describe 'vehicle_contribution' do
       before :each do
-        @vehicle = create(:vehicle, :type_one)
-        @financial_contribution = create(:financial_contribution, :type_one) 
+        @vehicle = create(:vehicle)
+        @financial_contribution = create(:financial_contribution) 
         @financial_contribution.vehicles << @vehicle
       end
 

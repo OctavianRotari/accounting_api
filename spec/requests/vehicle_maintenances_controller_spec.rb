@@ -2,13 +2,17 @@ require 'rails_helper'
 
 RSpec.describe 'Vehicle Api', type: :request do
   before :all do
-    user = create(:user)
+    if(User.all.count == 0)
+      user = create(:user)
+    else
+      user = User.find_by(uid: 'octavianrotari@example.com')
+    end
     @auth_headers = user.create_new_auth_token
   end
 
   describe 'GET /v1/vehicles/:id/maintenances' do
     before do
-      vehicle = create(:vehicle, :type_one)
+      vehicle = create(:vehicle)
       create(:maintenance, vehicle_id: vehicle.id)
       get "/v1/vehicles/#{vehicle.id}/maintenances", headers: @auth_headers
     end
@@ -24,7 +28,7 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'POST /v1/vehicles' do
-    let(:vehicle) { create(:vehicle, :type_one) }
+    let(:vehicle) { create(:vehicle) }
     let(:valid_params) do
       {
         maintenance: {
@@ -61,7 +65,7 @@ RSpec.describe 'Vehicle Api', type: :request do
 
   describe 'PUT /v1/maintenances/:id' do
     let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
-    let(:vehicle) { create(:vehicle, :type_one) }
+    let(:vehicle) { create(:vehicle) }
     let(:valid_params) do
       {
         maintenance: {
@@ -85,7 +89,7 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'DELETE /v1/vehicles/:id' do
-    let(:vehicle) { create(:vehicle, :type_one) }
+    let(:vehicle) { create(:vehicle) }
 
     before do
       @maintenance = create(:maintenance, vehicle_id: vehicle.id)

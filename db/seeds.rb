@@ -41,12 +41,3 @@ VehicleType.create([
   { desc: 'rimorchio'},
   { desc: 'semirimorchio'}
 ])
-
-# User.create(
-#   {
-#     uid: 'octavianrotari@example.com', 
-#     email: 'octavianrotari@example.com', 
-#     password: 'password', 
-#     password_confirmation: 'password'
-#   }
-# )

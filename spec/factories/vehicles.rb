@@ -13,10 +13,7 @@ FactoryBot.define do
     plate('EH535RV')
     charge_general_expenses(true)
     roadworthiness_check_date(Date.today.next_month)
-
-    trait :type_one do
-      vehicle_type_id(1)
-    end
+    vehicle_type_id(1)
 
     trait :type_two do
       vehicle_type_id(2)

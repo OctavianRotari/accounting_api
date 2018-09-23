@@ -22,11 +22,11 @@ RSpec.describe Vehicle, type: :model do
 
     describe 'tax deadlines' do
       before :each do
-        @vehicle = create(:vehicle, :type_one)
+        @vehicle = create(:vehicle)
       end
 
       it 'returns exipring date tax' do
-        financial_contribution = create(:financial_contribution, :type_one)
+        financial_contribution = create(:financial_contribution)
         @vehicle.financial_contributions << financial_contribution
         expect(@vehicle.deadline_tax).to eq(Date.today.next_year)
       end
@@ -35,7 +35,7 @@ RSpec.describe Vehicle, type: :model do
 
   describe 'sanctions' do
     before :each do
-      @vehicle = create(:vehicle, :type_one)
+      @vehicle = create(:vehicle)
       @vendor = create(:vendor)
 
       sanction1 = create(:sanction)
@@ -65,7 +65,7 @@ RSpec.describe Vehicle, type: :model do
 
   describe 'fuel receipts' do
     before :each do
-      @vehicle = create(:vehicle, :type_one)
+      @vehicle = create(:vehicle)
       @vendor = create(:vendor)
       create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)
       create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @vendor.id)

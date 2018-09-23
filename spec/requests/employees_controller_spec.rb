@@ -2,7 +2,11 @@ require 'rails_helper'
 
 RSpec.describe 'employee Api', type: :request do
   before :all do
-    user = create(:user)
+    if(User.all.count == 0)
+      user = create(:user)
+    else
+      user = User.find_by(uid: 'octavianrotari@example.com')
+    end
     @auth_headers = user.create_new_auth_token
   end
 

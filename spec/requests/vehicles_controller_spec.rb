@@ -2,13 +2,17 @@ require 'rails_helper'
 
 RSpec.describe 'Vehicle Api', type: :request do
   before :all do
-    user = create(:user)
+    if(User.all.count == 0)
+      user = create(:user)
+    else
+      user = User.find_by(uid: 'octavianrotari@example.com')
+    end
     @auth_headers = user.create_new_auth_token
   end
 
   describe 'GET /v1/vehicles' do
     before do
-      @vehicle = create(:vehicle, :type_one)
+      @vehicle = create(:vehicle)
       get '/v1/vehicles', headers: @auth_headers
     end
 
@@ -24,7 +28,7 @@ RSpec.describe 'Vehicle Api', type: :request do
 
   describe 'GET /v1/vehicles/:id' do
     before :all do
-      @vehicle = create(:vehicle, :type_one)
+      @vehicle = create(:vehicle)
     end
 
     it 'success' do
@@ -36,7 +40,7 @@ RSpec.describe 'Vehicle Api', type: :request do
   describe 'POST /v1/vehicles' do
     let(:valid_params) do
       {
-        vehicle: attributes_for(:vehicle, :type_one)
+        vehicle: attributes_for(:vehicle)
       }
     end
     let(:invalid_params) do
@@ -73,7 +77,7 @@ RSpec.describe 'Vehicle Api', type: :request do
     end
 
     before do
-      @vehicle = create(:vehicle, :type_one)
+      @vehicle = create(:vehicle)
     end
 
     it 'updates a vehicle' do
@@ -86,7 +90,7 @@ RSpec.describe 'Vehicle Api', type: :request do
 
   describe 'DELETE /v1/vehicles/:id' do
     before do
-      @vehicle = create(:vehicle, :type_one)
+      @vehicle = create(:vehicle)
     end
 
     it 'updates a vehicle' do
@@ -97,7 +101,7 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'gets all sanctions for vehicle' do
-    let(:vehicle) { create(:vehicle, :type_one) }
+    let(:vehicle) { create(:vehicle) }
     let(:sanction) {create(:sanction)}
 
     before do
@@ -111,9 +115,9 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'gets all financial_contributions for vehicle' do
-    let(:financial_contribution) { create(:financial_contribution, :type_one) }
+    let(:financial_contribution) { create(:financial_contribution) }
     before :all do
-      @vehicle = create(:vehicle, :type_one)
+      @vehicle = create(:vehicle)
     end
 
     before do
@@ -127,7 +131,7 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'get all invoices for vehicle' do
-    let(:vehicle) { create(:vehicle, :type_one) }
+    let(:vehicle) { create(:vehicle) }
     let(:invoice) { create(:invoice) }
 
     before do
@@ -142,7 +146,7 @@ RSpec.describe 'Vehicle Api', type: :request do
 
   describe 'insurances' do
     before :each do
-      @vehicle = create(:vehicle, :type_one)
+      @vehicle = create(:vehicle)
     end
 
     it 'gets all insurances' do

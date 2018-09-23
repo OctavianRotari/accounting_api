@@ -13,10 +13,7 @@ FactoryBot.define do
     desc('IVA')
     total(10.3)
     date(Date.today())
-
-    trait :type_one do
-      contribution_type_id(1)
-    end
+    contribution_type_id(1)
 
     trait :type_two do
       contribution_type_id(2)
