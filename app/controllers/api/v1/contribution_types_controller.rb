@@ -1,8 +1,7 @@
 module Api::V1
   class ContributionTypesController < ApiController
     def index
-      contribution_types = current_user.contribution_types
-      json_response(contribution_types)
+      json_response(ContributionType.all)
     end
 
     def create
@@ -39,7 +38,7 @@ module Api::V1
     end
 
     def contribution_type
-      current_user.contribution_types.find_by(id: params[:id])
+      ContributionType.find(params[:id])
     end
   end
 end

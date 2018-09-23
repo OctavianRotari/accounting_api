@@ -9,33 +9,36 @@ RSpec.describe FinancialContribution, type: :model do
     it 'fails if there is no desc or total or date' do
       financial_contribution = build(:financial_contribution, desc: nil, total: nil, date: nil)
       financial_contribution.save
-      expect(financial_contribution.errors.full_messages).to eq(["Contribution type must exist", "Desc required", "Total required", "Date required"])
+      expect(financial_contribution.errors.full_messages).to eq(
+        [
+          "User must exist", 
+          "Contribution type must exist", 
+          "Desc required", 
+          "Total required", 
+          "Date required"
+        ]
+      )
     end
 
     describe 'record created successfully' do
-      let (:user) { User.first }
-      let (:contribution_type) { create(:contribution_type, user_id: user.id) }
-      let (:contribution_type_two) { create(:contribution_type, user_id: user.id) }
-      let(:contribution1) {create(:financial_contribution, user_id: user.id, contribution_type_id: contribution_type.id)}
-      let(:contribution2) {create(:financial_contribution, user_id: user.id, contribution_type_id: contribution_type.id)}
-
-      before :each do
-        user
-        contribution1
-        contribution2
-        create(:financial_contribution, user_id: user.id, contribution_type_id: contribution_type_two.id)
+      before :all do
+        @constribution1 = create(:financial_contribution, :type_one)
+        @constribution2 = create(:financial_contribution, :type_two)
+        user = attributes_for(:user)
+        @user = User.find_by(uid: user[:email])
       end
 
       it 'returns the total of all recors' do
-        expect(user.financial_contributions.total).to eq(30.9)
+        expect(@user.financial_contributions.total).to eq(20.6)
       end
 
       it 'returns all records for the specified category' do
-        expect(user.financial_contributions.find_where(contribution_type.id)).to eq([contribution1, contribution2])
+        contribution_factory = attributes_for(:financial_contribution, :type_one)
+        expect(@user.financial_contributions.where(contribution_type_id: contribution_factory[:contribution_type_id]).count).to eq(1)
       end
 
       it 'returns the total only for the specified category' do
-        expect(user.financial_contributions.calc_total_where(contribution_type_two.id)).to eq(10.3)
+        expect(@user.financial_contributions.calc_total_where(@constribution1.contribution_type.id)).to eq(10.3)
       end
     end
   end

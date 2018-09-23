@@ -1,14 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe 'FinancialContributions Api', type: :request do
-  let(:user) { User.first }
-  let(:auth_headers) { user.create_new_auth_token }
+  before :all do
+    user = create(:user)
+    @auth_headers = user.create_new_auth_token
+  end
 
   describe 'GET /v1/financial_contributions' do
     before do
-      contribution_type = create(:contribution_type, user_id: user.id)
-      create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id)
-      get '/v1/financial_contributions', headers: auth_headers
+      create(:financial_contribution, :type_one)
+      get '/v1/financial_contributions', headers: @auth_headers
     end
 
     it 'return other one other expense for user' do
@@ -22,15 +23,9 @@ RSpec.describe 'FinancialContributions Api', type: :request do
   end
 
   describe 'POST /v1/financial_contributions' do
-    let(:contribution_type) { create(:contribution_type, user_id: user.id) }
     let(:valid_params) do
       {
-        financial_contribution: {
-          desc: 'caffe',
-          total: 10.3,
-          date: Date.today(),
-          contribution_type_id: contribution_type.id,
-        }
+        financial_contribution: attributes_for(:financial_contribution, :type_two)
       }
     end
 
@@ -41,7 +36,7 @@ RSpec.describe 'FinancialContributions Api', type: :request do
     it 'creates financial_contributions' do
       expect {
         post '/v1/financial_contributions',
-        headers: auth_headers,
+        headers: @auth_headers,
         params: valid_params
       }.to change(FinancialContribution, :count).by(+1)
       expect(response).to have_http_status :created
@@ -49,36 +44,31 @@ RSpec.describe 'FinancialContributions Api', type: :request do
 
     it 'creates invoice error' do
       post '/v1/financial_contributions',
-      headers: auth_headers,
+      headers: @auth_headers,
       params: invalid_params 
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: financial_contribution')
     end
 
     describe 'POST a vehicle finacial contribution' do
-      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
+      let(:vehicle_type) { create(:vehicle_type, :type_one) }
 
       before do
-        @vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
+        @vehicle = create(:vehicle, :type_one)
       end
 
       let(:valid_params) do
         {
-          financial_contribution: {
-            desc: 'caffe',
-            total: 10.3,
-            date: Date.today(),
-            vehicle_id: @vehicle.id,
-            contribution_type_id: contribution_type.id,
-          }
+          financial_contribution: attributes_for(:financial_contribution, :type_two)
         }
       end
 
       it 'creates financial_contributions vehicle' do
         vehicle = Vehicle.all.find(@vehicle.id)
+        valid_params[:financial_contribution]['vehicle_id'] = vehicle.id
         expect {
           post '/v1/financial_contributions',
-          headers: auth_headers,
+          headers: @auth_headers,
           params: valid_params
         }.to change(FinancialContribution, :count).by(+1)
         expect(vehicle.financial_contributions).to eq(FinancialContribution.all)
@@ -88,8 +78,7 @@ RSpec.describe 'FinancialContributions Api', type: :request do
   end
 
   describe 'PUT /v1/financial_contribution' do
-    let(:contribution_type) { create(:contribution_type, user_id: user.id) }
-    let(:financial_contribution) { create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id) }
+    let(:financial_contribution) { create(:financial_contribution, :type_one) }
     let(:valid_params) do
       {
         financial_contribution: {
@@ -102,32 +91,29 @@ RSpec.describe 'FinancialContributions Api', type: :request do
 
     it 'updates financial_contribution' do
       put "/v1/financial_contributions/#{financial_contribution.id}",
-        headers: auth_headers,
+        headers: @auth_headers,
         params: valid_params
       expect(response).to have_http_status :no_content
     end
   end
 
   describe 'Delete /v1/financial_contribution' do
-    let(:contribution_type) { create(:contribution_type, user_id: user.id) }
-    let(:financial_contribution) { create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id) }
+    let(:financial_contribution) { create(:financial_contribution, :type_one) }
 
     it 'deletes financial_contribution' do
-      delete "/v1/financial_contributions/#{financial_contribution.id}", headers: auth_headers
+      delete "/v1/financial_contributions/#{financial_contribution.id}", headers: @auth_headers
       expect(response).to have_http_status :no_content
     end
 
     describe 'vehicle_contribution' do
-      let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
-
       before :each do
-        @vehicle = create(:vehicle, vehicle_type_id: vehicle_type.id, user_id: user.id)
-        @financial_contribution = create(:financial_contribution, contribution_type_id: contribution_type.id, user_id: user.id) 
+        @vehicle = create(:vehicle, :type_one)
+        @financial_contribution = create(:financial_contribution, :type_one) 
         @financial_contribution.vehicles << @vehicle
       end
 
       it 'deletes the related vehicle_contribution' do 
-        delete "/v1/financial_contributions/#{@financial_contribution.id}", headers: auth_headers
+        delete "/v1/financial_contributions/#{@financial_contribution.id}", headers: @auth_headers
         expect(response).to have_http_status :no_content
         expect(@vehicle.financial_contributions).to eq([])
         expect(FinancialContribution.all).to eq([])

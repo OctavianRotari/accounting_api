@@ -2,7 +2,6 @@ FactoryBot.define do
   factory :other_expense do
     before(:create) do |other_expense|
       if User.all.count == 0
-        puts 'creating new user'
         user = FactoryBot.create(:user)
         other_expense.user = user
       else

@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :contribution_type do
-    desc "MyString"
+    desc "My Contribution"
   end
 end
