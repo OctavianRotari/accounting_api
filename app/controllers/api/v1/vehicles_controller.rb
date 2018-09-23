@@ -11,7 +11,8 @@ module Api::V1
       :active_insurance,
     ]
 
-    def index vehicles = current_user.vehicles
+    def index 
+      vehicles = current_user.vehicles
       json_response(vehicles)
     end
 

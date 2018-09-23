@@ -8,21 +8,17 @@ RSpec.describe 'FinancialContributions Api', type: :request do
       user = User.find_by(uid: 'octavianrotari@example.com')
     end
     @auth_headers = user.create_new_auth_token
+    @financial_contribution = create(:financial_contribution)
   end
 
   describe 'GET /v1/financial_contributions' do
-    before do
-      create(:financial_contribution)
+    before :all do
       get '/v1/financial_contributions', headers: @auth_headers
     end
 
-    it 'return other one other expense for user' do
-      expect(json.count).to eq(1)
-    end
-
     it 'checks that the total of the first other expense is correct' do
-      financial_contribution = json[0]
-      expect(financial_contribution['total']).to eq('10.3')
+      financial_contribution = json.last
+      expect(financial_contribution['total'].to_f).to eq(@financial_contribution[:total].to_f)
     end
   end
 
@@ -73,14 +69,13 @@ RSpec.describe 'FinancialContributions Api', type: :request do
           headers: @auth_headers,
           params: valid_params
         }.to change(FinancialContribution, :count).by(+1)
-        expect(vehicle.financial_contributions).to eq(FinancialContribution.all)
+        expect(vehicle.financial_contributions).to eq(Vehicle.find(@vehicle.id).financial_contributions)
         expect(response).to have_http_status :created
       end
     end
   end
 
   describe 'PUT /v1/financial_contribution' do
-    let(:financial_contribution) { create(:financial_contribution) }
     let(:valid_params) do
       {
         financial_contribution: {
@@ -92,7 +87,7 @@ RSpec.describe 'FinancialContributions Api', type: :request do
     end
 
     it 'updates financial_contribution' do
-      put "/v1/financial_contributions/#{financial_contribution.id}",
+      put "/v1/financial_contributions/#{@financial_contribution.id}",
         headers: @auth_headers,
         params: valid_params
       expect(response).to have_http_status :no_content
@@ -100,17 +95,14 @@ RSpec.describe 'FinancialContributions Api', type: :request do
   end
 
   describe 'Delete /v1/financial_contribution' do
-    let(:financial_contribution) { create(:financial_contribution) }
-
     it 'deletes financial_contribution' do
-      delete "/v1/financial_contributions/#{financial_contribution.id}", headers: @auth_headers
+      delete "/v1/financial_contributions/#{@financial_contribution.id}", headers: @auth_headers
       expect(response).to have_http_status :no_content
     end
 
     describe 'vehicle_contribution' do
       before :each do
         @vehicle = create(:vehicle)
-        @financial_contribution = create(:financial_contribution) 
         @financial_contribution.vehicles << @vehicle
       end
 
@@ -118,7 +110,6 @@ RSpec.describe 'FinancialContributions Api', type: :request do
         delete "/v1/financial_contributions/#{@financial_contribution.id}", headers: @auth_headers
         expect(response).to have_http_status :no_content
         expect(@vehicle.financial_contributions).to eq([])
-        expect(FinancialContribution.all).to eq([])
       end
     end
   end

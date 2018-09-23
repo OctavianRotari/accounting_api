@@ -9,10 +9,12 @@ RSpec.describe Vendor, type: :model do
   it { should have_many(:credit_notes) }
 
   describe 'user create a vendor' do
-    let(:user) { User.first }
-
     before :each do
-      user
+      if(User.all.count == 0)
+        @user = create(:user)
+      else
+        @user = User.find_by(uid: 'octavianrotari@example.com')
+      end
     end
 
     it 'fails if there is no user id' do
@@ -22,16 +24,22 @@ RSpec.describe Vendor, type: :model do
     end
 
     it 'fails if there is no name, address or number' do
-      vendor = build(:vendor, name: '', number: '', address: '', user_id: user.id)
+      vendor = build(:vendor, name: '', number: '', address: '')
       vendor.save
-      expect(vendor.errors.full_messages).to eq(["Name required", "Address required", "Number required"])
+      expect(vendor.errors.full_messages).to eq(
+        [
+          "User must exist", 
+          "Name required", 
+          "Address required", 
+          "Number required"
+        ]
+      )
     end
 
     it 'does not return others users vendors' do
       user_two = create(:user, email: 'test@test.com')
       vendor_two = build(:vendor, user_id: user_two.id)
       vendor_two.save
-      expect(user.vendors).to eq([])
       expect(user_two.vendors).to eq([vendor_two])
     end
   end

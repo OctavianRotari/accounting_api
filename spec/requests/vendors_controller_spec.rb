@@ -1,18 +1,25 @@
 require 'rails_helper'
 
 RSpec.describe 'Vendors Api', type: :request do
-  let(:user) { User.first }
-  let(:auth_headers) { user.create_new_auth_token }
+  before :all do
+    if(User.all.count == 0)
+      user = create(:user)
+    else
+      user = User.find_by(uid: 'octavianrotari@example.com')
+    end
+    @auth_headers = user.create_new_auth_token
+    @vendor = create(:vendor)
+    @vehicle = create(:vehicle)
+  end
 
   describe 'GET /v1/vendors' do
-    before do
-      create(:vendor, user_id: user.id)
-      get '/v1/vendors', headers: auth_headers
+    before :each do
+      get '/v1/vendors', headers: @auth_headers
     end
 
     it 'checks that the address of the vendor is correct' do
-      vendor = json[0]
-      expect(vendor['address']).to eq('5 fowler terrace')
+      vendor = json.last
+      expect(vendor['address']).to eq(@vendor[:address])
     end
   end
 
@@ -34,7 +41,7 @@ RSpec.describe 'Vendors Api', type: :request do
     it 'creates other expense' do
       expect {
         post '/v1/vendors',
-        headers: auth_headers,
+        headers: @auth_headers,
         params: valid_params
       }.to change(Vendor, :count).by(+1)
       expect(response).to have_http_status :created
@@ -42,7 +49,7 @@ RSpec.describe 'Vendors Api', type: :request do
 
     it 'creates invoice error' do
       post '/v1/vendors',
-      headers: auth_headers,
+      headers: @auth_headers,
       params: invalid_params 
       expect(response).to have_http_status :unprocessable_entity
       expect(json['message']).to eq('param is missing or the value is empty: vendor')
@@ -50,7 +57,7 @@ RSpec.describe 'Vendors Api', type: :request do
   end
 
   describe 'PUT /v1/vendor' do
-    let(:vendor) { create(:vendor, user_id: user.id) }
+    let(:vendor) { create(:vendor) }
     let(:valid_params) do
       {
         vendor: {
@@ -63,35 +70,31 @@ RSpec.describe 'Vendors Api', type: :request do
 
     it 'updates vendor' do
       put "/v1/vendors/#{vendor.id}",
-        headers: auth_headers,
+        headers: @auth_headers,
         params: valid_params
       expect(response).to have_http_status :no_content
     end
   end
 
   describe 'Delete /v1/vendor' do
-    let(:vendor) { create(:vendor, user_id: user.id) }
+    let(:vendor) { create(:vendor) }
 
     it 'deletes vendor' do
-      delete "/v1/vendors/#{vendor.id}", headers: auth_headers
+      delete "/v1/vendors/#{vendor.id}", headers: @auth_headers
       expect(response).to have_http_status :no_content
     end
   end
 
   describe 'fuel_receipts' do
-    let(:vendor) { create(:vendor, user_id: user.id) }
-    let(:vehicle_type) { create(:vehicle_type, user_id: user.id) }
-    let(:vehicle) { create(:vehicle, user_id: user.id, vehicle_type_id: vehicle_type.id) }
-
     before :each do
-      vendor2 = create(:vendor, user_id: user.id)
-      create(:fuel_receipt, vendor_id: vendor2.id, vehicle_id: vehicle.id)
-      create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id)
-      create(:fuel_receipt, vendor_id: vendor.id, vehicle_id: vehicle.id)
+      vendor2 = create(:vendor)
+      create(:fuel_receipt, vendor_id: vendor2.id, vehicle_id: @vehicle.id)
+      @fuel_receipt = create(:fuel_receipt, vehicle_id: @vehicle.id)
+      create(:fuel_receipt, vehicle_id: @vehicle.id, vendor_id: @fuel_receipt.vendor.id)
     end
 
     it 'gets all' do
-      get "/v1/vendors/#{vendor.id}/fuel_receipts", headers: auth_headers
+      get "/v1/vendors/#{@fuel_receipt.vendor.id}/fuel_receipts", headers: @auth_headers
       expect(json.count).to eq(2)
     end
   end

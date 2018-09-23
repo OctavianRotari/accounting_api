@@ -16,7 +16,7 @@ RSpec.describe ActiveInvoice, type: :model do
       )
       active_invoice.save
       expect(active_invoice.errors.full_messages).to eq(
-        [ "Date required", "Deadline required", "Description required", "Serial number required"]
+        [ "Date required", "Deadline required", "Description required", "Serial number required" ]
       )
     end
 

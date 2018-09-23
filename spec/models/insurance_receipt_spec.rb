@@ -6,7 +6,7 @@ RSpec.describe InsuranceReceipt, type: :model do
 
   describe 'create insurance_receipts' do
     before :each do
-      @insurance = create(:insurance, :with_vendor, :valid)
+      @insurance = create(:insurance, :valid)
     end
 
     it 'creates a new insurance receipt connected to a payment' do

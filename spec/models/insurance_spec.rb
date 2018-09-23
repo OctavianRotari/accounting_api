@@ -10,7 +10,6 @@ RSpec.describe Insurance, type: :model do
       insurance = build(:insurance, :invalid)
       insurance.save
       expect(insurance.errors.full_messages).to eq([
-        "Vendor must exist", 
         "Date required", 
         "Deadline required", 
         "Description required", 
@@ -23,11 +22,9 @@ RSpec.describe Insurance, type: :model do
 
   describe 'create insurance with vehicle' do
     before :all do
-      user = User.first
-      @vendor = create(:vendor, user_id: user.id)
-      vehicle_type = create(:vehicle_type, user_id: user.id)
+      @vendor = create(:vendor)
       @insurance = attributes_for(:insurance, :valid, vendor_id: @vendor.id, total: 4000.0)
-      @vehicle = create(:vehicle, user_id: user.id, vehicle_type_id: vehicle_type.id)
+      @vehicle = create(:vehicle)
     end
 
     it 'error no vehicle_id' do

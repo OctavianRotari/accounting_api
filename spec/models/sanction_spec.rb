@@ -9,7 +9,14 @@ RSpec.describe Sanction, type: :model do
     it 'fails if there is no desc or total or date' do
       sanction = build(:sanction, total: nil, date: nil, deadline: nil)
       sanction.save
-      expect(sanction.errors.full_messages).to eq(["Total required", "Date required", "Deadline required"])
+      expect(sanction.errors.full_messages).to eq(
+        [
+          "User must exist", 
+          "Total required", 
+          "Date required", 
+          "Deadline required"
+        ]
+      )
     end
 
     describe 'vehicle saction' do

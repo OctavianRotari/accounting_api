@@ -8,29 +8,27 @@ RSpec.describe 'Vehicle Api', type: :request do
       user = User.find_by(uid: 'octavianrotari@example.com')
     end
     @auth_headers = user.create_new_auth_token
+    @vehicle = create(:vehicle, user_id: user.id)
   end
 
   describe 'GET /v1/vehicles' do
-    before do
-      @vehicle = create(:vehicle)
+    before :each do
+      user2 = create(:user_one)
+      create(:vehicle, user_id: user2.id)
       get '/v1/vehicles', headers: @auth_headers
     end
 
     it 'return vehicles for user' do
-      expect(json.count).to eq(1)
+      expect(json.count).to eq(Vehicle.all.count - 1)
     end
 
     it 'checks that the plate of the vehicle is correct' do
-      vehicle = json[0]
-      expect(vehicle['plate']).to eq('EH535RV')
+      vehicle = json.last
+      expect(vehicle['plate']).to eq(@vehicle[:plate])
     end
   end
 
   describe 'GET /v1/vehicles/:id' do
-    before :all do
-      @vehicle = create(:vehicle)
-    end
-
     it 'success' do
       get "/v1/vehicles/#{@vehicle.id}", headers: @auth_headers
       expect(json['plate']).to eq(@vehicle.plate)
@@ -45,8 +43,7 @@ RSpec.describe 'Vehicle Api', type: :request do
     end
     let(:invalid_params) do
       {
-        vehicle: {
-        }
+        vehicle: {}
       }
     end
 
@@ -76,10 +73,6 @@ RSpec.describe 'Vehicle Api', type: :request do
       }
     end
 
-    before do
-      @vehicle = create(:vehicle)
-    end
-
     it 'updates a vehicle' do
       put "/v1/vehicles/#{@vehicle[:id]}",
         headers: @auth_headers,
@@ -89,10 +82,6 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'DELETE /v1/vehicles/:id' do
-    before do
-      @vehicle = create(:vehicle)
-    end
-
     it 'updates a vehicle' do
       delete "/v1/vehicles/#{@vehicle[:id]}",
         headers: @auth_headers
@@ -101,12 +90,10 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'gets all sanctions for vehicle' do
-    let(:vehicle) { create(:vehicle) }
-    let(:sanction) {create(:sanction)}
-
-    before do
-      vehicle.sanctions << sanction
-      get "/v1/vehicles/#{vehicle.id}/sanctions", headers: @auth_headers
+    before :each do
+      sanction = create(:sanction)
+      @vehicle.sanctions << sanction
+      get "/v1/vehicles/#{@vehicle.id}/sanctions", headers: @auth_headers
     end
 
     it 'returns all' do
@@ -115,12 +102,9 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'gets all financial_contributions for vehicle' do
-    let(:financial_contribution) { create(:financial_contribution) }
-    before :all do
+    before :each do
+      financial_contribution = create(:financial_contribution)
       @vehicle = create(:vehicle)
-    end
-
-    before do
       @vehicle.financial_contributions << financial_contribution
       get "/v1/vehicles/#{@vehicle.id}/financial_contributions", headers: @auth_headers
     end
@@ -131,12 +115,10 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'get all invoices for vehicle' do
-    let(:vehicle) { create(:vehicle) }
-    let(:invoice) { create(:invoice) }
-
-    before do
-      vehicle.invoices << invoice
-      get "/v1/vehicles/#{vehicle.id}/invoices", headers: @auth_headers
+    before :each do
+      invoice = create(:invoice)
+      @vehicle.invoices << invoice
+      get "/v1/vehicles/#{@vehicle.id}/invoices", headers: @auth_headers
     end
 
     it 'returns all' do
@@ -145,10 +127,6 @@ RSpec.describe 'Vehicle Api', type: :request do
   end
 
   describe 'insurances' do
-    before :each do
-      @vehicle = create(:vehicle)
-    end
-
     it 'gets all insurances' do
       insurance = create(:insurance, :valid)
       @vehicle.insurances << insurance 

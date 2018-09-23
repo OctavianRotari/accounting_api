@@ -17,7 +17,15 @@ RSpec.describe Vehicle, type: :model do
     it 'fails if there is no desc or total or date' do
       vehicle = build(:vehicle, plate: nil, roadworthiness_check_date: nil, vehicle_type_id: nil)
       vehicle.save
-      expect(vehicle.errors.full_messages).to eq(["User must exist", "Vehicle type must exist", "Roadworthiness check date required", "Plate required", "Vehicle type required"])
+      expect(vehicle.errors.full_messages).to eq(
+        [
+          "User must exist", 
+          "Vehicle type must exist", 
+          "Roadworthiness check date required", 
+          "Plate required", 
+          "Vehicle type required"
+        ]
+      )
     end
 
     describe 'tax deadlines' do

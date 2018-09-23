@@ -8,11 +8,12 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
       user = User.find_by(uid: 'octavianrotari@example.com')
     end
     @auth_headers = user.create_new_auth_token
+    @vendor = create(:vendor)
+    @active_invoice = create(:active_invoice)
   end
 
   describe 'GET /v1/active_invoices' do
-    before do
-      @active_invoice = create(:active_invoice)
+    before :each do
       get "/v1/vendors/#{@active_invoice.vendor.id}/active_invoices", headers: @auth_headers
     end
 
@@ -28,7 +29,6 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
 
   describe 'POST /v1/vendors/#{vendor.id}/active_invoices' do
     before :all do
-      @vendor = create(:vendor)
       @valid_params = {
         active_invoice: attributes_for(:active_invoice)
       }
@@ -66,7 +66,7 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
           headers: @auth_headers,
           params: @valid_params_item
         }.to change(ActiveInvoice, :count).by(+1)
-        expect(SoldLineItem.all.count).to eq(2)
+        expect(ActiveInvoice.last.sold_line_items.count).to eq(2)
         expect(response).to have_http_status :created
       end
     end
@@ -87,23 +87,21 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
           headers: @auth_headers,
           params: @valid_params
         }.to change(ActiveInvoice, :count).by(+1)
-        expect(SoldLineItem.all.count).to eq(2)
+        expect(ActiveInvoice.last.sold_line_items.count).to eq(2)
         expect(response).to have_http_status :created
       end
     end
   end
 
   describe 'SHOW /v1/active_invoice' do
-    let(:active_invoice) { create(:active_invoice) }
     it 'returns the active_invoice with line items' do
-      get "/v1/active_invoices/#{active_invoice.id}", headers: @auth_headers
+      get "/v1/active_invoices/#{@active_invoice.id}", headers: @auth_headers
       expect(json['description']).to eq("I bought something")
     end
   end
 
   describe 'PUT /v1/active_invoice' do
     before :all do
-      @active_invoice = create(:active_invoice)
       @valid_params = {
         active_invoice: {
           date: Date.today(),
@@ -124,10 +122,8 @@ RSpec.describe 'ActiveInvoices Api', type: :request do
   end
 
   describe 'Delete /v1/active_invoice' do
-    let(:active_invoice) { create(:active_invoice) }
-
     it 'deletes active_invoice' do
-      delete "/v1/active_invoices/#{active_invoice.id}", headers: @auth_headers
+      delete "/v1/active_invoices/#{@active_invoice.id}", headers: @auth_headers
       expect(response).to have_http_status :no_content
     end
   end
