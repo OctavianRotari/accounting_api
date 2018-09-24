@@ -35,7 +35,7 @@ module Api::V1
 
     private
     def other_expense_params
-      params.require(:other_expense).permit(
+      params.permit(
         :desc,
         :total,
         :date

@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'swagger_helper'
 
 RSpec.describe 'Other expenses Api', type: :request do
   before :all do
@@ -36,16 +37,14 @@ RSpec.describe 'Other expenses Api', type: :request do
   describe 'POST /v1/other_expenses' do
     let(:valid_params) do
       {
-        other_expense: {
-          desc: 'caffe',
-          total: 10.3,
-          date: Date.today(),
-        }
+        desc: 'caffe',
+        total: 10.3,
+        date: Date.today(),
       }
     end
 
     let(:invalid_params) do
-      { other_expense: {} }
+      { }
     end
 
     it 'creates other expense' do
@@ -56,25 +55,15 @@ RSpec.describe 'Other expenses Api', type: :request do
       }.to change(OtherExpense, :count).by(+1)
       expect(response).to have_http_status :created
     end
-
-    it 'creates invoice error' do
-      post '/v1/other_expenses',
-      headers: @auth_headers,
-      params: invalid_params 
-      expect(response).to have_http_status :unprocessable_entity
-      expect(json['message']).to eq('param is missing or the value is empty: other_expense')
-    end
   end
 
   describe 'PUT /v1/other_expense' do
     let(:other_expense) { create(:other_expense) }
     let(:valid_params) do
       {
-        other_expense: {
-          desc: 'caffe',
-          total: 10.3,
-          date: Date.today(),
-        }
+        desc: 'caffe',
+        total: 10.3,
+        date: Date.today(),
       }
     end
 
